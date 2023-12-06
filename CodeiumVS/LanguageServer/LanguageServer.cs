@@ -116,7 +116,7 @@ public class LanguageServer
     // Open the browser to sign in
     public async Task SignInAsync()
     {
-        // this will blocks until the sign in process has finished
+        // this will block until the sign in process has finished
         async Task<string?> WaitForAuthTokenAsync()
         {
             // wait until we got the actual port of the LSP
@@ -196,7 +196,7 @@ public class LanguageServer
 
         // the language server is downloaded in a thread so that it doesn't block the UI
         // if we remove `while (webClient.IsBusy)`, the DownloadProgressChanged callback won't be called
-        // until VS is closing, not sure how we can fix that without spawning a seperate thread
+        // until VS is closing, not sure how we can fix that without spawning a separate thread
         void ThreadDownloadLanguageServer()
         {
             Uri url = new($"https://github.com/Exafunction/codeium/releases/download/language-server-v{Version}/language_server_windows_x64.exe.gz");
@@ -392,7 +392,7 @@ public class LanguageServer
             completion_id = completionId
         };
 
-        await RequestCommandAsync<IList<CompletionItem>>("AcceptCompletion", data);
+        await RequestCommandAsync<AcceptCompletionResponse>("AcceptCompletion", data);
     }
 
     public async Task<GetProcessesResponse?> GetProcessesAsync()

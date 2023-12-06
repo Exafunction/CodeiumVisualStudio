@@ -2038,6 +2038,14 @@ public partial class AcceptCompletionRequest : global::ProtoBuf.IExtensible
 }
 
 [global::ProtoBuf.ProtoContract()]
+public partial class AcceptCompletionResponse : global::ProtoBuf.IExtensible
+{
+    private global::ProtoBuf.IExtension __pbn__extensionData;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+}
+
+[global::ProtoBuf.ProtoContract()]
 public enum Language
 {
     LANGUAGE_UNSPECIFIED = 0,

@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<Extern href="stdidcmd.h"/>
+	<Extern href="vsshlids.h"/>
+	<Include href="KnownImageIds.vsct"/>
+	<Include href="VSGlobals.vsct"/>
+
+	<Commands package="CodeiumVS">
+		<Groups>
+
+			<!-- Tools group -->
+			<Group guid="CodeiumVS" id="ToolsButtonsGroup" priority="0x0600">
+				<Parent guid="CodeiumVS" id="ToolsSubMenuCodeium" />
+			</Group>
+
+			<!-- Context group -->
+
+			<Group guid="CodeiumVS" id="ContextGroupCodeium" priority="0x0200" >
+				<Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN" />
+			</Group>
+			<Group guid="CodeiumVS" id="ContextSubMenuButtonsGroup">
+				<Parent guid="CodeiumVS" id="ContextGroupCodeiumSubMenu" />
+			</Group>
+
+		</Groups>
+
+		<Menus>
+			<!-- Tools menu -->
+			<Menu guid="CodeiumVS" id="ToolsSubMenuCodeium" priority="100" type="Menu">
+				<Parent guid="guidSHLMainMenu" id="Extensions.DefaultGroup"/>
+				<Strings>
+					<ButtonText>Codeium</ButtonText>
+				</Strings>
+			</Menu>
+
+			<!-- Context menu -->
+			<Menu guid="CodeiumVS" id="ContextGroupCodeiumSubMenu" priority="0x0200" type="Menu">
+				<Parent guid="CodeiumVS" id="ContextGroupCodeium" />
+				<Strings>
+					<ButtonText>Codeium: Refactor selected code block</ButtonText>
+				</Strings>
+			</Menu>
+		</Menus>
+
+
+		<Buttons>
+
+			<!-- Open chat window button -->
+			<Button guid="CodeiumVS" id="OpenChatWindow" priority="0x0100" type="Button">
+				<Parent guid="CodeiumVS" id="ToolsButtonsGroup" />
+				<Icon guid="ImageCatalogGuid" id="StatusInformation" />
+				<CommandFlag>IconIsMoniker</CommandFlag>
+				<Strings>
+					<ButtonText>Open Chat Window</ButtonText>
+					<LocCanonicalName>.Extensions.Codeium.OpenChatWindow</LocCanonicalName>
+				</Strings>
+			</Button>
+
+			<!-- Sign in button -->
+			<Button guid="CodeiumVS" id="SignIn" priority="0x0100" type="Button">
+				<Parent guid="CodeiumVS" id="ToolsButtonsGroup" />
+				<Icon guid="ImageCatalogGuid" id="AddUser" />
+				<CommandFlag>IconIsMoniker</CommandFlag>
+				<CommandFlag>DefaultInvisible</CommandFlag>
+				<CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings>
+					<ButtonText>Sign in</ButtonText>
+					<LocCanonicalName>.Extensions.Codeium.SignIn</LocCanonicalName>
+				</Strings>
+			</Button>
+
+			<!-- Sign out button -->
+			<Button guid="CodeiumVS" id="SignOut" priority="0x0100" type="Button">
+				<Parent guid="CodeiumVS" id="ToolsButtonsGroup" />
+				<Icon guid="ImageCatalogGuid" id="WebUserControl" />
+				<CommandFlag>IconIsMoniker</CommandFlag>
+				<CommandFlag>DefaultInvisible</CommandFlag>
+				<CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings>
+					<ButtonText>Sign out</ButtonText>
+					<LocCanonicalName>.Extensions.Codeium.SignOut</LocCanonicalName>
+				</Strings>
+			</Button>
+
+			<!-- Enter auth token button -->
+			<Button guid="CodeiumVS" id="EnterAuthToken" priority="0x0100" type="Button">
+				<Parent guid="CodeiumVS" id="ToolsButtonsGroup" />
+				<Icon guid="ImageCatalogGuid" id="LoginName" />
+				<CommandFlag>IconIsMoniker</CommandFlag>
+				<CommandFlag>DefaultInvisible</CommandFlag>
+				<CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings>
+					<ButtonText>Sign in with authentication token</ButtonText>
+					<LocCanonicalName>.Extensions.Codeium.EnterAuthToken</LocCanonicalName>
+				</Strings>
+			</Button>
+
+			<!-- Explain code block button -->
+			<Button guid="CodeiumVS" id="ExplainCodeBlock" priority="0x0100" type="Button">
+				<Parent guid="CodeiumVS" id="ContextGroupCodeium" />
+				<Icon guid="ImageCatalogGuid" id="CodeAnalysisWindow" />
+				<CommandFlag>IconIsMoniker</CommandFlag>
+				<CommandFlag>DefaultInvisible</CommandFlag>
+				<CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings>
+					<ButtonText>Codeium: Explain selected code block</ButtonText>
+					<LocCanonicalName>ExplainCodeBlock</LocCanonicalName>
+				</Strings>
+			</Button>
+
+			<!-- Here we go again -->
+			<Button guid="CodeiumVS" id="RefactorAddCommentsAndDocString" priority="0x0000" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" /> <Icon guid="ImageCatalogGuid" id="AddComment" /> <CommandFlag>IconIsMoniker</CommandFlag><CommandFlag>DefaultInvisible</CommandFlag><CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings> <ButtonText>Add comments and docstrings to the code</ButtonText></Strings>
+			</Button>
+			<Button guid="CodeiumVS" id="RefactorAddLoggingStatements" priority="0x0001" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" /> <Icon guid="ImageCatalogGuid" id="StartLogging" /> <CommandFlag>IconIsMoniker</CommandFlag><CommandFlag>DefaultInvisible</CommandFlag><CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings> <ButtonText>Add logging statements so that it can be easily debugged</ButtonText></Strings>
+			</Button>
+			<Button guid="CodeiumVS" id="RefactorAddTypeAnnotations" priority="0x0002" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" /> <Icon guid="ImageCatalogGuid" id="NewType" /> <CommandFlag>IconIsMoniker</CommandFlag><CommandFlag>DefaultInvisible</CommandFlag><CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings> <ButtonText>Add type annotations to the code</ButtonText></Strings>
+			</Button>
+			<Button guid="CodeiumVS" id="RefactorCleanupThisCode" priority="0x0003" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" /> <Icon guid="ImageCatalogGuid" id="CleanData" /> <CommandFlag>IconIsMoniker</CommandFlag><CommandFlag>DefaultInvisible</CommandFlag><CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings> <ButtonText>Clean up this code</ButtonText></Strings>
+			</Button>
+			<Button guid="CodeiumVS" id="RefactorCheckForBugsAndNullPointers" priority="0x0004" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" /> <Icon guid="ImageCatalogGuid" id="Spy" /> <CommandFlag>IconIsMoniker</CommandFlag><CommandFlag>DefaultInvisible</CommandFlag><CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings> <ButtonText>Check for bugs and null pointers</ButtonText></Strings>
+			</Button>
+			<Button guid="CodeiumVS" id="RefactorImplementCodeForTODOComment" priority="0x0005" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" /> <Icon guid="ImageCatalogGuid" id="ImplementInterface" /> <CommandFlag>IconIsMoniker</CommandFlag><CommandFlag>DefaultInvisible</CommandFlag><CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings> <ButtonText>Implement the code for the TODO comment</ButtonText></Strings>
+			</Button>
+			<Button guid="CodeiumVS" id="RefactorFixMyPyAndPylint" priority="0x0006" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" /> <Icon guid="ImageCatalogGuid" id="DocumentWarning" /> <CommandFlag>IconIsMoniker</CommandFlag><CommandFlag>DefaultInvisible</CommandFlag><CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings> <ButtonText>Fix mypy and pylint errors and warnings</ButtonText></Strings>
+			</Button>
+			<Button guid="CodeiumVS" id="RefactorMakeThisCodeStronglyTyped" priority="0x0007" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" /> <Icon guid="ImageCatalogGuid" id="TypePrivate" /> <CommandFlag>IconIsMoniker</CommandFlag><CommandFlag>DefaultInvisible</CommandFlag><CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings> <ButtonText>Make this code strongly typed</ButtonText></Strings>
+			</Button>
+			<Button guid="CodeiumVS" id="RefactorMakeThisCodeFaster" priority="0x0008" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" /> <Icon guid="ImageCatalogGuid" id="EventPublic" /> <CommandFlag>IconIsMoniker</CommandFlag><CommandFlag>DefaultInvisible</CommandFlag><CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings> <ButtonText>Make this faster and more efficient</ButtonText></Strings>
+			</Button>
+			<Button guid="CodeiumVS" id="RefactorMakeThisCodeAFuntionalReactComponent" priority="0x0009" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" /> <Icon guid="ImageCatalogGuid" id="AddComponent" /> <CommandFlag>IconIsMoniker</CommandFlag><CommandFlag>DefaultInvisible</CommandFlag><CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings> <ButtonText>[React] Make this code a functional React component.</ButtonText></Strings>
+			</Button>
+			<Button guid="CodeiumVS" id="RefactorCreateTypeScriptInterfaceToDefineTheComponentGroup" priority="0x000A" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" /> <Icon guid="ImageCatalogGuid" id="ImplementInterface" /> <CommandFlag>IconIsMoniker</CommandFlag><CommandFlag>DefaultInvisible</CommandFlag><CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings> <ButtonText>[React] Create a Typescript interface to define the component props</ButtonText></Strings>
+			</Button>
+			<Button guid="CodeiumVS" id="RefactorUseAsyncAwaitInsteadOfPromises" priority="0x000B" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" /> <Icon guid="ImageCatalogGuid" id="AsynchronousMessage" /> <CommandFlag>IconIsMoniker</CommandFlag><CommandFlag>DefaultInvisible</CommandFlag><CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings> <ButtonText>Use async / await instead of promises</ButtonText></Strings>
+			</Button>
+			<Button guid="CodeiumVS" id="RefactorVerboselyCommentThisCode" priority="0x000C" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" /> <Icon guid="ImageCatalogGuid" id="CommentCode" /> <CommandFlag>IconIsMoniker</CommandFlag><CommandFlag>DefaultInvisible</CommandFlag><CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings> <ButtonText>Verbosely comment this code so that I can understand what's going on.</ButtonText></Strings>
+			</Button>
+
+
+			<!-- Debug button -->
+			<Button guid="CodeiumVS" id="DebugButton" priority="0x0100" type="Button">
+				<Parent guid="CodeiumVS" id="ContextSubMenuButtonsGroup" />
+				<Icon guid="ImageCatalogGuid" id="DebugSelection" />
+				<CommandFlag>IconIsMoniker</CommandFlag>
+				<Strings>
+					<ButtonText>Debug</ButtonText>
+					<LocCanonicalName>.Extensions.Codeium.DebugButton</LocCanonicalName>
+				</Strings>
+			</Button>
+
+		</Buttons>
+
+	</Commands>
+
+	<Symbols>
+		<GuidSymbol name="CodeiumVS" value="{61329f9d-a7a0-4910-ab50-a7a864a549fd}">
+			<IDSymbol name="ToolsSubMenuCodeium"                                        value="0x0001" />
+			<IDSymbol name="ToolsButtonsGroup"                                          value="0x0002" />
+
+			<IDSymbol name="ContextGroupCodeium"                                        value="0x0003" />
+			<IDSymbol name="ContextGroupCodeiumSubMenu"                                 value="0x0004" />
+			<IDSymbol name="ContextSubMenuButtonsGroup"                                 value="0x0005" />
+
+			<IDSymbol name="OpenChatWindow"                                             value="0x0100" />
+			<IDSymbol name="SignIn"                                                     value="0x0101" />
+			<IDSymbol name="SignOut"                                                    value="0x0102" />
+			<IDSymbol name="EnterAuthToken"                                             value="0x0103" />
+
+			<IDSymbol name="ExplainCodeBlock"                                           value="0x0104" />
+
+			<!-- Unfortunately, we can't add commands programatically, this is so ugly-->
+			<IDSymbol name="RefactorAddCommentsAndDocString"                            value="0x0500" />
+			<IDSymbol name="RefactorAddLoggingStatements"                               value="0x0501" />
+			<IDSymbol name="RefactorAddTypeAnnotations"                                 value="0x0502" />
+			<IDSymbol name="RefactorCleanupThisCode"                                    value="0x0503" />
+			<IDSymbol name="RefactorCheckForBugsAndNullPointers"                        value="0x0504" />
+			<IDSymbol name="RefactorImplementCodeForTODOComment"                        value="0x0505" />
+			<IDSymbol name="RefactorFixMyPyAndPylint"                                   value="0x0506" />
+			<IDSymbol name="RefactorMakeThisCodeStronglyTyped"                          value="0x0507" />
+			<IDSymbol name="RefactorMakeThisCodeFaster"                                 value="0x0508" />
+			<IDSymbol name="RefactorMakeThisCodeAFuntionalReactComponent"               value="0x0509" />
+			<IDSymbol name="RefactorCreateTypeScriptInterfaceToDefineTheComponentGroup" value="0x050A" />
+			<IDSymbol name="RefactorUseAsyncAwaitInsteadOfPromises"                     value="0x050B" />
+			<IDSymbol name="RefactorVerboselyCommentThisCode"                           value="0x050C" />
+
+			<IDSymbol name="DebugButton"                                                value="0x0169" />
+			<IDSymbol name="DebugButton2"                                               value="0x01691" />
+		</GuidSymbol>
+	</Symbols>
+</CommandTable>

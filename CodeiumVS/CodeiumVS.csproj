@@ -61,6 +61,7 @@
     <Compile Include="Proposal\CodeiumProposalSource.cs" />
     <Compile Include="Proposal\CodeiumProposalSourceProvider.cs" />
     <Compile Include="Proposal\Mapper.cs" />
+    <Compile Include="TextHighlighter.cs" />
     <Compile Include="Windows\ChatToolWindow.cs" />
     <Compile Include="Windows\EnterTokenDialogWindow.cs" />
     <Compile Include="Commands.cs" />

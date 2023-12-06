@@ -106,25 +106,17 @@ internal class Mapper
 
     private static readonly ConcurrentDictionary<IContentType, bool> _formatDocumentSupportedByContentType = new ConcurrentDictionary<IContentType, bool>();
 
-    [Import]
-    private static readonly IAsyncCompletionBroker _completionBroker;
-
     public static LangInfo GetLanguage(DocumentView docView)
     {
         return GetLanguage(docView.TextBuffer.ContentType, Path.GetExtension(docView.FilePath)?.Trim('.'));
     }
-
+    
     public static LangInfo GetLanguage(IContentType contentType, string? fileExtension = null)
     {
         string fileExtension2 = fileExtension;
         return _contentTypeMap.GetOrAdd(contentType, (IContentType ct) => FindLanguage(ct, fileExtension2));
     }
 
-    public static bool IsTypeCharTriggerSupported(IContentType contentType, string? fileExtension = null)
-    {
-        string fileExtension2 = fileExtension;
-        return _typeCharTriggerSupportedByContentType.GetOrAdd(contentType, (IContentType ct) => !_completionBroker.IsCompletionSupported(ct) || GetLanguage(ct, fileExtension2).IsTypeCharTriggerSupported);
-    }
 
     public static bool IsFormatDocumentSupported(IContentType contentType, string? fileExtension = null)
     {

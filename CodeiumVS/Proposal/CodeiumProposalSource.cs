@@ -38,7 +38,7 @@ internal class CodeiumProposalSource : ProposalSourceBase
         document.TextBuffer.ContentTypeChanged += OnContentTypeChanged;
         RefreshLanguage();
     }
-
+    
 	public override Task DisposeAsync()
 	{
 		_document.FileActionOccurred -= OnFileActionOccurred;
@@ -85,10 +85,10 @@ internal class CodeiumProposalSource : ProposalSourceBase
         {
             string text = _document.TextBuffer.CurrentSnapshot.GetText();
             int cursorPosition = _document.Encoding.IsSingleByte ? caret.Position.Position : Utf16OffsetToUtf8Offset(text, caret.Position.Position);
-
+            
             VirtualSnapshotPoint newCaret = caret.TranslateTo(caret.Position.Snapshot);
 
-            IList<Packets.CompletionItem>? list = await package.langServer.GetCompletionsAsync(
+            IList<Packets.CompletionItem>? list = await package.LanguageServer.GetCompletionsAsync(
                 _document.FilePath,
                 text,
                 _language,
@@ -134,10 +134,10 @@ internal class CodeiumProposalSource : ProposalSourceBase
         for (int i = 0; i < completionItems.Count; i++)
         {
             Packets.CompletionItem completionItem = completionItems[i];
-            int startOffset = (int)completionItem.range.start_offset;
-            int endOffset = (int)completionItem.range.end_offset;
-            int insertionStart = (int)completionItem.completion_parts[0].offset;
-
+            int startOffset = (int)completionItem.range.startOffset;
+            int endOffset = (int)completionItem.range.endOffset;
+            int insertionStart = (int)completionItem.completionParts[0].offset;
+            
             if (!_document.Encoding.IsSingleByte)
             {
                 startOffset = Utf8OffsetToUtf16Offset(text, startOffset);
@@ -145,7 +145,7 @@ internal class CodeiumProposalSource : ProposalSourceBase
                 insertionStart = Utf8OffsetToUtf16Offset(text, insertionStart);
             }
 
-            string text2 =
+            string text2 = 
                 caret.IsInVirtualSpace ?
                 completionItems[i].completion.text.TrimStart() :
                 completionItems[i].completion.text.Substring(insertionStart - startOffset);
@@ -166,7 +166,7 @@ internal class CodeiumProposalSource : ProposalSourceBase
             Proposal proposal = new(
                 null, array, caret, completionState,
                 ProposalFlags.SingleTabToAccept | ProposalFlags.ShowCommitHighlight | ProposalFlags.FormatAfterCommit,
-                null, completionItem.completion.text
+                null, completionItem.completion.completionId
             );
 
             list.Add(proposal);

@@ -50,9 +50,9 @@ internal class CodeiumProposalSourceProvider : ProposalSourceProviderBase
     {
         return Uri.TryCreate(path.Replace('/', '\\'), UriKind.Absolute, out _);
     }
-    public override async Task<ProposalSourceBase?> GetProposalSourceAsync(ITextView view, CancellationToken cancel)
+    public override Task<ProposalSourceBase?> GetProposalSourceAsync(ITextView view, CancellationToken cancel)
     {
-        return TryCreate(view);
+        return Task.FromResult<ProposalSourceBase?>(TryCreate(view));
     }
 
     private void OnSuggestionAccepted(object sender, EventArgs e)
@@ -60,6 +60,6 @@ internal class CodeiumProposalSourceProvider : ProposalSourceProviderBase
         string proposalId = ((SuggestionAcceptedEventArgs)e).FinalProposal.ProposalId;
 
         CodeiumVSPackage.Instance.Log("Accepted completion " + proposalId);
-        _ = CodeiumVSPackage.Instance.langServer.AcceptCompletionAsync(proposalId);
+        _ = CodeiumVSPackage.Instance.LanguageServer.AcceptCompletionAsync(proposalId);
     }
 }

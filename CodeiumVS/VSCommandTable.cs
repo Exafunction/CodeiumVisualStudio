@@ -6,7 +6,7 @@
 namespace CodeiumVS
 {
     using System;
-
+    
     /// <summary>
     /// Helper class that exposes all GUIDs used across VS Package.
     /// </summary>
@@ -14,6 +14,9 @@ namespace CodeiumVS
     {
         public const string CodeiumVSString = "61329f9d-a7a0-4910-ab50-a7a864a549fd";
         public static Guid CodeiumVS = new Guid(CodeiumVSString);
+
+        public const string ChatToolWindowString = "1a46fd64-28d5-434c-8eb3-17a02d419b53";
+        public static Guid ChatToolWindow = new Guid(ChatToolWindowString);
     }
     /// <summary>
     /// Helper class that encapsulates all CommandIDs uses across VS Package.
@@ -23,27 +26,14 @@ namespace CodeiumVS
         public const int ToolsSubMenuCodeium = 0x0001;
         public const int ToolsButtonsGroup = 0x0002;
         public const int ContextGroupCodeium = 0x0003;
-        public const int ContextGroupCodeiumSubMenu = 0x0004;
-        public const int ContextSubMenuButtonsGroup = 0x0005;
         public const int OpenChatWindow = 0x0100;
         public const int SignIn = 0x0101;
         public const int SignOut = 0x0102;
         public const int EnterAuthToken = 0x0103;
         public const int ExplainCodeBlock = 0x0104;
-        public const int RefactorAddCommentsAndDocString = 0x0500;
-        public const int RefactorAddLoggingStatements = 0x0501;
-        public const int RefactorAddTypeAnnotations = 0x0502;
-        public const int RefactorCleanupThisCode = 0x0503;
-        public const int RefactorCheckForBugsAndNullPointers = 0x0504;
-        public const int RefactorImplementCodeForTODOComment = 0x0505;
-        public const int RefactorFixMyPyAndPylint = 0x0506;
-        public const int RefactorMakeThisCodeStronglyTyped = 0x0507;
-        public const int RefactorMakeThisCodeFaster = 0x0508;
-        public const int RefactorMakeThisCodeAFuntionalReactComponent = 0x0509;
-        public const int RefactorCreateTypeScriptInterfaceToDefineTheComponentGroup = 0x050A;
-        public const int RefactorUseAsyncAwaitInsteadOfPromises = 0x050B;
-        public const int RefactorVerboselyCommentThisCode = 0x050C;
-        public const int DebugButton = 0x0169;
-        public const int DebugButton2 = 0x1691;
+        public const int RefactorCodeBlock = 0x0105;
+        public const int GenerateFunctionDocstring = 0x0106;
+        public const int GenerateFunctionUnitTest = 0x0107;
+        public const int DebugButton = 0x0600;
     }
 }

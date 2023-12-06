@@ -1,0 +1,120 @@
+﻿<platform:DialogWindow  x:Class="CodeiumVS.RefactorCodeDialogWindow" x:Name="RefactorCodeDialogWindow_"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0" 
+                        xmlns:platform="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+                        xmlns:toolkit="clr-namespace:Community.VisualStudio.Toolkit;assembly=Community.VisualStudio.Toolkit"
+                        xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+                        xmlns:imagecatalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog" 
+                        
+                        toolkit:Themes.UseVsTheme="True"
+                        
+                        WindowStyle="None"
+                        ResizeMode="CanResize"
+                        mc:Ignorable="d"
+                        
+                        Title="Codeium Refactor Code Block"
+                        WindowStartupLocation="CenterOwner"
+                        
+                        Width="450"
+                        Height="450"
+                        MinWidth="450"
+                        MinHeight="200"
+                        
+                        MouseLeftButtonDown="Window_MouseLeftButtonDown"
+                        PreviewKeyDown="Window_PreviewKeyDown"
+                        
+                        Background="{DynamicResource {x:Static platform:CommonControlsColors.ComboBoxListBackgroundBrushKey}}"
+                        d:DesignHeight="450"
+                        d:DesignWidth="450"
+                        >
+                        <!--ShowInTaskbar="False"-->
+
+    <platform:DialogWindow.Resources>
+
+        <ResourceDictionary>
+
+            <platform:BrushToColorConverter x:Key="BrushToColorConverter"/>
+            <Style TargetType="Button">
+
+                <Setter Property="platform:ImageThemingUtilities.ImageBackgroundColor" 
+                        Value="{Binding Background, RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}"
+                        />
+
+                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                <Setter Property="Margin" Value="0,0,0,-1"/>
+                <Setter Property="Padding" Value="10,0,0,0"/>
+
+                <Setter Property="Height" Value="30"/>
+                <Setter Property="Background" Value="{DynamicResource {x:Static platform:CommonControlsColors.ComboBoxListBackgroundBrushKey}}"/>
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
+                                <ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource {x:Static platform:CommonControlsColors.ButtonHoverBrushKey}}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static platform:CommonControlsColors.CheckBoxBorderFocusedBrushKey}}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="SendButton" TargetType="Button">
+                <Setter Property="platform:ImageThemingUtilities.ImageBackgroundColor" 
+                        Value="{Binding Background, RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}"
+                        />
+                <Setter Property="HorizontalAlignment" Value="Right"/>
+                <Setter Property="Width" Value="30"/>
+                <Setter Property="ToolTip" Value="Ask Codeium"/>
+                <Setter Property="Background" Value="{StaticResource {x:Static platform:CommonControlsColors.TextBoxBackgroundFocusedBrushKey}}"/>
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
+                                <ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource {x:Static platform:CommonControlsColors.ButtonHoverBrushKey}}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static platform:CommonControlsColors.CheckBoxBorderFocusedBrushKey}}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+        </ResourceDictionary>
+    </platform:DialogWindow.Resources>
+
+    <Grid FocusManager.FocusedElement="{Binding ElementName=InputPrompt}" Margin="10,20,10,0">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical">
+                <Grid Margin="0,0,0,10">
+                    <TextBox x:Name="InputPrompt" KeyDown="InputPrompt_KeyDown" TextChanged="InputPrompt_TextChanged" />
+
+                    <Label x:Name="InputPromptHint" Margin="5,0,0,0"
+                       Foreground="{DynamicResource {x:Static platform:CommonControlsColors.TextBoxTextDisabledBrushKey}}" 
+                       Padding="{Binding ElementName=InputPrompt, Path=Padding}">
+                        Ask Codeium anything! Or you can just select from the presets below...
+                    </Label>
+
+                    <Button Style="{StaticResource SendButton}">
+                        <imaging:CrispImage Margin="0,0,3,-3" Moniker="{x:Static imagecatalog:KnownMonikers.Send}" />
+                    </Button>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</platform:DialogWindow>

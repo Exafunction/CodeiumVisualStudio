@@ -1,25 +1,14 @@
-﻿using EnvDTE;
-using Microsoft.VisualStudio.Editor;
-using Microsoft.VisualStudio.Utilities;
-using Microsoft.VisualStudio.Text;
+﻿using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.TextManager.Interop;
-using ProtoBuf;
-using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.TextTemplating;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Design;
-using System;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.OLE.Interop;
-using System.IO.Packaging;
-using System.Reflection;
+using System.Windows;
+using CodeiumVS.Packets;
 
-namespace CodeiumVS;
+namespace CodeiumVS.Commands;
 
 [Command(PackageIds.OpenChatWindow)]
 internal sealed class CommandOpenChatWindow : BaseCommand<CommandOpenChatWindow>
@@ -39,7 +28,7 @@ internal sealed class CommandSignIn : BaseCommand<CommandSignIn>
 {
     protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
     {
-        await CodeiumVSPackage.Instance.langServer.SignInAsync();
+        await CodeiumVSPackage.Instance.LanguageServer.SignInAsync();
     }
 }
 
@@ -48,7 +37,7 @@ internal sealed class CommandSignOut : BaseCommand<CommandSignOut>
 {
     protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
     {
-        await CodeiumVSPackage.Instance.langServer.SignOutAsync();
+        await CodeiumVSPackage.Instance.LanguageServer.SignOutAsync();
     }
 }
 
@@ -61,267 +50,246 @@ internal sealed class CommandEnterAuthToken : BaseCommand<CommandEnterAuthToken>
     }
 }
 
-[Command(PackageIds.DebugButton)]
-internal sealed class CommandDebugButton : BaseCommand<CommandDebugButton>
+//[Command(PackageIds.DebugButton)]
+//internal sealed class CommandDebugButton : BaseCommand<CommandDebugButton>
+//{
+
+//    //protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
+//    //{
+//    //}
+//}
+
+// this class provide the code context for the 4 right-click menu commands
+// otherwise, those commands will need to do the same thing repeatedly
+// this is rather ugly, but it works
+internal class BaseCommandContextMenu<T> : BaseCommand<T> where T : class, new()
 {
-    private static async Task<DTE> GetDTE2Async()
+    internal static long lastQuery = 0;
+    internal static bool is_visible = false;
+
+    protected static DocumentView? docView;
+    protected static string text; // the selected text
+    protected static bool is_function = false;
+    protected static int start_line, end_line;
+    protected static int start_col, end_col;
+    protected static int start_position, end_position;
+    protected static Languages.LangInfo languageInfo;
+
+    protected override void BeforeQueryStatus(EventArgs e)
     {
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-        return ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
-    }
-    private async Task<IWpfTextViewHost> GetCurrentViewHostAsync()
-    {
-        // code to get access to the editor's currently selected text cribbed from
-        // http://msdn.microsoft.com/en-us/library/dd884850.aspx
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-        IVsTextManager txtMgr = (IVsTextManager)ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager));
-        IVsTextView vTextView = null;
-        int mustHaveFocus = 1;
-        txtMgr.GetActiveView(mustHaveFocus, null, out vTextView);
-        IVsUserData userData = vTextView as IVsUserData;
-        if (userData == null)
+        Command.Visible = is_visible;
+
+        // Derived menu commands will call this repeatedly upon openning
+        // so we only want to do it once, i can't find a better way to do it
+        long timeStamp = Stopwatch.GetTimestamp();
+        if (lastQuery != 0 && timeStamp - lastQuery < 500) return;
+        lastQuery = timeStamp;
+
+        // If there are no selection, and we couldn't find any block that the caret is in
+        // then we don't want to show the command
+        is_visible = Command.Visible = ThreadHelper.JoinableTaskFactory.Run(async delegate
         {
-            return null;
-        }
-        else
-        {
-            IWpfTextViewHost viewHost;
-            object holder;
-            Guid guidViewHost = DefGuidList.guidIWpfTextViewHost;
-            userData.GetData(ref guidViewHost, out holder);
-            viewHost = (IWpfTextViewHost)holder;
-            return viewHost;
-        }
+            is_function = false;
+            docView = await VS.Documents.GetActiveDocumentViewAsync();
+            if (docView?.TextView == null) return false;
+
+            languageInfo = Languages.Mapper.GetLanguage(docView);
+            ITextSelection selection = docView.TextView.Selection;
+
+            start_position = selection.Start.Position;
+            end_position = selection.End.Position;
+
+            // if there is no selection, attempt to get the code block at the caret
+            if (selection.SelectedSpans.Count == 0 || start_position == end_position)
+            {
+                Span blockSpan = TextHighlighter.Instance.GetBlockSpan(out var tag, selection.Start.Position.Position, selection.Start.Position.Snapshot);
+                if (tag == null) return false;
+
+                start_position = blockSpan.Start;
+                end_position = blockSpan.End;
+
+                // "Nonstructural" == nothing; Namespace" == Namespace
+                // "Type" == class/struct/enum; "Expression" == lambda; "Member" == function
+                is_function = tag?.Type == "Member";
+            }
+
+            ITextSnapshotLine selectionStart = docView.TextBuffer.CurrentSnapshot.GetLineFromPosition(start_position);
+            ITextSnapshotLine selectionEnd = docView.TextBuffer.CurrentSnapshot.GetLineFromPosition(end_position);
+
+            start_line = selectionStart.LineNumber + 1;
+            end_line = selectionEnd.LineNumber + 1;
+            start_col = start_position - selectionStart.Start.Position + 1;
+            end_col = end_position - selectionEnd.Start.Position + 1;
+
+            text = docView.TextBuffer.CurrentSnapshot.GetText(start_position, end_position - start_position);
+
+            return true;
+        });
     }
 
-    protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
+    // Get the current function name and parameters, "current" being the at the the block caret is currently in
+    protected bool GetCurrentFunctionInfo(out string? functionName, out string? parameters)
     {
-        // somehow OpenViaProjectAsync doesn't work... at least for me
-        await VS.Documents.OpenAsync("D:\\source\\repos\\TestCPP\\TestSDKCS2\\main.cpp");
-        DocumentView docView = await VS.Documents.GetActiveDocumentViewAsync();
-        if (docView?.TextView == null) return;
+        ThreadHelper.ThrowIfNotOnUIThread();
 
-        ITextSelection selection = docView.TextView.Selection;
-        selection.Select(new SnapshotSpan(new SnapshotPoint(docView.TextBuffer.CurrentSnapshot, 300), 500), false);
-        docView.TextView.Caret.MoveTo(new SnapshotPoint(docView.TextBuffer.CurrentSnapshot, 300));
-        docView.TextView.Caret.EnsureVisible();
-    }
-}
+        functionName = null;
+        parameters = null;
 
+        IVsTextView vsTextView = VsShellUtilities.GetTextView(docView.WindowFrame);
+        if (vsTextView == null) return false;
+        if (vsTextView.GetBuffer(out var vsTextLines) != 0) return false;
+        if (vsTextLines.GetLanguageServiceID(out var languageServiceID) != 0) return false;
 
-internal abstract class BaseCommandSelectedCode<T> : BaseCommand<T> where T : class, new()
-{
-    protected DocumentView docView;
+        ServiceProvider.GlobalProvider.QueryService(languageServiceID, out var languageService);
+        IVsLanguageBlock vsLanguageBlock = languageService as IVsLanguageBlock;
+        if (vsLanguageBlock == null) return false;
 
-    protected override async Task InitializeCompletedAsync()
-    {
-        Command.BeforeQueryStatus += delegate (object s, EventArgs e)
-        {
-            ThreadHelper.JoinableTaskFactory.Run(UpdateVisibilityAsync);
-        };
+        TextSpan[] spans = [new TextSpan()];
+        vsLanguageBlock.GetCurrentBlock(vsTextLines, start_line, start_col, spans, out string desc, out int avail);
+        if (avail == 0) return false;
 
-        await base.InitializeCompletedAsync();
-    }
-
-    private async Task UpdateVisibilityAsync()
-    {
-        Command.Visible = false;
-        if (!CodeiumVSPackage.Instance.langServer.IsReady()) return;
-
-        docView = await VS.Documents.GetActiveDocumentViewAsync();
-        if (docView?.TextView == null) return;
-
-        ITextSelection selection = docView.TextView.Selection;
-
-        // has no selection
-        if (selection.SelectedSpans.Count == 0 || selection.SelectedSpans[0].Span.Start == selection.SelectedSpans[0].Span.End)
-            return;
-
-        Command.Visible = IsVisible();
-    }
-
-    protected virtual bool IsVisible()
-    {
+        var splits = desc.Split('(');
+        functionName = splits[0].Split(' ').Last();
+        parameters = splits[1].Substring(0, splits[1].LastIndexOf(')'));
         return true;
     }
 
-    protected abstract string GetText();
-
-
-    protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
+    protected async Task<FunctionInfo?> GetFunctionInfoAsync()
     {
-        if (this.GetType().GetCustomAttribute(typeof(CommandAttribute)) is not CommandAttribute attr)
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        if (!GetCurrentFunctionInfo(out string? functionName, out string? functionParams))
         {
-            throw new InvalidOperationException($"No [Command(GUID, ID)] attribute was added to {typeof(T).Name}");
+            await CodeiumVSPackage.Instance.LogAsync("Error: Could not get function info");
+            return null;
         }
 
-        await CodeiumVSPackage.Instance.langServer.controller.RefactorCodeBlockAsync(docView, GetText());
+        return new()
+        {
+            raw_source = text,
+            clean_function = text,
+            node_name = functionName,
+            @params = functionParams,
+            definition_line = start_line,
+            start_line = start_line,
+            end_line = end_line,
+            start_col = start_col,
+            end_col = end_col,
+            language = languageInfo.Type,
+        };
+    }
+
+    protected CodeBlockInfo GetCodeBlockInfo()
+    {
+        return new()
+        {
+            raw_source = text,
+            start_line = start_line,
+            end_line = end_line,
+            start_col = start_col,
+            end_col = end_col,
+        };
     }
 }
 
 [Command(PackageIds.ExplainCodeBlock)]
-internal sealed class CommandExplainCodeBlock : BaseCommandSelectedCode<CommandExplainCodeBlock>
+internal class CommandExplainCodeBlock : BaseCommandContextMenu<CommandExplainCodeBlock>
 {
-    protected override string GetText() { return ""; }
+    protected override void BeforeQueryStatus(EventArgs e)
+    {
+        base.BeforeQueryStatus(e);
+        if (Command.Visible) Command.Text = is_function ? "Codeium: Explain Function" : "Codeium: Explain Code block";
+    }
 
     protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
     {
+        LanguageServerController controller = (Package as CodeiumVSPackage).LanguageServer.Controller;
 
-        await CodeiumVSPackage.Instance.langServer.controller.ExplainCodeBlockAsync(docView);
-    }
-}
-
-
-[Command(PackageIds.RefactorAddCommentsAndDocString)]
-internal sealed class CommandRefactorAddCommentsAndDocString : BaseCommandSelectedCode<CommandRefactorAddCommentsAndDocString>
-{
-    protected override string GetText() { return "Add comments and docstrings to the code."; }
-}
-
-[Command(PackageIds.RefactorAddLoggingStatements)]
-internal sealed class CommandRefactorAddLoggingStatements : BaseCommandSelectedCode<CommandRefactorAddLoggingStatements>
-{
-    protected override string GetText()
-    {
-        var lang = Languages.Mapper.GetLanguage(docView);
-        return lang.Type switch
+        if (is_function)
         {
-            Packets.Language.LANGUAGE_C          => "Add `printf()` statements so that it can be easily debugged.",
-            Packets.Language.LANGUAGE_CPP        => "Add `std::cout` statements so that it can be easily debugged.",
-            Packets.Language.LANGUAGE_JAVASCRIPT => "Add `console.log()` statements so that it can be easily debugged.",
-            Packets.Language.LANGUAGE_PYTHON     => "Add `print()` statements so that it can be easily debugged.",
-            Packets.Language.LANGUAGE_CSHARP     => "Add `Console.WriteLine()` statements so that it can be easily debugged.",
-            _                                    => "Add logging statements so that it can be easily debugged.",
-        };
-    }
-}
-
-[Command(PackageIds.RefactorAddTypeAnnotations)]
-internal sealed class CommandRefactorAddTypeAnnotations : BaseCommandSelectedCode<CommandRefactorAddTypeAnnotations>
-{
-    protected override bool IsVisible()
-    {
-        var lang = Languages.Mapper.GetLanguage(docView);
-        return lang.Type switch
+            FunctionInfo functionInfo = await GetFunctionInfoAsync();
+            await controller.ExplainFunctionAsync(docView.Document.FilePath, functionInfo);
+        }
+        else
         {
-            Packets.Language.LANGUAGE_CSHARP or
-            Packets.Language.LANGUAGE_TYPESCRIPT or
-            Packets.Language.LANGUAGE_PYTHON => true,
-            _ => false,
-        };
-    }
-
-    protected override string GetText()
-    {
-        return "Add type annotations to this code block, including the function arguments and return type. Modify the docstring to reflect the types.";
+            CodeBlockInfo codeBlockInfo = GetCodeBlockInfo();
+            await controller.ExplainCodeBlockAsync(docView.Document.FilePath, languageInfo.Type, codeBlockInfo);
+        }
     }
 }
 
-[Command(PackageIds.RefactorCleanupThisCode)]
-internal sealed class CommandRefactorCleanupThisCode : BaseCommandSelectedCode<CommandRefactorCleanupThisCode>
+[Command(PackageIds.RefactorCodeBlock)]
+internal class CommandRefactorCodeBlock : BaseCommandContextMenu<CommandRefactorCodeBlock>
 {
-    protected override string GetText()
+    protected override void BeforeQueryStatus(EventArgs e)
     {
-        return "Clean up this code by standardizing variable names, removing debugging statements, improving readability, and more. Explain what you did to clean it up in a short and concise way.";
-    }
-}
-
-[Command(PackageIds.RefactorCheckForBugsAndNullPointers)]
-internal sealed class CommandRefactorCheckForBugsAndNullPointers : BaseCommandSelectedCode<CommandRefactorCheckForBugsAndNullPointers>
-{
-    protected override string GetText()
-    {
-        return "Check for bugs such as null pointer references, unhandled exceptions, and more. If you don't see anything obvious, reply that things look good and that the user can reply with a stack trace to get more information.";
-    }
-}
-
-[Command(PackageIds.RefactorImplementCodeForTODOComment)]
-internal sealed class CommandRefactorImplementCodeForTODOComment : BaseCommandSelectedCode<CommandRefactorImplementCodeForTODOComment>
-{
-    protected override string GetText() { return "Implement the code for the TODO comment."; }
-}
-
-[Command(PackageIds.RefactorFixMyPyAndPylint)]
-internal sealed class CommandRefactorFixMyPyAndPylint : BaseCommandSelectedCode<CommandRefactorFixMyPyAndPylint>
-{
-    protected override bool IsVisible()
-    {
-        var lang = Languages.Mapper.GetLanguage(docView);
-        return lang.Type == Packets.Language.LANGUAGE_PYTHON;
+        base.BeforeQueryStatus(e);
+        if (Command.Visible) Command.Text = is_function ? "Codeium: Refactor Function" : "Codeium: Refactor Code block";
     }
 
-    protected override string GetText() { return "Fix mypy and pylint errors and warnings."; }
-}
-
-[Command(PackageIds.RefactorMakeThisCodeStronglyTyped)]
-internal sealed class CommandRefactorMakeThisCodeStronglyTyped : BaseCommandSelectedCode<CommandRefactorMakeThisCodeStronglyTyped>
-{
-    protected override string GetText()
+    protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
     {
-        return "Make this code strongly typed, including the function arguments and return type. Modify the docstring to reflect the types.";
-    }
-}
+        // get the caret screen position and create the dialog at that position
+        TextBounds caretLine = docView.TextView.TextViewLines.GetCharacterBounds(docView.TextView.Caret.Position.BufferPosition);
+        Point caretScreenPos = docView.TextView.VisualElement.PointToScreen(
+            new Point(caretLine.Left - docView.TextView.ViewportLeft, caretLine.Top - docView.TextView.ViewportTop)
+        );
 
-[Command(PackageIds.RefactorMakeThisCodeFaster)]
-internal sealed class CommandRefactorMakeThisCodeFaster : BaseCommandSelectedCode<CommandRefactorMakeThisCodeFaster>
-{
-    protected override string GetText() { return "Make this faster and more efficient"; }
-}
+        // highlight the selected codeblock
+        TextHighlighter.Instance?.AddHighlight(start_position, end_position - start_position, docView.TextView.TextSnapshot);
 
-[Command(PackageIds.RefactorMakeThisCodeAFuntionalReactComponent)]
-internal sealed class CommandRefactorMakeThisCodeAFuntionalReactComponent : BaseCommandSelectedCode<CommandRefactorMakeThisCodeAFuntionalReactComponent>
-{
-    protected override bool IsVisible()
-    {
-        var lang = Languages.Mapper.GetLanguage(docView);
-        return lang.Type switch
+        var dialog = RefactorCodeDialogWindow.GetOrCreate();
+        string? prompt = await dialog.ShowAndGetPromptAsync(languageInfo, caretScreenPos.X, caretScreenPos.Y);
+
+        TextHighlighter.Instance?.ClearAll();
+
+        // user did not select any of the prompt
+        if (prompt == null) return;
+
+        LanguageServerController controller = (Package as CodeiumVSPackage).LanguageServer.Controller;
+
+        if (is_function)
         {
-            Packets.Language.LANGUAGE_JAVASCRIPT or
-            Packets.Language.LANGUAGE_TSX => true,
-            _ => false,
-        };
-    }
-
-    protected override string GetText() { return "Make this code a functional React component."; }
-}
-
-[Command(PackageIds.RefactorCreateTypeScriptInterfaceToDefineTheComponentGroup)]
-internal sealed class CommandRefactorCreateTypeScriptInterfaceToDefineTheComponentGroup : BaseCommandSelectedCode<CommandRefactorCreateTypeScriptInterfaceToDefineTheComponentGroup>
-{
-    protected override bool IsVisible()
-    {
-        var lang = Languages.Mapper.GetLanguage(docView);
-        return lang.Type switch
+            FunctionInfo functionInfo = await GetFunctionInfoAsync();
+            await controller.RefactorFunctionAsync(prompt, docView.Document.FilePath, functionInfo);
+        }
+        else
         {
-            Packets.Language.LANGUAGE_JAVASCRIPT or
-            Packets.Language.LANGUAGE_TSX => true,
-            _ => false,
-        };
+            CodeBlockInfo codeBlockInfo = GetCodeBlockInfo();
+            await controller.RefactorCodeBlockAsync(prompt, docView.Document.FilePath, languageInfo.Type, codeBlockInfo);
+        }
     }
-
-    protected override string GetText() { return "Create a Typescript interface to define the component props."; }
 }
 
-[Command(PackageIds.RefactorUseAsyncAwaitInsteadOfPromises)]
-internal sealed class CommandRefactorUseAsyncAwaitInsteadOfPromises : BaseCommandSelectedCode<CommandRefactorUseAsyncAwaitInsteadOfPromises>
+[Command(PackageIds.GenerateFunctionUnitTest)]
+internal class CommandGenerateFunctionUnitTest : BaseCommandContextMenu<CommandGenerateFunctionUnitTest>
 {
-    protected override bool IsVisible()
+    protected override void BeforeQueryStatus(EventArgs e)
     {
-        var lang = Languages.Mapper.GetLanguage(docView);
-        return lang.Type switch
-        {
-            Packets.Language.LANGUAGE_TYPESCRIPT or
-            Packets.Language.LANGUAGE_JAVASCRIPT or
-            Packets.Language.LANGUAGE_TSX => true,
-            _ => false,
-        };
+        base.BeforeQueryStatus(e);
+        Command.Visible = is_function;
     }
 
-    protected override string GetText() { return "Use async / await instead of promises."; }
+    protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
+    {
+        LanguageServerController controller = (Package as CodeiumVSPackage).LanguageServer.Controller;
+        FunctionInfo functionInfo = await GetFunctionInfoAsync();
+        await controller.GenerateFunctionUnitTestAsync("Generate unit test", docView.Document.FilePath, functionInfo);
+    }
 }
 
-[Command(PackageIds.RefactorVerboselyCommentThisCode)]
-internal sealed class CommandRefactorVerboselyCommentThisCode : BaseCommandSelectedCode<CommandRefactorVerboselyCommentThisCode>
+[Command(PackageIds.GenerateFunctionDocstring)]
+internal class CommandGenerateFunctionDocstring : BaseCommandContextMenu<CommandGenerateFunctionDocstring>
 {
-    protected override string GetText() { return "Verbosely comment this code so that I can understand what's going on."; }
+    protected override void BeforeQueryStatus(EventArgs e)
+    {
+        base.BeforeQueryStatus(e);
+        Command.Visible = is_function;
+    }
+
+    protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
+    {
+        LanguageServerController controller = (Package as CodeiumVSPackage).LanguageServer.Controller;
+        FunctionInfo functionInfo = await GetFunctionInfoAsync();
+        await controller.GenerateFunctionDocstringAsync(docView.Document.FilePath, functionInfo);
+    }
 }

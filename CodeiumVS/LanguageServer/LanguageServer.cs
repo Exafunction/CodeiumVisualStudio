@@ -21,7 +21,7 @@ namespace CodeiumVS;
 
 public class LanguageServer
 {
-    private const string Version = "1.4.23";
+    private const string Version = "1.4.27";
 
     private int port = 0;
     private System.Diagnostics.Process process;

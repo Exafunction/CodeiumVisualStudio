@@ -1,20 +1,17 @@
 ﻿using Microsoft.VisualStudio.PlatformUI;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Web.WebView2.Core;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Markup;
 
 namespace CodeiumVS;
 
-[Guid(GuidString)]
+[Guid(PackageGuids.ChatToolWindowString)]
 public class ChatToolWindow : ToolWindowPane
 {
-    public const string GuidString = "1a46fd64-28d5-434c-8eb3-17a02d419b53";
     public ChatToolWindow()
         : base(null)
     {
@@ -39,14 +36,10 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
     }
     async Task InitializeWebViewAsync()
     {
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         package = CodeiumVSPackage.Instance;
 
-        IVsUIShell5 vsShell = ServiceProvider.GlobalProvider.GetService(typeof(SVsUIShell)) as IVsUIShell5;
-
         // set the default background color to avoid flashing a white window
-        if (vsShell != null)
-            webView.DefaultBackgroundColor = vsShell.GetThemedGDIColor(EnvironmentColors.ToolWindowBackgroundBrushKey);
+        webView.DefaultBackgroundColor = VSColorTheme.GetThemedColor(EnvironmentColors.ToolWindowBackgroundBrushKey);
 
         // create webview2 environment and load the webview
         string webviewDirectory = Path.Combine(package.GetAppDataPath(), "webview2");
@@ -63,13 +56,13 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
     public async Task ReloadAsync()
     {
         // wait for the language server
-        await package.langServer.WaitReadyAsync();
+        await package.LanguageServer.WaitReadyAsync();
 
-        Packets.Metadata metadata = package.langServer.GetMetadata();
-        Packets.GetProcessesResponse gpr = await package.langServer.GetProcessesAsync();
+        Packets.Metadata metadata = package.LanguageServer.GetMetadata();
+        Packets.GetProcessesResponse gpr = await package.LanguageServer.GetProcessesAsync();
 
-        string serverUrl = $"ws://127.0.0.1:{gpr.chat_web_server_port}";
-        string clientUrl = $"http://127.0.0.1:{gpr.chat_client_port}";
+        string serverUrl = $"ws://127.0.0.1:{gpr.chatWebServerPort}";
+        string clientUrl = $"http://127.0.0.1:{gpr.chatClientPort}";
 
         Dictionary<string, string> data = new()
         {
@@ -99,21 +92,19 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         await SetChatThemeAsync();
     }
 
+    // Get VS colors and set the theme for chat page
     private async Task SetChatThemeAsync()
     {
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-        IVsUIShell5 vsShell = ServiceProvider.GlobalProvider.GetService(typeof(SVsUIShell)) as IVsUIShell5;
-
-        // get vs colors and set the theme for chat page
-        uint GetColor(ThemeResourceKey key)
+        // System.Drawing.Color is ARGB, we need to convert it to RGBA for css
+        static uint GetColor(ThemeResourceKey key)
         {
-            var color = VsColors.GetThemedWPFColor(vsShell, key);
+            var color = VSColorTheme.GetThemedColor(key);
             return (uint)(color.R << 24 | color.G << 16 | color.R << 8 | color.A);
         }
 
-        uint colorWindowBg = GetColor(EnvironmentColors.ToolWindowBackgroundBrushKey);
-        uint colorTextBoxBg = GetColor(EnvironmentColors.ComboBoxBackgroundBrushKey);
-        uint colorTextBoxText = GetColor(EnvironmentColors.ComboBoxTextBrushKey);
+        uint colorWindowBg           = GetColor(EnvironmentColors.ToolWindowBackgroundBrushKey);
+        uint colorTextBoxBg          = GetColor(EnvironmentColors.ComboBoxBackgroundBrushKey);
+        uint colorTextBoxText        = GetColor(EnvironmentColors.ComboBoxTextBrushKey);
         uint colorTextBoxPlaceholder = GetColor(EnvironmentColors.CommandBarTextInactiveBrushKey);
 
         string script = $@"
@@ -132,5 +123,4 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 
         await webView.ExecuteScriptAsync(script);
     }
-
 }

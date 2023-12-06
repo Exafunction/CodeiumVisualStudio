@@ -34,7 +34,7 @@ public partial class EnterTokenDialogWindowControl : UserControl
 
     private void BtnOKClicked(object sender, RoutedEventArgs e)
     {
-        _= CodeiumVSPackage.Instance.langServer.SignInWithAuthTokenAsync(authTokenInput.Text);
+        _= CodeiumVSPackage.Instance.LanguageServer.SignInWithAuthTokenAsync(authTokenInput.Text);
         Window.GetWindow(this).Close();
     }
     private void BtnCancelClicked(object sender, RoutedEventArgs e)
@@ -44,7 +44,7 @@ public partial class EnterTokenDialogWindowControl : UserControl
 
     private void HelpLinkClicked(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
     {
-        SettingsPage settingsPage = CodeiumVSPackage.Instance.settingsPage;
+        SettingsPage settingsPage = CodeiumVSPackage.Instance.SettingsPage;
 
         string state = Guid.NewGuid().ToString();
         string portalUrl = settingsPage.EnterpriseMode ? settingsPage.PortalUrl : "https://www.codeium.com";

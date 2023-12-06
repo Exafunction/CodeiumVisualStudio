@@ -36,7 +36,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -61,6 +60,7 @@
     <Compile Include="Proposal\CodeiumProposalSource.cs" />
     <Compile Include="Proposal\CodeiumProposalSourceProvider.cs" />
     <Compile Include="Proposal\Mapper.cs" />
+    <Compile Include="TextHighlighter.cs" />
     <Compile Include="Windows\ChatToolWindow.cs" />
     <Compile Include="Windows\EnterTokenDialogWindow.cs" />
     <Compile Include="Commands.cs" />
@@ -80,6 +80,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>VSCommandTable.vsct</DependentUpon>
     </Compile>
+    <Compile Include="Windows\RefactorCodeDialogWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig">
@@ -125,6 +126,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Language">
       <Version>17.8.222</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.SDK.VsixSuppression">
+      <Version>14.1.37</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.8.2365">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -146,6 +150,9 @@
     <Page Include="Windows\EnterTokenDialogWindowControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Windows\RefactorCodeDialogWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -155,7 +162,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

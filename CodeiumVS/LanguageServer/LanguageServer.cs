@@ -1,4 +1,4 @@
-﻿using EnvDTE;
+﻿using CodeiumVS.Packets;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -15,50 +15,46 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using CodeiumVS.Packets;
 
 namespace CodeiumVS;
 
 public class LanguageServer
 {
-    private const string Version = "1.4.23";
+    private const string Version = "1.4.27";
 
-    private int port = 0;
-    private System.Diagnostics.Process process;
+    private int Port = 0;
+    private Process process;
 
-    private readonly HttpClient httpClient;
-    private readonly Metadata metadata;
-    private readonly CodeiumVSPackage package = null;
-    public readonly LanguageServerController controller;
+    private readonly Metadata Metadata;
+    private readonly HttpClient HttpClient;
+    private readonly CodeiumVSPackage Package;
+    private readonly NotificationInfoBar NotificationDownloading;
 
-    public int        GetPort()        { return port;                               }
-    public string     GetKey()         { return metadata.api_key;                   }
-    public string     GetVersion()     { return Version;                            }
-    public bool       IsReady()        { return port != 0;                          }
-    public async Task WaitReadyAsync() { while (!IsReady()) {await Task.Delay(50);} }
+    public  readonly LanguageServerController Controller;
 
     public LanguageServer()
     {
-        package = CodeiumVSPackage.Instance;
-        httpClient = new HttpClient();
-        controller = new LanguageServerController();
-        metadata = new();
+        NotificationDownloading = new NotificationInfoBar();
+
+        Package = CodeiumVSPackage.Instance;
+        HttpClient = new HttpClient();
+        Controller = new LanguageServerController();
+        Metadata = new();
     }
 
     public async Task InitializeAsync()
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-        DTE VSDTE = (DTE)Marshal.GetActiveObject("VisualStudio.DTE");
-
-        metadata.request_id        = 0;
-        metadata.ide_name          = "visual_studio";
-        metadata.ide_version       = VSDTE.Version;
-        metadata.extension_name    = Vsix.Name;
-        metadata.extension_version = Version;
-        metadata.session_id        = Guid.NewGuid().ToString();
-        metadata.locale            = new CultureInfo(VSDTE.LocaleID).Name;
-        metadata.disable_telemetry = false;
+        EnvDTE.DTE VSDTE = (EnvDTE.DTE)Marshal.GetActiveObject("VisualStudio.DTE");
+        Metadata.request_id        = 0;
+        Metadata.ide_name          = "visual_studio";
+        Metadata.ide_version       = VSDTE.Version;
+        Metadata.extension_name    = Vsix.Name;
+        Metadata.extension_version = Version;
+        Metadata.session_id        = Guid.NewGuid().ToString();
+        Metadata.locale            = new CultureInfo(VSDTE.LocaleID).Name;
+        Metadata.disable_telemetry = false;
 
         await PrepareAsync();
     }
@@ -72,28 +68,34 @@ public class LanguageServer
             process = null;
         }
 
-        controller.Disconnect();
+        Controller.Disconnect();
     }
+    
+    public int        GetPort()        { return Port;                               }
+    public string     GetKey()         { return Metadata.api_key;                   }
+    public string     GetVersion()     { return Version;                            }
+    public bool       IsReady()        { return Port != 0;                          }
+    public async Task WaitReadyAsync() { while (!IsReady()) {await Task.Delay(50);} }
 
-    // register the auth token to the language server
+    // Get API key from the authentication token
     public async Task SignInWithAuthTokenAsync(string authToken)
     {
-        string url = package.settingsPage.EnterpriseMode ?
-            package.settingsPage.ApiUrl + "/exa.seat_management_pb.SeatManagementService/RegisterUser" :
+        string url = Package.SettingsPage.EnterpriseMode ?
+            Package.SettingsPage.ApiUrl + "/exa.seat_management_pb.SeatManagementService/RegisterUser" :
             "https://api.codeium.com/register_user/";
 
         RegisterUserRequest data = new() { firebase_id_token = authToken };
         RegisterUserResponse result = await RequestUrlAsync<RegisterUserResponse>(url, data);
 
-        metadata.api_key = result.api_key;
+        Metadata.api_key = result.api_key;
 
-        if (metadata.api_key == null)
+        if (Metadata.api_key == null)
         {
-            await package.LogAsync("Failed to sign in.");
+            await Package.LogAsync("Failed to sign in.");
 
             // show an error message box
             var msgboxResult = await VS.MessageBox.ShowAsync(
-                "Failed to sign in. Please check the output window for more details.",
+                "Codeium: Failed to sign in. Please check the output window for more details.",
                 "Do you want to retry?",
                 OLEMSGICON.OLEMSGICON_INFO,
                 OLEMSGBUTTON.OLEMSGBUTTON_RETRYCANCEL,
@@ -106,12 +108,12 @@ public class LanguageServer
             return;
         }
 
-        File.WriteAllText(package.GetAPIKeyPath(), metadata.api_key);
-        await package.LogAsync("Signed in successfully");
-        await package.UpdateSignedInStateAsync();
+        File.WriteAllText(Package.GetAPIKeyPath(), Metadata.api_key);
+        await Package.LogAsync("Signed in successfully");
+        await Package.UpdateSignedInStateAsync();
     }
 
-    // open the browser to sign in
+    // Open the browser to sign in
     public async Task SignInAsync()
     {
         // this will blocks until the sign in process has finished
@@ -127,9 +129,9 @@ public class LanguageServer
             {
                 // show an error message box
                 var msgboxResult = await VS.MessageBox.ShowAsync(
-                    "Failed to get the Authentication Token. Please check the output window for more details.",
+                    "Codeium: Failed to get the Authentication Token. Please check the output window for more details.", 
                     "Do you want to retry?",
-                    OLEMSGICON.OLEMSGICON_INFO,
+                    OLEMSGICON.OLEMSGICON_INFO, 
                     OLEMSGBUTTON.OLEMSGBUTTON_RETRYCANCEL,
                     OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST
                 );
@@ -137,15 +139,15 @@ public class LanguageServer
                 return (msgboxResult == VSConstants.MessageBoxResult.IDRETRY) ? await WaitForAuthTokenAsync() : null;
             }
 
-            return result.auth_token;
+            return result.authToken;
         }
 
         string state = Guid.NewGuid().ToString();
-        string portalUrl = package.settingsPage.EnterpriseMode ? package.settingsPage.PortalUrl : "https://www.codeium.com";
-        string redirectUrl = Uri.EscapeDataString($"http://127.0.0.1:{port}/auth");
+        string portalUrl = Package.SettingsPage.EnterpriseMode ? Package.SettingsPage.PortalUrl : "https://www.codeium.com";
+        string redirectUrl = Uri.EscapeDataString($"http://127.0.0.1:{Port}/auth");
         string url = $"{portalUrl}/profile?response_type=token&redirect_uri={redirectUrl}&state={state}&scope=openid%20profile%20email&redirect_parameters_type=query";
 
-        await package.LogAsync("Opening browser to " + url);
+        await Package.LogAsync("Opening browser to " + url);
 
         System.Diagnostics.Process.Start(new ProcessStartInfo
         {
@@ -157,22 +159,22 @@ public class LanguageServer
         if (authToken != null) await SignInWithAuthTokenAsync(authToken);
     }
 
-    // this just deletes the api key
+    // Delete the stored API key
     public async Task SignOutAsync()
     {
-        metadata.api_key = "";
-        File.Delete(package.GetAPIKeyPath());
-        await package.LogAsync("Signed out successfully");
-        await package.UpdateSignedInStateAsync();
+        Metadata.api_key = "";
+        File.Delete(Package.GetAPIKeyPath());
+        await Package.LogAsync("Signed out successfully");
+        await Package.UpdateSignedInStateAsync();
     }
 
-    // download the language server (if not already) and start it
+    // Download the language server (if not already) and start it
     public async Task PrepareAsync()
     {
-        string langServerFolder = package.GetLanguageServerFolder();
+        string langServerFolder = Package.GetLanguageServerFolder();
         Directory.CreateDirectory(langServerFolder);
 
-        string binaryPath = package.GetLanguageServerPath();
+        string binaryPath = Package.GetLanguageServerPath();
 
         if (File.Exists(binaryPath))
         {
@@ -181,7 +183,7 @@ public class LanguageServer
         }
 
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-        await package.LogAsync("Downloading language server...");
+        await Package.LogAsync("Downloading language server...");
 
         // show the downloading progress dialog
         var waitDialogFactory = (IVsThreadedWaitDialogFactory)await VS.Services.GetThreadedWaitDialogAsync();
@@ -194,11 +196,11 @@ public class LanguageServer
 
         // the language server is downloaded in a thread so that it doesn't block the UI
         // if we remove `while (webClient.IsBusy)`, the DownloadProgressChanged callback won't be called
-        // until VS is closing, not sure how we can fix that without spawning a separate thread
+        // until VS is closing, not sure how we can fix that without spawning a seperate thread
         void ThreadDownloadLanguageServer()
         {
             Uri url = new($"https://github.com/Exafunction/codeium/releases/download/language-server-v{Version}/language_server_windows_x64.exe.gz");
-            string downloadDest = Path.Combine(package.GetLanguageServerFolder(), "language-server.gz");
+            string downloadDest = Path.Combine(Package.GetLanguageServerFolder(), "language-server.gz");
             File.Delete(downloadDest);
 
             WebClient webClient = new();
@@ -235,10 +237,10 @@ public class LanguageServer
                         $"Codeium: Extracting files...", 0, false, true
                     );
 
-                    await package.LogAsync("Extracting language server...");
+                    await Package.LogAsync("Extracting language server...");
                     using FileStream fileStream = new(downloadDest, FileMode.Open);
                     using GZipStream gzipStream = new(fileStream, CompressionMode.Decompress);
-                    using FileStream outputStream = new(package.GetLanguageServerPath(), FileMode.Create);
+                    using FileStream outputStream = new(Package.GetLanguageServerPath(), FileMode.Create);
                     await gzipStream.CopyToAsync(outputStream);
 
                     outputStream.Close();
@@ -267,64 +269,64 @@ public class LanguageServer
         trd.Start();
     }
 
-    // start the language server process
+    // Start the language server process
     // TODO: make the LSP exit when VS closes unexpectedly
     private async Task StartAsync()
     {
-        port = 0;
+        Port = 0;
 
-        string apiUrl = (package.settingsPage.ApiUrl.Equals("") ? "https://server.codeium.com" : package.settingsPage.ApiUrl);
+        string apiUrl = (Package.SettingsPage.ApiUrl.Equals("") ? "https://server.codeium.com" : Package.SettingsPage.ApiUrl);
         string managerDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        string databaseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".codeium", "database");
+        string databaseDir = Package.GetDatabaseDirectory();
 
         Directory.CreateDirectory(managerDir);
         Directory.CreateDirectory(databaseDir);
 
         process = new();
-        process.StartInfo.FileName = package.GetLanguageServerPath();
+        process.StartInfo.FileName = Package.GetLanguageServerPath();
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.CreateNoWindow = true;
         process.StartInfo.RedirectStandardError = true;
         process.StartInfo.Arguments =
-            $"--api_server_url {apiUrl} --manager_dir \"{managerDir}\" --enable_chat_web_server --enable_chat_client --database_dir \"{databaseDir}\" --detect_proxy=false";
+            $"--api_server_url {apiUrl} --manager_dir \"{managerDir}\" --database_dir \"{databaseDir}\" --enable_chat_web_server --enable_chat_client --detect_proxy=false";
 
-        if (package.settingsPage.EnterpriseMode)
-            process.StartInfo.Arguments += $" --enterprise_mode --portal_url {package.settingsPage.PortalUrl}";
+        if (Package.SettingsPage.EnterpriseMode)
+            process.StartInfo.Arguments += $" --enterprise_mode --portal_url {Package.SettingsPage.PortalUrl}";
 
         process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
         {
             if (string.IsNullOrEmpty(e.Data)) return;
 
             // get the port from the output of LSP
-            if (port == 0)
+            if (Port == 0)
             {
                 Match match = Regex.Match(e.Data, @"Language server listening on random port at (\d+)");
                 if (match.Success)
                 {
-                    if (int.TryParse(match.Groups[1].Value, out port))
+                    if (int.TryParse(match.Groups[1].Value, out Port))
                     {
-                        package.Log($"Language server started on port {port}");
-                        _ = controller.ConnectAsync();
+                        Package.Log($"Language server started on port {Port}");
+                        _ = Controller.ConnectAsync();
                     }
                     else
-                        package.Log($"Error: Failed to parse the port number from \"{match.Groups[1].Value}\"");
+                        Package.Log($"Error: Failed to parse the port number from \"{match.Groups[1].Value}\"");
                 }
             }
 
-            package.Log("Language Server: " + e.Data);
+            Package.Log("Language Server: " + e.Data);
         };
 
-        await package.LogAsync("Starting language server");
+        await Package.LogAsync("Starting language server");
         process.Start();
         process.BeginErrorReadLine();
 
-        string apiKeyFilePath = package.GetAPIKeyPath();
+        string apiKeyFilePath = Package.GetAPIKeyPath();
         if (File.Exists(apiKeyFilePath))
         {
-            metadata.api_key = File.ReadAllText(apiKeyFilePath);
+            Metadata.api_key = File.ReadAllText(apiKeyFilePath);
         }
 
-        await package.UpdateSignedInStateAsync();
+        await Package.UpdateSignedInStateAsync();
     }
 
     private async Task<T?> RequestUrlAsync<T>(string url, object data, CancellationToken cancellationToken = default)
@@ -332,18 +334,18 @@ public class LanguageServer
         StringContent post_data = new(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
         try
         {
-            HttpResponseMessage rq = await httpClient.PostAsync(url, post_data, cancellationToken);
+            HttpResponseMessage rq = await HttpClient.PostAsync(url, post_data, cancellationToken);
             if (rq.StatusCode == HttpStatusCode.OK)
             {
                 return JsonConvert.DeserializeObject<T>(await rq.Content.ReadAsStringAsync());
             }
 
-            await package.LogAsync($"Error: Failed to send request to {url}, status code: {rq.StatusCode}");
+            await Package.LogAsync($"Error: Failed to send request to {url}, status code: {rq.StatusCode}");
         }
         catch (OperationCanceledException) { }
         catch (Exception ex)
         {
-            await package.LogAsync($"Error: Failed to send request to {url}, exception: {ex.Message}");
+            await Package.LogAsync($"Error: Failed to send request to {url}, exception: {ex.Message}");
         }
 
         return default;
@@ -351,64 +353,8 @@ public class LanguageServer
 
     private async Task<T?> RequestCommandAsync<T>(string command, object data, CancellationToken cancellationToken = default)
     {
-        string url = $"http://127.0.0.1:{port}/exa.language_server_pb.LanguageServerService/{command}";
+        string url = $"http://127.0.0.1:{Port}/exa.language_server_pb.LanguageServerService/{command}";
         return await RequestUrlAsync<T>(url, data, cancellationToken);
-    }
-
-    public static Packets.Language ContentTypeToLanguage(string language)
-    {
-        //language = language.ToLower();
-        return language switch
-        {
-            "c#"         => Packets.Language.LANGUAGE_CSHARP,
-            "CSharp" => Packets.Language.LANGUAGE_CSHARP,
-
-            "c"          => Packets.Language.LANGUAGE_C,
-            "C/C++" => Packets.Language.LANGUAGE_CPP,
-            "c++"        => Packets.Language.LANGUAGE_CPP,
-
-            "CMake" => Packets.Language.LANGUAGE_CMAKE,
-            "CMakeSettings" => Packets.Language.LANGUAGE_CMAKE,
-            "CMakePresets" => Packets.Language.LANGUAGE_CMAKE,
-
-            "css"        => Packets.Language.LANGUAGE_CSS,
-            "cssLSPClient" => Packets.Language.LANGUAGE_CSS,
-            "cssLSPServer" => Packets.Language.LANGUAGE_CSS,
-
-            "HTML" => Packets.Language.LANGUAGE_HTML,
-
-            "F#" => Packets.Language.LANGUAGE_FSHARP,
-            "java"       => Packets.Language.LANGUAGE_JAVA,
-
-            "JavaScript" => Packets.Language.LANGUAGE_JAVASCRIPT,
-
-            "JSON" => Packets.Language.LANGUAGE_JSON,
-
-            "markdown"   => Packets.Language.LANGUAGE_MARKDOWN,
-            "vs-markdown" => Packets.Language.LANGUAGE_MARKDOWN,
-
-            "php"        => Packets.Language.LANGUAGE_PHP,
-            "powershell" => Packets.Language.LANGUAGE_POWERSHELL,
-            "python"     => Packets.Language.LANGUAGE_PYTHON,
-            "sql"        => Packets.Language.LANGUAGE_SQL,
-            "TypeScript" => Packets.Language.LANGUAGE_TYPESCRIPT,
-
-            "vb"         => Packets.Language.LANGUAGE_VISUALBASIC,
-            "vbscript" => Packets.Language.LANGUAGE_VISUALBASIC,
-            "VB_LSP" => Packets.Language.LANGUAGE_VISUALBASIC,
-            "Basic" => Packets.Language.LANGUAGE_VISUALBASIC,
-
-            "XML" => Packets.Language.LANGUAGE_XML,
-            "XAML" => Packets.Language.LANGUAGE_XML,
-
-            "plaintext" => Packets.Language.LANGUAGE_PLAINTEXT,
-            "text" => Packets.Language.LANGUAGE_PLAINTEXT,
-            "SCSS" => Packets.Language.LANGUAGE_SCSS,
-            "yaml" => Packets.Language.LANGUAGE_YAML,
-
-            _ => Packets.Language.LANGUAGE_UNSPECIFIED,
-        };
-
     }
 
     public async Task<IList<CompletionItem>?> GetCompletionsAsync(string absolutePath, string text, Languages.LangInfo language, int cursorPosition, string lineEnding, int tabSize, bool insertSpaces, CancellationToken token)
@@ -430,12 +376,12 @@ public class LanguageServer
             {
                 tab_size = (ulong)tabSize,
                 insert_spaces = insertSpaces,
-                disable_autocomplete_in_comments = !package.settingsPage.EnableCommentCompletion,
+                disable_autocomplete_in_comments = !Package.SettingsPage.EnableCommentCompletion,
             }
         };
 
         GetCompletionsResponse? result = await RequestCommandAsync<GetCompletionsResponse>("GetCompletions", data, token);
-        return result != null ? result.completion_items : [];
+        return result != null ? result.completionItems : [];
     }
 
     public async Task AcceptCompletionAsync(string completionId)
@@ -458,16 +404,15 @@ public class LanguageServer
     {
         return new()
         {
-            request_id        = metadata.request_id++,
-            api_key           = metadata.api_key,
-            ide_name          = metadata.ide_name,
-            ide_version       = metadata.ide_version,
-            extension_name    = metadata.extension_name,
-            extension_version = metadata.extension_version,
-            session_id        = metadata.session_id,
-            locale            = metadata.locale,
-            disable_telemetry = metadata.disable_telemetry
+            request_id        = Metadata.request_id++,
+            api_key           = Metadata.api_key,
+            ide_name          = Metadata.ide_name,
+            ide_version       = Metadata.ide_version,
+            extension_name    = Metadata.extension_name,
+            extension_version = Metadata.extension_version,
+            session_id        = Metadata.session_id,
+            locale            = Metadata.locale,
+            disable_telemetry = Metadata.disable_telemetry
         };
     }
-
 }

@@ -9,7 +9,6 @@ namespace CodeiumVS;
 #nullable enable
 public class NotificationInfoBar : IVsInfoBarUIEvents
 {
-    private readonly IServiceProvider serviceProvider;
 
     private IVsInfoBarUIElement? view;
 
@@ -23,9 +22,8 @@ public class NotificationInfoBar : IVsInfoBarUIEvents
 
     public IVsInfoBarUIElement? View => view;
 
-    public NotificationInfoBar(IServiceProvider serviceProvider)
+    public NotificationInfoBar()
     {
-        this.serviceProvider = serviceProvider;
     }
 
     public void Show(string text, ImageMoniker? icon = null, bool canClose = true, Action? onCloseCallback = null, params KeyValuePair<string, Action>[] actions)
@@ -33,18 +31,17 @@ public class NotificationInfoBar : IVsInfoBarUIEvents
         ThreadHelper.ThrowIfNotOnUIThread("Show");
         if (view != null) return;
 
-        IVsShell vsShell = serviceProvider.GetService<SVsShell, IVsShell>();
-        IVsInfoBarUIFactory vsInfoBarFactory = serviceProvider.GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>();
+        IVsShell vsShell = ServiceProvider.GlobalProvider.GetService<SVsShell, IVsShell>();
+        IVsInfoBarUIFactory vsInfoBarFactory = ServiceProvider.GlobalProvider.GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>();
         if (vsShell == null || vsInfoBarFactory == null) return;
-
-        // -9080 is an (undocumented?) __VSSPROPID found in source code of github copilot
+        
         if (vsInfoBarFactory != null && ErrorHandler.Succeeded(vsShell.GetProperty((int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out var pvar)) && pvar is IVsInfoBarHost vsInfoBarHost)
         {
             InfoBarModel infoBar = new(text, GetActionsItems(actions), icon ?? KnownMonikers.StatusInformation, canClose);
-
+            
             view = vsInfoBarFactory.CreateInfoBar(infoBar);
             view.Advise(this, out infoBarEventsCookie);
-
+            
             this.vsInfoBarHost = vsInfoBarHost;
             this.vsInfoBarHost.AddInfoBar(view);
 

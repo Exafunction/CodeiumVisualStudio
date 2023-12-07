@@ -45,7 +45,15 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         string webviewDirectory = Path.Combine(package.GetAppDataPath(), "webview2");
         Directory.CreateDirectory(webviewDirectory);
         CoreWebView2Environment env = await CoreWebView2Environment.CreateAsync(null, webviewDirectory);
-        await webView.EnsureCoreWebView2Async(env);
+        try
+        {
+            // Try Catch this in case it's causing problems
+            await webView.EnsureCoreWebView2Async(env);
+        }
+        catch (Exception)
+        {
+            // Do nothing
+        }
 
         // load the loading page
         webView.NavigateToString(Properties.Resources.ChatLoadingPage_html);
@@ -76,7 +84,6 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
             { "app_name"                  , "Visual Studio"            },
             { "web_server_url"            , serverUrl                  },
             { "has_dev_extension"         , "false"                    },
-            //{ "has_enterprise_extension"  , "false"                    },
             { "open_file_pointer_enabled" , "true"                     },
             { "diff_view_enabled"         , "true"                     },
             { "insert_at_cursor_enabled"  , "true"                     },

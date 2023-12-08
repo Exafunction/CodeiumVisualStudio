@@ -196,6 +196,7 @@ public sealed class CodeiumVSPackage : ToolkitPackage
         }
 
         Log($"Codeium failed to open the browser, please use this URL instead: {url}");
+        VS.MessageBox.Show("Codeium: Failed to open browser", $"Please use this URL instead (you can copy from the output window):\n{url}");
     }
 
     public string GetAppDataPath()

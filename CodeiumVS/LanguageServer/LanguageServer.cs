@@ -149,11 +149,7 @@ public class LanguageServer
 
         await Package.LogAsync("Opening browser to " + url);
 
-        System.Diagnostics.Process.Start(new ProcessStartInfo
-        {
-            FileName = url,
-            UseShellExecute = true
-        });
+        Package.OpenInBrowser(url);
 
         string authToken = await WaitForAuthTokenAsync();
         if (authToken != null) await SignInWithAuthTokenAsync(authToken);

@@ -96,7 +96,8 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         string uriString = clientUrl + "?" + string.Join("&", data.Select((KeyValuePair<string, string> kv) => kv.Key + "=" + kv.Value));
         webView.Source = new Uri(uriString);
 
-        await SetChatThemeAsync();
+        // TODO: Re-implement this after we revamp our themes for chat.
+        // await SetChatThemeAsync();
     }
 
     // Get VS colors and set the theme for chat page

@@ -20,7 +20,7 @@ namespace CodeiumVS;
 
 public class LanguageServer
 {
-    private const string Version = "1.6.1";
+    private const string Version = "1.6.5";
 
     private int Port = 0;
     private Process process;

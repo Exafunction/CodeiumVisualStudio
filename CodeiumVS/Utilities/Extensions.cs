@@ -4,27 +4,34 @@ using System.Collections.Generic;
 
 namespace CodeiumVS.Utilities;
 
-internal abstract class TextViewExtension<T> where T : class
+internal abstract class TextViewExtension<ViewType, ExtensionType> where ViewType : class where ExtensionType : class
 {
-    protected ITextView _hostView { get; set; }
+    protected readonly ViewType _hostView;
+    protected static readonly Dictionary<ViewType, ExtensionType> _instances = [];
 
-    private static readonly Dictionary<ITextView, T> Instances = [];
-
-    public TextViewExtension(ITextView hostView)
+    public TextViewExtension(ViewType hostView)
     {
         _hostView = hostView;
-        Instances.Add(_hostView, this as T);
+        _instances.Add(_hostView, this as ExtensionType);
     }
 
-    public static T? GetInstance(ITextView hostView)
+    public static ExtensionType? GetInstance(ViewType hostView)
     {
-        return Instances.TryGetValue(hostView, out var instance) ? instance : null;
+        return _instances.TryGetValue(hostView, out var instance) ? instance : null;
     }
 }
 
-internal class FunctionBlock(string name, string @params, TextSpan span)
+internal class FunctionBlock(string fullname, string name, string @params, TextSpan span)
 {
+    // full name of the function, including namespaces and classes
+    public readonly string FullName = fullname;
+
+    // short name of the function
     public readonly string Name = name;
+    
+    // parameters, not including the braces
     public readonly string Params = @params;
+
+    // span of the function body
     public readonly TextSpan Span = span;
 }

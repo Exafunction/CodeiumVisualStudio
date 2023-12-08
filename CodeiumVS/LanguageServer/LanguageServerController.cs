@@ -1,10 +1,11 @@
-﻿using Microsoft.VisualStudio.Text;
+﻿using CodeiumVs.InlineDiff;
+using CodeiumVS.Packets;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Newtonsoft.Json;
 using ProtoBuf;
 using System.IO;
 using System.Linq;
-using CodeiumVS.Packets;
 using WebSocketSharp;
 
 namespace CodeiumVS;
@@ -56,7 +57,23 @@ public class LanguageServerController
                 var data = request.insert_at_cursor;
                 InsertText(data.text);
             }
+            else if (request.ShouldSerializeapply_diff())
+            {
+                var data = request.apply_diff;
+                string replacement = "";
 
+                // i'd rather not using .Join here because it looks too scary
+                foreach (var line in data.diff.unified_diff.lines)
+                {
+                    if (line.type == UnifiedDiffLineType.UNIFIED_DIFF_LINE_TYPE_INSERT ||
+                        line.type == UnifiedDiffLineType.UNIFIED_DIFF_LINE_TYPE_UNCHANGED)
+                    {
+                        replacement += line.text + "\n";
+                    }
+                }
+
+                ApplyDiff(data.file_path, data.diff.start_line, data.diff.end_line, replacement);
+            }
         }
 
         void OnError(object sender, EventArgs e)
@@ -98,6 +115,36 @@ public class LanguageServerController
                 docView.TextBuffer?.Replace(selection.SelectedSpans[0].Span, text);
             }
         }).FireAndForget(true);
+    }
+
+    private void ApplyDiff(string filePath, int start_line, int end_line, string replacement)
+    {
+        ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            // some how OpenViaProjectAsync doesn't work... at least for me
+            DocumentView? docView = await VS.Documents.OpenAsync(filePath);
+            if (docView?.TextView == null) return;
+
+            // FIXME: if the file is closed, or it's a new file, GetInstance will failed
+            // we'd have to wait for the `CodeiumInlineDiffViewProvider` to run
+            InlineDiffAdornment? adornment = InlineDiffAdornment.GetInstance(docView.TextView);
+            if (adornment == null) return;
+
+            var snapshot = docView.TextView.TextSnapshot;
+            ITextSelection selection = docView.TextView.Selection;
+
+            var lineStart = docView.TextBuffer.CurrentSnapshot.GetLineFromLineNumber(start_line - 1);
+            var lineEnd = docView.TextBuffer.CurrentSnapshot.GetLineFromLineNumber(end_line - 1);
+
+            int position = lineStart.Start.Position;
+            int length = lineEnd.End.Position - position;
+
+            docView.TextView.DisplayTextLineContainingBufferPosition(new SnapshotPoint(snapshot, position), docView.TextView.ViewportHeight / 2, ViewRelativePosition.Top);
+            await adornment.CreateDiffAsync(position, length, replacement);
+
+        }).FireAndForget();
     }
 
     private void OpenSelection(string filePath, int start_line, int start_col, int end_line, int end_col)

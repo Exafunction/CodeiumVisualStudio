@@ -46,6 +46,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="InlineDiff\InlineDiffAdornment.cs" />
+    <Compile Include="InlineDiff\InlineDiffControl.xaml.cs">
+      <DependentUpon>InlineDiffControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="InlineDiff\InlineDiffView.cs" />
     <Compile Include="LanguageServer\LanguageServerController.cs" />
     <Compile Include="LanguageServer\LanguageServer.cs" />
     <Compile Include="LanguageServer\Packets.cs" />
@@ -132,6 +137,9 @@
     <PackageReference Include="Microsoft.VisualStudio.SDK.VsixSuppression">
       <Version>14.1.37</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf">
+      <Version>17.8.222</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.8.2365">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -147,6 +155,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="InlineDiff\InlineDiffControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\ChatToolWindowControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

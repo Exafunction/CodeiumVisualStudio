@@ -51,10 +51,6 @@ public partial class EnterTokenDialogWindowControl : UserControl
         string redirectUrl = "show-auth-token";
         string url = $"{portalUrl}/profile?response_type=token&redirect_uri={redirectUrl}&state={state}&scope=openid%20profile%20email&redirect_parameters_type=query";
 
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = url,
-            UseShellExecute = true
-        });
+        CodeiumVSPackage.Instance.OpenInBrowser(url);
     }
 }

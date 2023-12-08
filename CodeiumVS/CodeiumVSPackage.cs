@@ -6,8 +6,10 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
+using Microsoft.Win32;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -108,6 +110,93 @@ public sealed class CodeiumVSPackage : ToolkitPackage
         // find the ChatToolWindow and update it
         ChatToolWindow chatWindowPane = (await FindWindowPaneAsync(typeof(ChatToolWindow), 0, false, DisposalToken)) as ChatToolWindow;
         chatWindowPane?.Reload();
+    }
+
+    public static string GetDefaultBrowserPath()
+    {
+        // https://web.archive.org/web/20160304114550/http://www.seirer.net/blog/2014/6/10/solved-how-to-open-a-url-in-the-default-browser-in-csharp
+
+        static string CleanifyBrowserPath(string p)
+        {
+            string[] url = p.Split('"');
+            string clean = url[1];
+            return clean;
+        }
+
+        string urlAssociation = @"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http";
+        string browserPathKey = @"$BROWSER$\shell\open\command";
+        try
+        {
+            //Read default browser path from userChoiceLKey
+            RegistryKey userChoiceKey = Registry.CurrentUser.OpenSubKey(urlAssociation + @"\UserChoice", false);
+
+            //If user choice was not found, try machine default
+            if (userChoiceKey == null)
+            {
+                //Read default browser path from Win XP registry key
+                var browserKey = Registry.ClassesRoot.OpenSubKey(@"HTTP\shell\open\command", false);
+
+                //If browser path wasn’t found, try Win Vista (and newer) registry key
+                if (browserKey == null)
+                {
+                    browserKey =
+                    Registry.CurrentUser.OpenSubKey(
+                    urlAssociation, false);
+                }
+                var path = CleanifyBrowserPath(browserKey.GetValue(null) as string);
+                browserKey.Close();
+                return path;
+            }
+            else
+            {
+                // user defined browser choice was found
+                string progId = (userChoiceKey.GetValue("ProgId").ToString());
+                userChoiceKey.Close();
+
+                // now look up the path of the executable
+                string concreteBrowserKey = browserPathKey.Replace("$BROWSER$", progId);
+                var kp = Registry.ClassesRoot.OpenSubKey(concreteBrowserKey, false);
+                string browserPath = CleanifyBrowserPath(kp.GetValue(null) as string);
+                kp.Close();
+                return browserPath;
+            }
+        }
+        catch (Exception)
+        {
+            return "";
+        }
+    }
+
+    // Try three different ways to open url in the default browser
+    public void OpenInBrowser(string url)
+    {
+        Action<string>[] methods = [
+            (_url) => {
+                Process.Start(new ProcessStartInfo { FileName = _url, UseShellExecute = true });
+            },
+            (_url) => {
+                Process.Start("explorer.exe", _url);
+            },
+            (_url) => {
+                Process.Start(GetDefaultBrowserPath(), _url);
+            }
+        ];
+
+        foreach (var method in methods)
+        {
+            try
+            {
+                method(url);
+                return;
+            }
+            catch (Exception ex)
+            {
+                Log($"Could not open in browser, encountered an exception: {ex}\n Retrying using another method");
+            }
+        }
+
+        Log($"Codeium failed to open the browser, please use this URL instead: {url}");
+        VS.MessageBox.Show("Codeium: Failed to open browser", $"Please use this URL instead (you can copy from the output window):\n{url}");
     }
 
     public string GetAppDataPath()

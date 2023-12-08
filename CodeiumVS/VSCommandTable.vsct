@@ -136,8 +136,8 @@
 				</Strings>
 			</Button>
 			
-			<!-- Debug button -->
-			<Button guid="CodeiumVS" id="DebugButton" priority="0x0002" type="Button">
+			<!-- Debug button --><!--
+			<Button guid="CodeiumVS" id="DebugButton" priority="0x0004" type="Button">
 				<Parent guid="CodeiumVS" id="ContextGroupCodeium" />
 				<Icon guid="ImageCatalogGuid" id="DebugSelection" />
 				<CommandFlag>IconIsMoniker</CommandFlag>
@@ -146,7 +146,7 @@
 					<ButtonText>Debug</ButtonText>
 					<LocCanonicalName>.Extensions.Codeium.DebugButton</LocCanonicalName>
 				</Strings>
-			</Button>
+			</Button>-->
 			
 		</Buttons>
 

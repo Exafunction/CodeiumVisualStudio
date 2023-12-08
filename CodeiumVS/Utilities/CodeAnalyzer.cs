@@ -14,6 +14,7 @@ internal static class CodeAnalyzer
 {
     private static readonly Dictionary<Guid, object> _languageServices = [];
 
+    // This method will return a Span(0,0) if not found
     public static Span GetBlockSpan(ITextView view, int position, out IStructureTag? outtag)
     {
         outtag = null;
@@ -37,13 +38,20 @@ internal static class CodeAnalyzer
         if (length > 1000) length = 1000;
         else if (length < 0) return new Span(0, 0);
 
-        var tagAggregator = MefProvider.Instance.TagAggregatorFactoryService.CreateTagAggregator<IStructureTag>(view);
-        var tagSpan = new SnapshotSpan(view.TextSnapshot, position, length);
+        // get the tag aggregator
+        ITagAggregator<IStructureTag> tagAggregator =
+            MefProvider.Instance.TagAggregatorFactoryService.CreateTagAggregator<IStructureTag>(view);
 
+        // not sure if this could happen
+        if (tagAggregator == null) return new Span(0, 0);
+
+        // get all the structure tag that intersect with the span
+        SnapshotSpan tagSpan = new(view.TextSnapshot, position, length);
         IEnumerable<IMappingTagSpan<IStructureTag>> mappingTags = tagAggregator.GetTags(tagSpan);
 
         int start = 0, end = 0;
 
+        // iterate through the tags and find the closest block to the position
         foreach (var mappingTag in mappingTags)
         {
             IStructureTag tag = mappingTag.Tag;
@@ -79,6 +87,9 @@ internal static class CodeAnalyzer
 
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         ServiceProvider.GlobalProvider.QueryService(languageServiceId, out languageService);
+        
+        if (languageService != null)
+            _languageServices.Add(languageServiceId, languageService);
 
         return languageService as T;
     }
@@ -92,6 +103,9 @@ internal static class CodeAnalyzer
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             ServiceProvider.GlobalProvider.QueryService(languageServiceId, out languageService);
+
+            if (languageService != null)
+                _languageServices.Add(languageServiceId, languageService);
         });
 
         return languageService as T;

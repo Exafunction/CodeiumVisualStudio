@@ -184,8 +184,10 @@ internal class CommandExplainCodeBlock : BaseCommandContextMenu<CommandExplainCo
 
         if (is_function)
         {
-            FunctionInfo functionInfo = await GetFunctionInfoAsync();
-            await controller.ExplainFunctionAsync(docView.Document.FilePath, functionInfo);
+            FunctionInfo? functionInfo = await GetFunctionInfoAsync();
+
+            if (functionInfo != null)
+                await controller.ExplainFunctionAsync(docView.Document.FilePath, functionInfo);
         }
         else
         {
@@ -228,8 +230,10 @@ internal class CommandRefactorCodeBlock : BaseCommandContextMenu<CommandRefactor
 
         if (is_function)
         {
-            FunctionInfo functionInfo = await GetFunctionInfoAsync();
-            await controller.RefactorFunctionAsync(prompt, docView.Document.FilePath, functionInfo);
+            FunctionInfo? functionInfo = await GetFunctionInfoAsync();
+
+            if (functionInfo != null)
+                await controller.RefactorFunctionAsync(prompt, docView.Document.FilePath, functionInfo);
         }
         else
         {
@@ -251,8 +255,10 @@ internal class CommandGenerateFunctionUnitTest : BaseCommandContextMenu<CommandG
     protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
     {
         LanguageServerController controller = (Package as CodeiumVSPackage).LanguageServer.Controller;
-        FunctionInfo functionInfo = await GetFunctionInfoAsync();
-        await controller.GenerateFunctionUnitTestAsync("Generate unit test", docView.Document.FilePath, functionInfo);
+        FunctionInfo? functionInfo = await GetFunctionInfoAsync();
+
+        if (functionInfo != null)
+            await controller.GenerateFunctionUnitTestAsync("Generate unit test", docView.Document.FilePath, functionInfo);
     }
 }
 
@@ -268,7 +274,9 @@ internal class CommandGenerateFunctionDocstring : BaseCommandContextMenu<Command
     protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
     {
         LanguageServerController controller = (Package as CodeiumVSPackage).LanguageServer.Controller;
-        FunctionInfo functionInfo = await GetFunctionInfoAsync();
-        await controller.GenerateFunctionDocstringAsync(docView.Document.FilePath, functionInfo);
+        FunctionInfo? functionInfo = await GetFunctionInfoAsync();
+
+        if (functionInfo != null)
+            await controller.GenerateFunctionDocstringAsync(docView.Document.FilePath, functionInfo);
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using CodeiumVS.Packets;
+using CodeiumVS.Utilities;
 
 namespace CodeiumVS.Commands;
 
@@ -102,14 +103,17 @@ internal class BaseCommandContextMenu<T> : BaseCommand<T> where T : class, new()
             // if there is no selection, attempt to get the code block at the caret
             if (selection.SelectedSpans.Count == 0 || start_position == end_position)
             {
-                Span blockSpan = TextHighlighter.Instance.GetBlockSpan(out var tag, selection.Start.Position.Position, selection.Start.Position.Snapshot);
+                Span blockSpan = CodeAnalyzer.GetBlockSpan(docView.TextView, selection.Start.Position.Position, out var tag);
                 if (tag == null) return false;
 
                 start_position = blockSpan.Start;
                 end_position = blockSpan.End;
 
-                // "Nonstructural" == nothing; Namespace" == Namespace
-                // "Type" == class/struct/enum; "Expression" == lambda; "Member" == function
+                // "Type"          | class, struct, enum
+                // "Member"        | function
+                // "Namespace"     | namespace
+                // "Expression"    | lambda
+                // "Nonstructural" | nothing
                 is_function = tag?.Type == "Member";
             }
 
@@ -127,37 +131,11 @@ internal class BaseCommandContextMenu<T> : BaseCommand<T> where T : class, new()
         });
     }
 
-    // Get the current function name and parameters, "current" being the at the the block caret is currently in
-    protected bool GetCurrentFunctionInfo(out string? functionName, out string? parameters)
-    {
-        ThreadHelper.ThrowIfNotOnUIThread();
-
-        functionName = null;
-        parameters = null;
-
-        IVsTextView vsTextView = VsShellUtilities.GetTextView(docView.WindowFrame);
-        if (vsTextView == null) return false;
-        if (vsTextView.GetBuffer(out var vsTextLines) != 0) return false;
-        if (vsTextLines.GetLanguageServiceID(out var languageServiceID) != 0) return false;
-
-        ServiceProvider.GlobalProvider.QueryService(languageServiceID, out var languageService);
-        IVsLanguageBlock vsLanguageBlock = languageService as IVsLanguageBlock;
-        if (vsLanguageBlock == null) return false;
-
-        TextSpan[] spans = [new TextSpan()];
-        vsLanguageBlock.GetCurrentBlock(vsTextLines, start_line, start_col, spans, out string desc, out int avail);
-        if (avail == 0) return false;
-
-        var splits = desc.Split('(');
-        functionName = splits[0].Split(' ').Last();
-        parameters = splits[1].Substring(0, splits[1].LastIndexOf(')'));
-        return true;
-    }
-
     protected async Task<FunctionInfo?> GetFunctionInfoAsync()
     {
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-        if (!GetCurrentFunctionInfo(out string? functionName, out string? functionParams))
+        FunctionBlock? func = await CodeAnalyzer.GetFunctionBlockAsync(docView.TextView, start_line, start_col);
+
+        if (func == null)
         {
             await CodeiumVSPackage.Instance.LogAsync("Error: Could not get function info");
             return null;
@@ -167,8 +145,8 @@ internal class BaseCommandContextMenu<T> : BaseCommand<T> where T : class, new()
         {
             raw_source = text,
             clean_function = text,
-            node_name = functionName,
-            @params = functionParams,
+            node_name = func.Name,
+            @params = func.Params,
             definition_line = start_line,
             start_line = start_line,
             end_line = end_line,
@@ -235,12 +213,13 @@ internal class CommandRefactorCodeBlock : BaseCommandContextMenu<CommandRefactor
         );
 
         // highlight the selected codeblock
-        TextHighlighter.Instance?.AddHighlight(start_position, end_position - start_position, docView.TextView.TextSnapshot);
+        TextHighlighter? highlighter = TextHighlighter.GetInstance(docView.TextView);
+        highlighter?.AddHighlight(start_position, end_position - start_position);
 
         var dialog = RefactorCodeDialogWindow.GetOrCreate();
         string? prompt = await dialog.ShowAndGetPromptAsync(languageInfo, caretScreenPos.X, caretScreenPos.Y);
 
-        TextHighlighter.Instance?.ClearAll();
+        highlighter?.ClearAll();
 
         // user did not select any of the prompt
         if (prompt == null) return;

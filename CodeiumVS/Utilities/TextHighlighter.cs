@@ -102,6 +102,6 @@ internal class HighlightWordTaggerProvider : IViewTaggerProvider
     {
         // Provide highlighting only on the top buffer 
         if (textView.TextBuffer != buffer) return null;
-        return new TextHighlighter(textView, buffer) as ITagger<T>;
+        return TextHighlighter.GetOrCreate(textView, () => new TextHighlighter(textView, buffer)) as ITagger<T>;
     }
 }

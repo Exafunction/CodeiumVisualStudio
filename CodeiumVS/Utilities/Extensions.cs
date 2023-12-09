@@ -26,6 +26,11 @@ internal abstract class PropertyOwnerExtension<OwnerType, ExtensionType> : IDisp
         return owner.Properties.TryGetProperty(typeof(ExtensionType), out ExtensionType instance) ? instance : null;
     }
 
+    public static ExtensionType GetOrCreate(OwnerType owner, Func<ExtensionType> creator)
+    {
+        return GetInstance(owner) ?? creator();
+    }
+
     public virtual void Dispose()
     {
         if (_disposed) return;

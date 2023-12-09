@@ -64,13 +64,17 @@ internal class IntellisenseController : TextViewExtension<ITextView, Intellisens
     }
 }
 
-[Export(typeof(IIntellisenseControllerProvider))]
-[Name("Codeium Intellisense Controller Provider")]
-[ContentType("any")]
-internal sealed class IntellisenseControllerProvider : IIntellisenseControllerProvider
-{
-    public IIntellisenseController TryCreateIntellisenseController(ITextView textView, IList<ITextBuffer> subjectBuffers)
-    {
-        return new IntellisenseController(textView, subjectBuffers);
-    }
-}
+// This causes it to call `TriggerQuickInfoAsync` too early and dead lock
+// the UI, I'm not sure what happened and how should we check if quickinfo
+// is ready yet, but we don't need this right now, leave here for the future
+//
+//[Export(typeof(IIntellisenseControllerProvider))]
+//[Name("Codeium Intellisense Controller Provider")]
+//[ContentType("any")]
+//internal sealed class IntellisenseControllerProvider : IIntellisenseControllerProvider
+//{
+//    public IIntellisenseController TryCreateIntellisenseController(ITextView textView, IList<ITextBuffer> subjectBuffers)
+//    {
+//        return new IntellisenseController(textView, subjectBuffers);
+//    }
+//}

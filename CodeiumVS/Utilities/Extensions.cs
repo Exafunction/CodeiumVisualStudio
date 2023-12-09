@@ -1,23 +1,59 @@
-﻿using Microsoft.VisualStudio.Text.Editor;
+﻿using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
+using Microsoft.VisualStudio.Threading;
+using Microsoft.VisualStudio.Utilities;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace CodeiumVS.Utilities;
 
-internal abstract class TextViewExtension<ViewType, ExtensionType> where ViewType : class where ExtensionType : class
+internal abstract class PropertyOwnerExtension<OwnerType, ExtensionType> : IDisposable
+    where OwnerType     : IPropertyOwner
+    where ExtensionType : class
 {
-    protected readonly ViewType _hostView;
-    protected static readonly Dictionary<ViewType, ExtensionType> _instances = [];
+    protected bool _disposed = false;
+    protected readonly OwnerType _owner;
 
-    public TextViewExtension(ViewType hostView)
+    public PropertyOwnerExtension(OwnerType owner)
     {
-        _hostView = hostView;
-        _instances.Add(_hostView, this as ExtensionType);
+        _owner = owner;
+        _owner.Properties.AddProperty(typeof(ExtensionType), this as ExtensionType);
     }
 
-    public static ExtensionType? GetInstance(ViewType hostView)
+    public static ExtensionType? GetInstance(OwnerType owner)
     {
-        return _instances.TryGetValue(hostView, out var instance) ? instance : null;
+        return owner.Properties.TryGetProperty(typeof(ExtensionType), out ExtensionType instance) ? instance : null;
+    }
+
+    public virtual void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        _owner.Properties.RemoveProperty(typeof(ExtensionType));
+    }
+}
+
+internal abstract class TextViewExtension<ViewType, ExtensionType> : PropertyOwnerExtension<ViewType, ExtensionType>
+    where ViewType      : ITextView
+    where ExtensionType : class
+{
+    protected ViewType _hostView => _owner;
+
+    public TextViewExtension(ViewType hostView) : base(hostView)
+    {
+        _hostView.Closed += HostView_Closed;
+    }
+
+    private void HostView_Closed(object sender, EventArgs e)
+    {
+        Dispose();
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+        _hostView.Closed -= HostView_Closed;
     }
 }
 
@@ -35,3 +71,4 @@ internal class FunctionBlock(string fullname, string name, string @params, TextS
     // span of the function body
     public readonly TextSpan Span = span;
 }
+

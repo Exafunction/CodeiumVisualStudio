@@ -278,6 +278,42 @@ public class LanguageServerController
         await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
     }
 
+    public async Task ExplainProblemAsync(string problemMessage, SnapshotSpan span)
+    {
+        ITextSnapshotLine problemLineStart = span.Snapshot.GetLineFromPosition(span.Start);
+        ITextSnapshotLine problemLineEnd = span.Snapshot.GetLineFromPosition(span.End);
+
+        int surroundingLineStart_no = Math.Max(problemLineStart.LineNumber - 10, 0);
+        int surroundingLineEnd_no = Math.Min(problemLineStart.LineNumber + 10, span.Snapshot.LineCount - 1);
+
+        ITextSnapshotLine surroundingLineStart = span.Snapshot.GetLineFromLineNumber(surroundingLineStart_no);
+        ITextSnapshotLine surroundingLineEnd = span.Snapshot.GetLineFromLineNumber(surroundingLineEnd_no);
+
+        var request = WebChatServer.NewRequest();
+        request.get_chat_message_request.chat_messages[0].intent = new()
+        {
+            problem_explain = new()
+            {
+                diagnostic_message = problemMessage,
+                problematic_code = new()
+                {
+                    raw_source = span.GetText(),
+                    start_line = problemLineStart.LineNumber + 1,
+                    end_line = problemLineEnd.LineNumber + 1,
+                    start_col = span.Start - problemLineStart.Start + 1,
+                    end_col = span.End - problemLineEnd.Start + 1,
+                },
+                surrounding_code_snippet = span.Snapshot.GetText(surroundingLineStart.Start, surroundingLineEnd.End - surroundingLineStart.Start),
+                language = Languages.Mapper.GetLanguage(span.Snapshot.TextBuffer.ContentType).Type,
+                file_path = span.Snapshot.TextBuffer.GetFileName(),
+                line_number = problemLineStart.LineNumber + 1,
+            }
+        };
+
+        request.Send(ws);
+        await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
+    }
+
     public void Disconnect()
     {
         if (ws == null) return;
@@ -302,7 +338,7 @@ internal static class WebChatServer
         {
             get_chat_message_request = new()
             {
-                context_inclusion_type = Packets.ContextInclusionType.CONTEXT_INCLUSION_TYPE_UNSPECIFIED,
+                context_inclusion_type = ContextInclusionType.CONTEXT_INCLUSION_TYPE_UNSPECIFIED,
                 metadata = CodeiumVSPackage.Instance?.LanguageServer.GetMetadata(),
                 prompt = ""
             }

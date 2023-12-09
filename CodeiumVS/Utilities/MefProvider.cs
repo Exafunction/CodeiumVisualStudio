@@ -26,6 +26,7 @@ internal class MefProvider
     // disabled because not needed right now
     [Import] internal IPeekBroker PeekBroker { get; private set; }
     [Import] internal ICompletionBroker CompletionBroker { get; private set; }
+    [Import] internal IAsyncQuickInfoBroker AsyncQuickInfoBroker { get; set; }
     [Import] internal IAsyncCompletionBroker AsyncCompletionBroker { get; private set; }
     [Import] internal ITextEditorFactoryService TextEditorFactoryService { get; private set; }
     [Import] internal ITextDocumentFactoryService TextDocumentFactoryService { get; private set; }

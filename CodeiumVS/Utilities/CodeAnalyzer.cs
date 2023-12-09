@@ -39,8 +39,7 @@ internal static class CodeAnalyzer
         else if (length < 0) return new Span(0, 0);
 
         // get the tag aggregator
-        ITagAggregator<IStructureTag> tagAggregator =
-            MefProvider.Instance.TagAggregatorFactoryService.CreateTagAggregator<IStructureTag>(view);
+        ITagAggregator<IStructureTag> tagAggregator = IntellisenseUtilities.GetTagAggregator<IStructureTag>(view);
 
         // not sure if this could happen
         if (tagAggregator == null) return new Span(0, 0);

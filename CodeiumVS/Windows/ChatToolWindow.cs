@@ -34,7 +34,7 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         InitializeComponent();
         _ = InitializeWebViewAsync();
     }
-    async Task InitializeWebViewAsync()
+    private async Task InitializeWebViewAsync()
     {
         package = CodeiumVSPackage.Instance;
 
@@ -57,6 +57,8 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 
         // load the loading page
         webView.NavigateToString(Properties.Resources.ChatLoadingPage_html);
+
+        VSColorTheme.ThemeChanged += VSColorTheme_ThemeChanged;
 
         await ReloadAsync();
     }
@@ -97,7 +99,7 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         webView.Source = new Uri(uriString);
 
         // TODO: Re-implement this after we revamp our themes for chat.
-        // await SetChatThemeAsync();
+        await SetChatThemeAsync();
     }
 
     // Get VS colors and set the theme for chat page
@@ -107,28 +109,93 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         static uint GetColor(ThemeResourceKey key)
         {
             var color = VSColorTheme.GetThemedColor(key);
-            return (uint)(color.R << 24 | color.G << 16 | color.R << 8 | color.A);
+            return (uint)(color.R << 24 | color.G << 16 | color.B << 8 | color.A);
         }
 
-        uint colorWindowBg           = GetColor(EnvironmentColors.ToolWindowBackgroundBrushKey);
-        uint colorTextBoxBg          = GetColor(EnvironmentColors.ComboBoxBackgroundBrushKey);
-        uint colorTextBoxText        = GetColor(EnvironmentColors.ComboBoxTextBrushKey);
-        uint colorTextBoxPlaceholder = GetColor(EnvironmentColors.CommandBarTextInactiveBrushKey);
+        uint textColor = GetColor(EnvironmentColors.ToolWindowTextBrushKey);
 
         string script = $@"
-            var style = document.createElement('style');
+            var style = document.getElementById(""vs-code-theme"");
+            if (style == null)
+            {{
+                style = document.createElement('style');
+                style.id = ""vs-code-theme"";
+                document.head.appendChild(style);
+            }}
 
             style.textContent = `
             body {{
-	            --vscode-sideBar-background: #{colorWindowBg:x8};
-	            --vscode-input-background: #{colorTextBoxBg:x8};
-	            --vscode-input-foreground: #{colorTextBoxText:x8};
-	            --vscode-input-placeholderForeground: #{colorTextBoxPlaceholder:x8};
-	            --vscode-list-inactiveSelectionBackground: #{colorTextBoxBg:x8};
-            }}`;
 
-            document.head.appendChild(style);";
+                /* window background */
+	            --vscode-editor-background:                #{GetColor(CommonControlsColors.ComboBoxBackgroundBrushKey):x8};
+	            --vscode-editor-foreground:                #{textColor:x8};
+	            --vscode-sideBar-background:               #{GetColor(EnvironmentColors.ToolWindowBackgroundBrushKey):x8};
+	            --vscode-foreground:                       #{textColor:x8};
+
+                 /* user message block */
+	            --vscode-list-activeSelectionBackground:   #{GetColor(EnvironmentColors.VizSurfaceSteelBlueMediumBrushKey):x8};
+	            --vscode-list-hoverBackground:             #{GetColor(CommonControlsColors.ComboBoxBackgroundHoverBrushKey):x8};
+                --vscode-list-activeSelectionForeground:   #{textColor:x8};
+
+                 /* bot message block */
+	            --vscode-list-inactiveSelectionBackground: #{GetColor(CommonControlsColors.ComboBoxBackgroundDisabledBrushKey):x8};
+
+                 /* textbox input */
+	            --vscode-input-background:                 #{GetColor(CommonControlsColors.TextBoxBackgroundBrushKey):x8};
+	            --vscode-input-foreground:                 #{GetColor(CommonControlsColors.TextBoxTextBrushKey):x8};
+	            --vscode-input-placeholderForeground:      #{GetColor(CommonControlsColors.TextBoxTextDisabledBrushKey):x8};
+
+                /* border */
+	            --vscode-contrastBorder:                   #{GetColor(CommonDocumentColors.ListItemBorderFocusedBrushKey):x8};
+	            --vscode-focusBorder:                      #{GetColor(CommonControlsColors.ButtonBorderBrushKey):x8};
+
+                /* scroll bar */
+	            --vscode-scrollbarSlider-background:       #{GetColor(EnvironmentColors.ScrollBarThumbBackgroundBrushKey):x8};
+	            --vscode-scrollbarSlider-hoverBackground:  #{GetColor(EnvironmentColors.ScrollBarThumbMouseOverBackgroundBrushKey):x8};
+	            --vscode-scrollbarSlider-activeBackground: #{GetColor(EnvironmentColors.ScrollBarThumbPressedBackgroundBrushKey):x8};
+
+                /* primary button */
+	            --vscode-button-border:                    #{GetColor(CommonControlsColors.ButtonBorderBrushKey):x8};
+	            --vscode-button-background:                #{GetColor(CommonControlsColors.ButtonDefaultBrushKey):x8};
+	            --vscode-button-foreground:                #{GetColor(CommonControlsColors.ButtonDefaultTextBrushKey):x8};
+	            --vscode-button-hoverBackground:           #{GetColor(CommonControlsColors.ButtonHoverBrushKey):x8};
+
+                /* second button */
+	            --vscode-button-secondaryBackground:       #{GetColor(CommonControlsColors.ButtonBrushKey):x8};
+	            --vscode-button-secondaryForeground:       #{GetColor(CommonControlsColors.ButtonTextBrushKey):x8};
+	            --vscode-button-secondaryHoverBackground:  #{GetColor(CommonControlsColors.ButtonHoverBrushKey):x8};
+
+                /* checkbox */
+	            --vscode-checkbox-background:              #{GetColor(CommonControlsColors.CheckBoxBackgroundBrushKey):x8};
+	            --vscode-checkbox-border:                  #{GetColor(CommonControlsColors.CheckBoxBorderBrushKey):x8};
+	            --vscode-checkbox-foreground:              #{GetColor(CommonControlsColors.CheckBoxTextBrushKey):x8};
+                
+                /* drop down */
+	            --vscode-settings-dropdownListBorder:      #{GetColor(EnvironmentColors.DropDownBorderBrushKey):x8};
+	            --vscode-dropdown-background:              #{GetColor(EnvironmentColors.DropDownBackgroundBrushKey):x8};
+	            --vscode-dropdown-border:                  #{GetColor(EnvironmentColors.DropDownBorderBrushKey):x8};
+	            --vscode-dropdown-foreground:              #{GetColor(EnvironmentColors.DropDownTextBrushKey):x8};
+
+                /* hyperlink */
+	            --vscode-textLink-foreground:              #{GetColor(EnvironmentColors.DiagReportLinkTextBrushKey):x8};
+	            --vscode-textLink-activeForeground:        #{GetColor(EnvironmentColors.DiagReportLinkTextHoverColorKey):x8};
+
+                /* progressbar */
+	            --vscode-progressBar-background:           #{GetColor(ProgressBarColors.IndicatorFillBrushKey):x8};
+
+                /* panel */
+	            --vscode-panelTitle-activeBorder:          #{GetColor(CommonDocumentColors.InnerTabActiveIndicatorBrushKey):x8};
+	            --vscode-panelTitle-activeForeground:      #{GetColor(CommonDocumentColors.InnerTabActiveTextBrushKey):x8};
+	            --vscode-panelTitle-inactiveForeground:    #{GetColor(CommonDocumentColors.InnerTabInactiveTextBrushKey):x8};
+	            --vscode-panel-background:                 #{GetColor(CommonDocumentColors.InnerTabBackgroundBrushKey):x8};
+	            --vscode-panel-border:                     #{GetColor(EnvironmentColors.PanelBorderBrushKey):x8};
+            }}`;";
 
         await webView.ExecuteScriptAsync(script);
+    }
+
+    private void VSColorTheme_ThemeChanged(ThemeChangedEventArgs e)
+    {
+        ThreadHelper.JoinableTaskFactory.RunAsync(SetChatThemeAsync).FireAndForget(true);
     }
 }

@@ -137,12 +137,9 @@ public sealed class CodeiumVSPackage : ToolkitPackage
                 var browserKey = Registry.ClassesRoot.OpenSubKey(@"HTTP\shell\open\command", false);
 
                 //If browser path wasn’t found, try Win Vista (and newer) registry key
-                if (browserKey == null)
-                {
-                    browserKey =
+                browserKey ??=
                     Registry.CurrentUser.OpenSubKey(
                     urlAssociation, false);
-                }
                 var path = CleanifyBrowserPath(browserKey.GetValue(null) as string);
                 browserKey.Close();
                 return path;

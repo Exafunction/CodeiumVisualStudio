@@ -10,7 +10,7 @@ using System.Windows.Media;
 
 namespace CodeiumVS.Utilities;
 
-internal class TextHighlighter : TextViewExtension<TextHighlighter>, ITagger<HighlightWordTag>
+internal class TextHighlighter : TextViewExtension<ITextView, TextHighlighter>, ITagger<HighlightWordTag>
 {
     private readonly ITextBuffer _sourceBuffer;
     private readonly List<ITagSpan<HighlightWordTag>> _spans;

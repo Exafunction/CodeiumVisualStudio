@@ -60,7 +60,10 @@
     <Compile Include="Proposal\CodeiumProposalSource.cs" />
     <Compile Include="Proposal\CodeiumProposalSourceProvider.cs" />
     <Compile Include="Proposal\Mapper.cs" />
+    <Compile Include="QuickInfo\IntellisenseController.cs" />
+    <Compile Include="QuickInfo\QuickInfoSource.cs" />
     <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="Utilities\IntellisenseUtilities.cs" />
     <Compile Include="Utilities\TextHighlighter.cs" />
     <Compile Include="Utilities\CodeAnalyzer.cs" />
     <Compile Include="Utilities\MefProvider.cs" />

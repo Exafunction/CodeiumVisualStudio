@@ -126,8 +126,8 @@
     <PackageReference Include="Community.VisualStudio.Toolkit.17" Version="17.0.507" ExcludeAssets="Runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Language">
-      <Version>17.8.222</Version>
+    <PackageReference Include="Microsoft.VisualStudio.SDK">
+      <Version>17.8.37222</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.SDK.VsixSuppression">
       <Version>14.1.37</Version>

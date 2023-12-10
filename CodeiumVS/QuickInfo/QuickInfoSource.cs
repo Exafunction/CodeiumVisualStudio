@@ -72,6 +72,9 @@ internal sealed class CodeiumAsyncQuickInfoSource(ITextBuffer textBuffer) :
         ITextSnapshot currentSnapshot = subjectTriggerPoint.Value.Snapshot;
         var querySpan = new SnapshotSpan(subjectTriggerPoint.Value, 0);
 
+        // Must be on main thread when dealing with tag aggregator
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
         // Ask for all of the error tags that intersect our query span.  We'll get back a list of mapping tag spans.
         // The first of these is what we'll use for our quick info.
         IEnumerable<IMappingTagSpan<IErrorTag>> tags = _tagAggregator.GetTags(querySpan);
@@ -99,7 +102,7 @@ internal sealed class CodeiumAsyncQuickInfoSource(ITextBuffer textBuffer) :
         if (appToSpan != null && problemMessage.Length > 0)
         {
             var hyperLink = ClassifiedTextElement.CreateHyperlink(
-                "Codeium: Explain problem",
+                "Codeium: Explain Problem",
                 "Ask codeium to explain the problem",
                 () => {
                     ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
@@ -142,7 +145,6 @@ internal sealed class AsyncQuickInfoSourceProvider : IAsyncQuickInfoSourceProvid
 {
     public IAsyncQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer)
     {
-        return CodeiumAsyncQuickInfoSource.GetInstance(textBuffer) 
-            ?? new CodeiumAsyncQuickInfoSource(textBuffer);
+        return CodeiumAsyncQuickInfoSource.GetOrCreate(textBuffer, () => new CodeiumAsyncQuickInfoSource(textBuffer));
     }
 }

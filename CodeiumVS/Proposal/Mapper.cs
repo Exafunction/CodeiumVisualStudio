@@ -92,19 +92,17 @@ internal class LanguageEqualityComparer : IEqualityComparer<LangInfo>
 
 internal class Mapper
 {
-    private static readonly Dictionary<string, LangInfo> _languagesByIdentifier = KnownLanguages.Default.Distinct<LangInfo>(new LanguageEqualityComparer()).ToDictionary((LangInfo x) => x.Identifier.ToLowerInvariant());
+    private static readonly Dictionary<string, LangInfo> _languagesByIdentifier =
+        KnownLanguages.Default.Distinct(new LanguageEqualityComparer())
+        .ToDictionary((LangInfo x) => x.Identifier.ToLowerInvariant());
 
-    private static readonly Dictionary<string, LangInfo> _languagesByName = KnownLanguages.Default.ToDictionary((LangInfo x) => x.Name.ToLowerInvariant());
+    private static readonly Dictionary<string, LangInfo> _languagesByName = 
+        KnownLanguages.Default.ToDictionary((LangInfo x) => x.Name.ToLowerInvariant());
 
-    private static readonly ConcurrentDictionary<IContentType, string> _extensionByContentType = new ConcurrentDictionary<IContentType, string>();
-
-    private static readonly ConcurrentDictionary<string, LangInfo> _languageByExtension = new ConcurrentDictionary<string, LangInfo>();
-
-    private static readonly ConcurrentDictionary<IContentType, LangInfo> _contentTypeMap = new ConcurrentDictionary<IContentType, LangInfo>();
-
-    private static readonly ConcurrentDictionary<IContentType, bool> _typeCharTriggerSupportedByContentType = new ConcurrentDictionary<IContentType, bool>();
-
-    private static readonly ConcurrentDictionary<IContentType, bool> _formatDocumentSupportedByContentType = new ConcurrentDictionary<IContentType, bool>();
+    private static readonly ConcurrentDictionary<IContentType, string  > _extensionByContentType               = new();
+    private static readonly ConcurrentDictionary<string      , LangInfo> _languageByExtension                  = new();
+    private static readonly ConcurrentDictionary<IContentType, LangInfo> _contentTypeMap                       = new();
+    private static readonly ConcurrentDictionary<IContentType, bool    > _formatDocumentSupportedByContentType = new();
 
     public static LangInfo GetLanguage(DocumentView docView)
     {
@@ -135,7 +133,7 @@ internal class Mapper
         foreach (IContentType baseType in type.BaseTypes)
         {
             LangInfo language = FindLanguage(baseType, null);
-            if ((object)language != null && language != KnownLanguages.Fallback)
+            if (language is not null && language != KnownLanguages.Fallback)
             {
                 return language;
             }

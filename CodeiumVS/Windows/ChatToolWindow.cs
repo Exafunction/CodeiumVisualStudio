@@ -12,30 +12,39 @@ namespace CodeiumVS;
 [Guid(PackageGuids.ChatToolWindowString)]
 public class ChatToolWindow : ToolWindowPane
 {
+    internal static ChatToolWindow? Instance { get; private set; }
+
     public ChatToolWindow()
         : base(null)
     {
+        Instance = this;
         Caption = "Codeium Chat";
         Content = new ChatToolWindowControl();
     }
 
     public void Reload()
     {
-        _ = (Content as ChatToolWindowControl).ReloadAsync();
+        ThreadHelper.JoinableTaskFactory.RunAsync(
+            (Content as ChatToolWindowControl).ReloadAsync
+        ).FireAndForget(true);
     }
 }
 
 public partial class ChatToolWindowControl : UserControl, IComponentConnector
 {
     private CodeiumVSPackage package;
+    private bool _isInitialized = false;
 
     public ChatToolWindowControl()
     {
         InitializeComponent();
-        _ = InitializeWebViewAsync();
+        ThreadHelper.JoinableTaskFactory.RunAsync(InitializeWebViewAsync).FireAndForget(true);
     }
+
     private async Task InitializeWebViewAsync()
     {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
         package = CodeiumVSPackage.Instance;
 
         // set the default background color to avoid flashing a white window
@@ -50,11 +59,16 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
             // Try Catch this in case it's causing problems
             await webView.EnsureCoreWebView2Async(env);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // Do nothing
+            await package.LogAsync($"Failed to initialize webview core enviroment. Exception: {ex}");
+            await VS.MessageBox.ShowErrorAsync(
+                "Codeium: Failed to initialize webview core enviroment", 
+                "Chat might be unavailable. Please see more details in the output window."
+            );
         }
 
+        _isInitialized = true;
         // load the loading page
         webView.NavigateToString(Properties.Resources.ChatLoadingPage_html);
 
@@ -65,6 +79,10 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 
     public async Task ReloadAsync()
     {
+        if (!_isInitialized) return;
+
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
         // wait for the language server
         await package.LanguageServer.WaitReadyAsync();
 
@@ -96,15 +114,28 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         };
 
         string uriString = clientUrl + "?" + string.Join("&", data.Select((KeyValuePair<string, string> kv) => kv.Key + "=" + kv.Value));
-        webView.Source = new Uri(uriString);
+        try
+        {
+            if (webView.Source?.OriginalString == uriString) webView.Reload();
+            else webView.Source = new Uri(uriString);
+        }
+        catch(Exception ex)
+        {
+            await package.LogAsync($"Failed to open the chat page. Exception: {ex}");
+            await VS.MessageBox.ShowErrorAsync(
+                "Codeium: Failed to open the chat page",
+                "We're sorry for the inconvenience. Please see more details in the output window."
+            );
+        }
 
-        // TODO: Re-implement this after we revamp our themes for chat.
         await SetChatThemeAsync();
     }
 
     // Get VS colors and set the theme for chat page
     private async Task SetChatThemeAsync()
     {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
         // System.Drawing.Color is ARGB, we need to convert it to RGBA for css
         static uint GetColor(ThemeResourceKey key)
         {

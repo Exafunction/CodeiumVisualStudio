@@ -60,6 +60,9 @@ internal class CodeiumProposalSourceProvider : ProposalSourceProviderBase
         string proposalId = ((SuggestionAcceptedEventArgs)e).FinalProposal.ProposalId;
 
         CodeiumVSPackage.Instance.Log("Accepted completion " + proposalId);
-        _ = CodeiumVSPackage.Instance.LanguageServer.AcceptCompletionAsync(proposalId);
+        ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
+        {
+            await CodeiumVSPackage.Instance.LanguageServer.AcceptCompletionAsync(proposalId);
+        }).FireAndForget(true);
     }
 }

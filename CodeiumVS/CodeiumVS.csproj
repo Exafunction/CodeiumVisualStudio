@@ -61,6 +61,7 @@
     <Compile Include="Proposal\CodeiumProposalSourceProvider.cs" />
     <Compile Include="Proposal\Mapper.cs" />
     <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="Utilities\ProcessExtensions.cs" />
     <Compile Include="Utilities\TextHighlighter.cs" />
     <Compile Include="Utilities\CodeAnalyzer.cs" />
     <Compile Include="Utilities\MefProvider.cs" />

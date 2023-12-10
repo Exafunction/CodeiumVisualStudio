@@ -96,7 +96,10 @@ public sealed class CodeiumVSPackage : ToolkitPackage
         if (!IsSignedIn())
         {
             KeyValuePair<string, Action>[] actions = [
-                new KeyValuePair<string, Action>("Sign in", delegate { _ = LanguageServer.SignInAsync(); }),
+                new KeyValuePair<string, Action>("Sign in", delegate 
+                { 
+                    ThreadHelper.JoinableTaskFactory.RunAsync(LanguageServer.SignInAsync).FireAndForget(true);
+                }),
                 new KeyValuePair<string, Action>("Use authentication token", delegate { new EnterTokenDialogWindow().ShowDialog(); }),
             ];
 
@@ -107,9 +110,7 @@ public sealed class CodeiumVSPackage : ToolkitPackage
             await NotificationAuth.CloseAsync();
         }
 
-        // find the ChatToolWindow and update it
-        ChatToolWindow chatWindowPane = (await FindWindowPaneAsync(typeof(ChatToolWindow), 0, false, DisposalToken)) as ChatToolWindow;
-        chatWindowPane?.Reload();
+        ChatToolWindow.Instance?.Reload();
     }
 
     public static string GetDefaultBrowserPath()

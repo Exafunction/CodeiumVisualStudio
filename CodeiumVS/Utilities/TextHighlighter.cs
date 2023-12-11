@@ -10,7 +10,7 @@ using System.Windows.Media;
 
 namespace CodeiumVS.Utilities;
 
-internal class TextHighlighter : TextViewExtension<TextHighlighter>, ITagger<HighlightWordTag>
+internal class TextHighlighter : TextViewExtension<ITextView, TextHighlighter>, ITagger<HighlightWordTag>
 {
     private readonly ITextBuffer _sourceBuffer;
     private readonly List<ITagSpan<HighlightWordTag>> _spans;
@@ -102,6 +102,6 @@ internal class HighlightWordTaggerProvider : IViewTaggerProvider
     {
         // Provide highlighting only on the top buffer 
         if (textView.TextBuffer != buffer) return null;
-        return new TextHighlighter(textView, buffer) as ITagger<T>;
+        return TextHighlighter.GetOrCreate(textView, () => new TextHighlighter(textView, buffer)) as ITagger<T>;
     }
 }

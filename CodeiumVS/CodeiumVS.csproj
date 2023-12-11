@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -64,6 +64,7 @@
     <Compile Include="QuickInfo\QuickInfoSource.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\IntellisenseUtilities.cs" />
+    <Compile Include="Utilities\ProcessExtensions.cs" />
     <Compile Include="Utilities\TextHighlighter.cs" />
     <Compile Include="Utilities\CodeAnalyzer.cs" />
     <Compile Include="Utilities\MefProvider.cs" />
@@ -129,8 +130,8 @@
     <PackageReference Include="Community.VisualStudio.Toolkit.17" Version="17.0.507" ExcludeAssets="Runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Language">
-      <Version>17.8.222</Version>
+    <PackageReference Include="Microsoft.VisualStudio.SDK">
+      <Version>17.8.37222</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.SDK.VsixSuppression">
       <Version>14.1.37</Version>

@@ -208,9 +208,10 @@ public class LanguageServer
                 if (e.ProgressPercentage != oldPercent)
                 {
                     oldPercent = e.ProgressPercentage;
-                    ThreadHelper.JoinableTaskFactory.Run(async delegate
+                    ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
                     {
                         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
                         double totalBytesMb = e.TotalBytesToReceive / 1024.0 / 1024.0;
                         double recievedBytesMb = e.BytesReceived / 1024.0 / 1024.0;
 
@@ -218,16 +219,19 @@ public class LanguageServer
                             $"Downloading language server v{Version} ({e.ProgressPercentage}%)",
                             $"{recievedBytesMb:f2}Mb / {totalBytesMb:f2}Mb",
                             $"Codeium: Downloading language server v{Version} ({e.ProgressPercentage}%)",
-                            (int)e.BytesReceived, (int)e.TotalBytesToReceive, true, out _);
-                    });
+                            (int)e.BytesReceived, (int)e.TotalBytesToReceive, true, out _
+                        );
+
+                    }).FireAndForget(true);
                 }
             };
 
             webClient.DownloadFileCompleted += (s, e) =>
             {
-                ThreadHelper.JoinableTaskFactory.Run(async delegate
+                ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
                 {
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
                     progDialog.StartWaitDialog(
                         "Codeium", $"Extracting files...", "Almost done", null,
                         $"Codeium: Extracting files...", 0, false, true
@@ -247,18 +251,20 @@ public class LanguageServer
                     (progDialog as IDisposable).Dispose();
 
                     await StartAsync();
-                });
+                }).FireAndForget(true);
             };
 
+            // set no-cache so that we don't have unexpected problems
             webClient.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
+
+            // start downloading and wait for it to finish
             webClient.DownloadFileAsync(url, downloadDest);
-            while (webClient.IsBusy)
-            {
-                System.Threading.Thread.Sleep(100);
-            }
+
+            while (webClient.IsBusy) 
+                Thread.Sleep(100);
         }
 
-        System.Threading.Thread trd = new(new ThreadStart(ThreadDownloadLanguageServer))
+        Thread trd = new(new ThreadStart(ThreadDownloadLanguageServer))
         {
             IsBackground = true
         };
@@ -266,7 +272,6 @@ public class LanguageServer
     }
 
     // Start the language server process
-    // TODO: make the LSP exit when VS closes unexpectedly
     private async Task StartAsync()
     {
         Port = 0;
@@ -279,42 +284,27 @@ public class LanguageServer
         Directory.CreateDirectory(databaseDir);
 
         process = new();
-        process.StartInfo.FileName = Package.GetLanguageServerPath();
-        process.StartInfo.UseShellExecute = false;
-        process.StartInfo.CreateNoWindow = true;
+        process.StartInfo.FileName              = Package.GetLanguageServerPath();
+        process.StartInfo.UseShellExecute       = false;
+        process.StartInfo.CreateNoWindow        = true;
         process.StartInfo.RedirectStandardError = true;
+        process.EnableRaisingEvents             = true;
+
         process.StartInfo.Arguments =
-            $"--api_server_url {apiUrl} --manager_dir \"{managerDir}\" --database_dir \"{databaseDir}\" --enable_chat_web_server --enable_chat_client --detect_proxy=false";
+            $"--api_server_url {apiUrl} --manager_dir \"{managerDir}\" --database_dir \"{databaseDir}\"" +
+            " --enable_chat_web_server --enable_chat_client --detect_proxy=false";
 
         if (Package.SettingsPage.EnterpriseMode)
             process.StartInfo.Arguments += $" --enterprise_mode --portal_url {Package.SettingsPage.PortalUrl}";
 
-        process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(e.Data)) return;
-
-            // get the port from the output of LSP
-            if (Port == 0)
-            {
-                Match match = Regex.Match(e.Data, @"Language server listening on random port at (\d+)");
-                if (match.Success)
-                {
-                    if (int.TryParse(match.Groups[1].Value, out Port))
-                    {
-                        Package.Log($"Language server started on port {Port}");
-                        _ = Controller.ConnectAsync();
-                    }
-                    else
-                        Package.Log($"Error: Failed to parse the port number from \"{match.Groups[1].Value}\"");
-                }
-            }
-
-            Package.Log("Language Server: " + e.Data);
-        };
+        process.ErrorDataReceived += LSP_OnPipeDataReceived;
+        process.Exited += LSP_OnExited;
 
         await Package.LogAsync("Starting language server");
         process.Start();
         process.BeginErrorReadLine();
+
+        Utilities.ProcessExtensions.MakeProcessExitOnParentExit(process);
 
         string apiKeyFilePath = Package.GetAPIKeyPath();
         if (File.Exists(apiKeyFilePath))
@@ -323,6 +313,42 @@ public class LanguageServer
         }
 
         await Package.UpdateSignedInStateAsync();
+    }
+
+    private void LSP_OnExited(object sender, EventArgs e)
+    {
+        Package.Log("Language Server Process exited unexpectedly, restarting...");
+
+        Port = 0;
+        process = null;
+        Controller.Disconnect();
+        ThreadHelper.JoinableTaskFactory.RunAsync(StartAsync).FireAndForget(true);
+    }
+
+    // This method will be responsible for reading and parsing the output of the LSP
+    private void LSP_OnPipeDataReceived(object sender, DataReceivedEventArgs e)
+    {
+        if (string.IsNullOrEmpty(e.Data)) return;
+
+        // regex to match the port number
+        Match match = Regex.Match(e.Data, @"Language server listening on (random|fixed) port at (\d{2,5})");
+
+        if (match.Success)
+        {
+            if (int.TryParse(match.Groups[2].Value, out Port))
+            {
+                Package.Log($"Language server started on port {Port}");
+
+                ChatToolWindow.Instance?.Reload();
+                ThreadHelper.JoinableTaskFactory.RunAsync(Controller.ConnectAsync).FireAndForget(true);
+            }
+            else
+            {
+                Package.Log($"Error: Failed to parse the port number from \"{match.Groups[1].Value}\"");
+            }
+        }
+
+        Package.Log("Language Server: " + e.Data);
     }
 
     private async Task<T?> RequestUrlAsync<T>(string url, object data, CancellationToken cancellationToken = default)

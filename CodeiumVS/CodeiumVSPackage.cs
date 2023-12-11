@@ -96,7 +96,10 @@ public sealed class CodeiumVSPackage : ToolkitPackage
         if (!IsSignedIn())
         {
             KeyValuePair<string, Action>[] actions = [
-                new KeyValuePair<string, Action>("Sign in", delegate { _ = LanguageServer.SignInAsync(); }),
+                new KeyValuePair<string, Action>("Sign in", delegate 
+                { 
+                    ThreadHelper.JoinableTaskFactory.RunAsync(LanguageServer.SignInAsync).FireAndForget(true);
+                }),
                 new KeyValuePair<string, Action>("Use authentication token", delegate { new EnterTokenDialogWindow().ShowDialog(); }),
             ];
 
@@ -107,9 +110,7 @@ public sealed class CodeiumVSPackage : ToolkitPackage
             await NotificationAuth.CloseAsync();
         }
 
-        // find the ChatToolWindow and update it
-        ChatToolWindow chatWindowPane = (await FindWindowPaneAsync(typeof(ChatToolWindow), 0, false, DisposalToken)) as ChatToolWindow;
-        chatWindowPane?.Reload();
+        ChatToolWindow.Instance?.Reload();
     }
 
     public static string GetDefaultBrowserPath()
@@ -137,12 +138,9 @@ public sealed class CodeiumVSPackage : ToolkitPackage
                 var browserKey = Registry.ClassesRoot.OpenSubKey(@"HTTP\shell\open\command", false);
 
                 //If browser path wasn’t found, try Win Vista (and newer) registry key
-                if (browserKey == null)
-                {
-                    browserKey =
+                browserKey ??=
                     Registry.CurrentUser.OpenSubKey(
                     urlAssociation, false);
-                }
                 var path = CleanifyBrowserPath(browserKey.GetValue(null) as string);
                 browserKey.Close();
                 return path;

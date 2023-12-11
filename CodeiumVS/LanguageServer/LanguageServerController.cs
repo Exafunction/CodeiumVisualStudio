@@ -1,7 +1,6 @@
 ﻿using CodeiumVS.Packets;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Newtonsoft.Json;
 using ProtoBuf;
 using System.IO;
 using System.Linq;
@@ -25,26 +24,22 @@ public class LanguageServerController
 #pragma warning disable VSTHRD103 // Call async methods when in an async method
         void OnOpen(object sender, EventArgs e)
         {
-            WebSocket ws = sender as WebSocket;
-            Package.Log($"Connected to {ws.Url}");
+            Package.Log($"Language Server Controller: Connected to {ws.Url}");
         }
 
-        void OnClose(object sender, EventArgs e)
+        void OnClose(object sender, CloseEventArgs e)
         {
-            WebSocket ws = sender as WebSocket;
-            Package.Log($"Disconnected from {ws.Url}");
+            // We don't actually do anything here, just log that we disconnected
+            // the LanguageServer will handle the reconnection
+            Package.Log("Language Server Controller: Disconnected unexpectedly, retrying to connect...");
         }
 
-        void OnMessage(object sender, EventArgs e)
+        void OnMessage(object sender, MessageEventArgs msg)
         {
-            MessageEventArgs msg = e as MessageEventArgs;
             if (!msg.IsBinary) return;
 
             using MemoryStream stream = new(msg.RawData);
             WebServerResponse request = Serializer.Deserialize<WebServerResponse>(stream);
-            string text = JsonConvert.SerializeObject(request);
-
-            Package.Log($"OnMessage: {text}");
 
             if (request.ShouldSerializeopen_file_pointer())
             {
@@ -56,12 +51,11 @@ public class LanguageServerController
                 var data = request.insert_at_cursor;
                 InsertText(data.text);
             }
-
         }
 
-        void OnError(object sender, EventArgs e)
+        void OnError(object sender, WebSocketSharp.ErrorEventArgs error)
         {
-            Package.Log("OnError\n");
+            Package.Log($"Language Server Controller: Error '{error.Message}'; Exception: {error.Exception}");
         }
 #pragma warning restore VSTHRD103 // Call async methods when in an async method
 
@@ -124,8 +118,7 @@ public class LanguageServerController
             docView.TextView.Caret.EnsureVisible();
         }).FireAndForget();
     }
-
-
+    
     public async Task ExplainCodeBlockAsync(string filePath, Language language, CodeBlockInfo codeBlockInfo)
     {
         var request = WebChatServer.NewRequest();
@@ -139,8 +132,8 @@ public class LanguageServerController
             }
         };
 
-        request.Send(ws);
-        await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
+        if (request.Send(ws))
+            await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
     }
 
     public async Task ExplainFunctionAsync(string filePath, FunctionInfo functionInfo)
@@ -156,8 +149,8 @@ public class LanguageServerController
             }
         };
 
-        request.Send(ws);
-        await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
+        if (request.Send(ws))
+            await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
     }
     
     public async Task GenerateFunctionUnitTestAsync(string instructions, string filePath, FunctionInfo functionInfo)
@@ -174,8 +167,8 @@ public class LanguageServerController
             }
         };
 
-        request.Send(ws);
-        await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
+        if (request.Send(ws))
+            await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
     }
 
     public async Task GenerateFunctionDocstringAsync(string filePath, FunctionInfo functionInfo)
@@ -191,8 +184,8 @@ public class LanguageServerController
             }
         };
 
-        request.Send(ws);
-        await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
+        if (request.Send(ws))
+            await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
     }
 
     public async Task RefactorCodeBlockAsync(string prompt, string filePath, Language language, CodeBlockInfo codeBlockInfo)
@@ -209,8 +202,8 @@ public class LanguageServerController
             }
         };
 
-        request.Send(ws);
-        await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
+        if (request.Send(ws))
+            await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
     }
 
     public async Task RefactorFunctionAsync(string prompt, string filePath, FunctionInfo functionInfo)
@@ -227,8 +220,8 @@ public class LanguageServerController
             }
         };
 
-        request.Send(ws);
-        await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
+        if (request.Send(ws))
+            await Package.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
     }
 
     public async Task ExplainProblemAsync(string problemMessage, SnapshotSpan span)
@@ -309,10 +302,18 @@ internal static class WebChatServer
         return request;
     }
 
-    internal static void Send(this WebServerRequest request, WebSocket ws)
+    internal static bool Send(this WebServerRequest request, WebSocket ws)
     {
+        if (!ws.IsAlive)
+        {
+            CodeiumVSPackage.Instance.Log("Language Server Controller: Unable to send the request because the connection is closed.");
+            return false;
+        }
+
         using MemoryStream memoryStream = new();
         Serializer.Serialize(memoryStream, request);
         ws.SendAsync(memoryStream.ToArray(), delegate (bool e) { });
+
+        return true;
     }
 }

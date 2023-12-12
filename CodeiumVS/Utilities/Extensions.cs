@@ -62,10 +62,18 @@ internal abstract class TextViewExtension<ViewType, ExtensionType> : PropertyOwn
     }
 }
 
-internal class FunctionBlock(string name, string @params, TextSpan span)
+internal class FunctionBlock(string fullname, string name, string @params, TextSpan span)
 {
+    // full name of the function, including namespaces and classes
+    public readonly string FullName = fullname;
+
+    // short name of the function
     public readonly string Name = name;
+    
+    // parameters, not including the braces
     public readonly string Params = @params;
+
+    // span of the function body
     public readonly TextSpan Span = span;
 }
 

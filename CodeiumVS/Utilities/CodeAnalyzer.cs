@@ -130,7 +130,8 @@ internal static class CodeAnalyzer
         ) return null;
 
         var splits = desc.Split('(');
-        string functionName = splits[0].Split(' ').Last();
+        string fullname = splits[0].Split(' ').Last();
+        string name = fullname.Split(':').Last().Split('.').Last();
         string parameters = "";
 
         if (splits.Length >= 2)
@@ -143,7 +144,7 @@ internal static class CodeAnalyzer
             parameters = parameters.Substring(0, parameters.LastIndexOf(')'));
         }
 
-        return new(functionName, parameters, spans[0]);
+        return new(fullname, name, parameters, spans[0]);
     }
 
     public static FunctionBlock? GetFunctionBlock(IWpfTextView view, int line, int column)

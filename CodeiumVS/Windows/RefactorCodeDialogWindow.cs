@@ -58,6 +58,7 @@ public partial class RefactorCodeDialogWindow : DialogWindow
     private void CloseDialog()
     {
         Visibility = Visibility.Hidden;
+        InputPrompt.Text = string.Empty;
     }
 
     private void NewContext(Languages.LangInfo languageInfo)

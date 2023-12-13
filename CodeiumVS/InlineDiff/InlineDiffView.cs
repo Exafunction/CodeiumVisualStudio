@@ -458,18 +458,18 @@ internal class InlineDiffView
 
     private void LeftView_OnClosed(object sender, EventArgs e)
     {
-        LeftView.VisualElement.GotFocus -= LeftView_OnGotFocus;
-        LeftView.VisualElement.LostFocus -= LeftView_OnLostFocus;
-        LeftView.Caret.PositionChanged -= LeftView_OnCaretPositionChanged;
-        LeftView.Closed -= LeftView_OnClosed;
+        LeftView.VisualElement.GotFocus       -= LeftView_OnGotFocus;
+        LeftView.VisualElement.LostFocus      -= LeftView_OnLostFocus;
+        LeftView.Caret.PositionChanged        -= LeftView_OnCaretPositionChanged;
+        LeftView.Closed                       -= LeftView_OnClosed;
     }
 
     private void RightView_OnClosed(object sender, EventArgs e)
     {
-        RightView.VisualElement.GotFocus -= RightView_OnGotFocus;
-        RightView.VisualElement.LostFocus -= RightView_OnLostFocus;
-        RightView.Caret.PositionChanged -= RightView_OnCaretPositionChanged;
-        RightView.Closed -= RightView_OnClosed;
+        RightView.VisualElement.GotFocus      -= RightView_OnGotFocus;
+        RightView.VisualElement.LostFocus     -= RightView_OnLostFocus;
+        RightView.Caret.PositionChanged       -= RightView_OnCaretPositionChanged;
+        RightView.Closed                      -= RightView_OnClosed;
     }
 
     /// <summary>
@@ -481,6 +481,9 @@ internal class InlineDiffView
     {
         _diffBuffer.SnapshotDifferenceChanged -= DiffBuffer_SnapshotDifferenceChanged;
         _viewer.Closed                        -= DifferenceViewer_OnClosed;
+
+        // restore the selected line highlight for the host view
+        ShowSelectedLineForView(_hostView);
     }
 
     /// <summary>

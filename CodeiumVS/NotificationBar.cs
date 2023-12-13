@@ -31,22 +31,30 @@ public class NotificationInfoBar : IVsInfoBarUIEvents
         ThreadHelper.ThrowIfNotOnUIThread("Show");
         if (view != null) return;
 
-        IVsShell vsShell = ServiceProvider.GlobalProvider.GetService<SVsShell, IVsShell>();
-        IVsInfoBarUIFactory vsInfoBarFactory = ServiceProvider.GlobalProvider.GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>();
-        if (vsShell == null || vsInfoBarFactory == null) return;
-        
-        if (vsInfoBarFactory != null && ErrorHandler.Succeeded(vsShell.GetProperty((int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out var pvar)) && pvar is IVsInfoBarHost vsInfoBarHost)
+        try
         {
-            InfoBarModel infoBar = new(text, GetActionsItems(actions), icon ?? KnownMonikers.StatusInformation, canClose);
+            IVsShell vsShell = ServiceProvider.GlobalProvider.GetService<SVsShell, IVsShell>();
+            IVsInfoBarUIFactory vsInfoBarFactory = ServiceProvider.GlobalProvider.GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>();
+            if (vsShell == null || vsInfoBarFactory == null) return;
+        
+            if (vsInfoBarFactory != null && ErrorHandler.Succeeded(vsShell.GetProperty((int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out var pvar)) && pvar is IVsInfoBarHost vsInfoBarHost)
+            {
+                InfoBarModel infoBar = new(text, GetActionsItems(actions), icon ?? KnownMonikers.StatusInformation, canClose);
             
-            view = vsInfoBarFactory.CreateInfoBar(infoBar);
-            view.Advise(this, out infoBarEventsCookie);
+                view = vsInfoBarFactory.CreateInfoBar(infoBar);
+                view.Advise(this, out infoBarEventsCookie);
             
-            this.vsInfoBarHost = vsInfoBarHost;
-            this.vsInfoBarHost.AddInfoBar(view);
+                this.vsInfoBarHost = vsInfoBarHost;
+                this.vsInfoBarHost.AddInfoBar(view);
 
-            IsShown = true;
-            OnCloseCallback = onCloseCallback;
+                IsShown = true;
+                OnCloseCallback = onCloseCallback;
+            }
+        }
+        catch (Exception ex)
+        {
+            CodeiumVSPackage.Instance?.Log($"NotificationInfoBar.Show: Failed to show notificaiton; Exception: {ex}");
+            return;
         }
     }
 

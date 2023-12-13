@@ -471,8 +471,8 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
         // format it
         try
         {
-            DTE2 dte = (DTE2)ServiceProvider.GlobalProvider.GetService(typeof(DTE));
-            dte.ExecuteCommand("Edit.FormatSelection");
+            DTE2? dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
+            dte?.ExecuteCommand("Edit.FormatSelection");
 
             // this doesn't work
             //var guid = VSConstants.CMDSETID.StandardCommandSet2K_guid;

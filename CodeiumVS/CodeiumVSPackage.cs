@@ -44,14 +44,33 @@ public sealed class CodeiumVSPackage : ToolkitPackage
         Instance = this;
 
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-        //await this.SatisfyImportsOnceAsync();
 
-        LanguageServer = new LanguageServer();
-        OutputWindow = new OutputWindow();
-        SettingsPage = (SettingsPage)GetDialogPage(typeof(SettingsPage));
+        LanguageServer   = new LanguageServer();
+        OutputWindow     = new OutputWindow();
         NotificationAuth = new NotificationInfoBar();
 
-        await this.RegisterCommandsAsync();
+        try 
+        {
+            SettingsPage = GetDialogPage(typeof(SettingsPage)) as SettingsPage; 
+        }
+        catch (Exception) { }
+
+        if (SettingsPage == null)
+        {
+            await LogAsync($"CodeiumVSPackage.InitializeAsync: Failed to get settings page, using the default settings");
+            SettingsPage = new SettingsPage();
+        }
+
+        try 
+        {
+            await this.RegisterCommandsAsync();
+        }
+        catch (Exception ex)
+        {
+            await LogAsync($"CodeiumVSPackage.InitializeAsync: Failed to register commands; Exception {ex}");
+            await VS.MessageBox.ShowErrorAsync("Codeium: Failed to register commands.", "Codeium might not work correctly. Please check the output window for more details.");
+        }
+
         await LanguageServer.InitializeAsync();
         await LogAsync("Codeium Extension for Visual Studio");
     }
@@ -87,10 +106,17 @@ public sealed class CodeiumVSPackage : ToolkitPackage
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync();
 
-        OleMenuCommandService obj = (await GetServiceAsync(typeof(IMenuCommandService))) as OleMenuCommandService;
-        obj.FindCommand(new CommandID(PackageGuids.CodeiumVS, PackageIds.SignIn)).Visible = !IsSignedIn();
-        obj.FindCommand(new CommandID(PackageGuids.CodeiumVS, PackageIds.SignOut)).Visible = IsSignedIn();
-        obj.FindCommand(new CommandID(PackageGuids.CodeiumVS, PackageIds.EnterAuthToken)).Visible = !IsSignedIn();
+
+        if ((await GetServiceAsync(typeof(IMenuCommandService))) is OleMenuCommandService cmdService)
+        {
+            MenuCommand? commandSignIn = cmdService.FindCommand(new CommandID(PackageGuids.CodeiumVS, PackageIds.SignIn));
+            MenuCommand? commandSignOut = cmdService.FindCommand(new CommandID(PackageGuids.CodeiumVS, PackageIds.SignOut));
+            MenuCommand? commandEnterToken = cmdService.FindCommand(new CommandID(PackageGuids.CodeiumVS, PackageIds.EnterAuthToken));
+
+            if (commandSignIn != null) commandSignIn.Visible = !IsSignedIn();
+            if (commandSignOut != null) commandSignOut.Visible = IsSignedIn();
+            if (commandEnterToken != null) commandEnterToken.Visible = !IsSignedIn();
+        }
 
         // notify the user they need to sign in
         if (!IsSignedIn())

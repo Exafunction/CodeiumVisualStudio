@@ -91,8 +91,19 @@ internal class BaseCommandContextMenu<T> : BaseCommand<T> where T : class, new()
         is_visible = Command.Visible = ThreadHelper.JoinableTaskFactory.Run(async delegate
         {
             is_function = false;
-            docView = await VS.Documents.GetActiveDocumentViewAsync();
-            if (docView?.TextView == null) return false;
+
+            // any interactions with the `IVsTextView` should be done on the main thread
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            try
+            {
+                docView = await VS.Documents.GetActiveDocumentViewAsync();
+                if (docView?.TextView == null) return false;
+            }catch (Exception ex)
+            {
+                await CodeiumVSPackage.Instance.LogAsync($"BaseCommandContextMenu: Failed to get the active document view; Exception: {ex}");
+                return false;
+            }
 
             languageInfo = Languages.Mapper.GetLanguage(docView);
             ITextSelection selection = docView.TextView.Selection;

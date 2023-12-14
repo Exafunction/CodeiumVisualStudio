@@ -1,9 +1,15 @@
-﻿using Microsoft.VisualStudio.PlatformUI;
+﻿using Community.VisualStudio.Toolkit;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Imaging;
+using Microsoft.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Web.WebView2.Core;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Markup;
 
@@ -26,7 +32,7 @@ public class ChatToolWindow : ToolWindowPane
     {
         ThreadHelper.JoinableTaskFactory.RunAsync(
             (Content as ChatToolWindowControl).ReloadAsync
-        ).FireAndForget(true);
+        ).FireAndForget();
     }
 }
 
@@ -34,11 +40,14 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 {
     private CodeiumVSPackage package;
     private bool _isInitialized = false;
+    private bool _isChatPageLoaded = false;
+    private string? _themeScriptId = null;
+    private InfoBar? _infoBar = null;
 
     public ChatToolWindowControl()
     {
         InitializeComponent();
-        ThreadHelper.JoinableTaskFactory.RunAsync(InitializeWebViewAsync).FireAndForget(true);
+        ThreadHelper.JoinableTaskFactory.RunAsync(InitializeWebViewAsync).FireAndForget();
     }
 
     private async Task InitializeWebViewAsync()
@@ -69,17 +78,56 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         }
 
         _isInitialized = true;
+
+        webView.CoreWebView2.DOMContentLoaded += WebView_OnDOMContentLoaded;
+        webView.GotFocus += WebView_OnGotFocus;
+
         // load the loading page
         webView.NavigateToString(Properties.Resources.ChatLoadingPage_html);
 
+        // add theme script to the list of scripts that get executed on document load
+        await AddThemeScriptOnLoadAsync();
+
+        // add the info bar to notify the user when the webview failed to load
+        var model = new InfoBarModel(
+            new[] {
+                new InfoBarTextSpan("It looks like Codeium Chat is taking too long to load, do you want to reload? "),
+                new InfoBarHyperlink("Reload")
+            },
+            KnownMonikers.IntellisenseWarning,
+            true
+        );
+
+        _infoBar = await VS.InfoBar.CreateAsync(ChatToolWindow.Instance.Frame as IVsWindowFrame, model);
+        if (_infoBar != null) _infoBar.ActionItemClicked += InfoBar_OnActionItemClicked;
+
+        // listen for theme changes
         VSColorTheme.ThemeChanged += VSColorTheme_ThemeChanged;
 
+        // load the chat
         await ReloadAsync();
     }
 
+    /// <summary>
+    /// Reload, or in another word, navigate to the chat web page
+    /// </summary>
+    /// <returns></returns>
     public async Task ReloadAsync()
     {
         if (!_isInitialized) return;
+
+        _isChatPageLoaded = false;
+
+        // check again in 10 seconds to see if the dom content was loaded
+        // if it's not, show the info bar and ask the user if they want to
+        // reload the page
+        Task.Delay(10_000).ContinueWith(
+            (task) => {
+                if (_isChatPageLoaded) return;
+                _infoBar?.TryShowInfoBarUIAsync().FireAndForget();
+            },
+            TaskScheduler.Default
+        ).FireAndForget();
 
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -113,7 +161,8 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
             }
         };
 
-        string uriString = clientUrl + "?" + string.Join("&", data.Select((KeyValuePair<string, string> kv) => kv.Key + "=" + kv.Value));
+        string uriString = clientUrl + "?" + string.Join("&", data.Select((pair) => $"{pair.Key}={pair.Value}"));
+
         try
         {
             if (webView.Source?.OriginalString == uriString) webView.Reload();
@@ -127,15 +176,43 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
                 "We're sorry for the inconvenience. Please see more details in the output window."
             );
         }
-
-        await SetChatThemeAsync();
     }
 
-    // Get VS colors and set the theme for chat page
-    private async Task SetChatThemeAsync()
+    /// <summary>
+    /// Activate the chat tool window and focus the text input when the webview is focused
+    /// </summary>
+    private void WebView_OnGotFocus(object sender, System.Windows.RoutedEventArgs e)
     {
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
+            // the GotFocus event is fired event when the user is switching to another tab
+            // i don't know why this happens, but this is a workaround
+
+            // code taken from VS.Windows.GetCurrentWindowAsync
+            IVsMonitorSelection? monitorSelection = await VS.Services.GetMonitorSelectionAsync();
+            monitorSelection.GetCurrentElementValue((uint)VSConstants.VSSELELEMID.SEID_WindowFrame, out object selection);
+
+            IVsWindowFrame chatFrame = ChatToolWindow.Instance.Frame as IVsWindowFrame;
+
+            if (selection is IVsWindowFrame6 frame && frame != chatFrame && !frame.IsInSameTabGroup(chatFrame))
+            {
+                chatFrame.Show();
+            }
+
+            // focus the text input
+            await webView.ExecuteScriptAsync("document.getElementsByClassName('ql-editor')[0].focus()");
+
+        }).FireAndForget();
+    }
+
+    /// <summary>
+    /// Get the script to set the theme color to match that of Visual Studio.
+    /// </summary>
+    /// <returns></returns>
+    private string GetSetThemeScript()
+    {
         // System.Drawing.Color is ARGB, we need to convert it to RGBA for css
         static uint GetColor(ThemeResourceKey key)
         {
@@ -145,7 +222,7 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 
         uint textColor = GetColor(EnvironmentColors.ToolWindowTextBrushKey);
 
-        string script = $@"
+        return $@"
             var style = document.getElementById(""vs-code-theme"");
             if (style == null)
             {{
@@ -221,12 +298,57 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 	            --vscode-panel-background:                 #{GetColor(CommonDocumentColors.InnerTabBackgroundBrushKey):x8};
 	            --vscode-panel-border:                     #{GetColor(EnvironmentColors.PanelBorderBrushKey):x8};
             }}`;";
+    }
 
-        await webView.ExecuteScriptAsync(script);
+    /// <summary>
+    /// Add the set-theme script to the list of script that get executed on webview document load.
+    /// </summary>
+    /// <remarks>This will also remove any previous scripts that was added</remarks>
+    /// <param name="execute">Whether or not to execute the script immediately</param>
+    /// <returns>The script created by <see cref="GetSetThemeScript"/></returns>
+    private async Task<string> AddThemeScriptOnLoadAsync(bool execute = false)
+    {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+        if (_themeScriptId != null)
+            webView.CoreWebView2.RemoveScriptToExecuteOnDocumentCreated(_themeScriptId);
+
+        string script = GetSetThemeScript();
+        _themeScriptId = await webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(
+            @$"addEventListener(
+                ""DOMContentLoaded"",
+                (event) => {{
+                    {script}
+                }}
+            );"
+        );
+
+        if (execute)
+            await webView.ExecuteScriptAsync(script);
+
+        return script;
+    }
+
+    /// <summary>
+    /// Fire when the user clicked the "Reload" button on the info bar
+    /// </summary>
+    private void InfoBar_OnActionItemClicked(object sender, InfoBarActionItemEventArgs e)
+    {
+        _infoBar.Close();
+        ThreadHelper.JoinableTaskFactory.RunAsync(ReloadAsync).FireAndForget();
     }
 
     private void VSColorTheme_ThemeChanged(ThemeChangedEventArgs e)
     {
-        ThreadHelper.JoinableTaskFactory.RunAsync(SetChatThemeAsync).FireAndForget(true);
+        ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
+        {
+            await AddThemeScriptOnLoadAsync(true);
+        }).FireAndForget();
+    }
+
+    private void WebView_OnDOMContentLoaded(object sender, CoreWebView2DOMContentLoadedEventArgs e)
+    {
+        if (webView.Source.OriginalString != "about:blank")
+            _isChatPageLoaded = true;
     }
 }

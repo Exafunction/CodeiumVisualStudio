@@ -175,4 +175,13 @@
 		<GuidSymbol name="ChatToolWindow" value="{1a46fd64-28d5-434c-8eb3-17a02d419b53}"/>
 		
 	</Symbols>
+
+	<KeyBindings>
+		<!-- CMDSETID_StandardCommandSet97 for global shortcuts, GUID_TextEditorFactory for editor only shortcuts
+			 How to find them: https://stackoverflow.com/a/64912040/13253010 -->
+		<KeyBinding guid="CodeiumVS" id="OpenChatWindow"    editor="CMDSETID_StandardCommandSet97" mod1="Alt" mod2="Alt" key1="C" key2="C" />
+		<KeyBinding guid="CodeiumVS" id="ExplainCodeBlock"  editor="GUID_TextEditorFactory"        mod1="Alt" mod2="Alt" key1="C" key2="E" />
+		<KeyBinding guid="CodeiumVS" id="RefactorCodeBlock" editor="GUID_TextEditorFactory"        mod1="Alt" mod2="Alt" key1="C" key2="R" />
+	</KeyBindings>
+	
 </CommandTable>

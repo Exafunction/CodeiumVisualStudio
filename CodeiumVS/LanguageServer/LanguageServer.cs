@@ -211,6 +211,7 @@ public class LanguageServer
                 await Package.LogAsync("Failed to get extension base url");
             }
         }
+        Metadata.extension_version = languageServerVersion;
 
         progDialog.StartWaitDialog(
             "Codeium", $"Downloading language server v{languageServerVersion}", "", null,

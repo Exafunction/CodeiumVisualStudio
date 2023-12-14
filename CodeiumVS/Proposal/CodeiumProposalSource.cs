@@ -12,6 +12,7 @@ using CodeiumVS.Languages;
 
 namespace CodeiumVS;
 
+#pragma warning disable CS0618 // Type or member is obsolete
 internal class CodeiumProposalSource : ProposalSourceBase
 {
 
@@ -43,7 +44,7 @@ internal class CodeiumProposalSource : ProposalSourceBase
 	{
 		_document.FileActionOccurred -= OnFileActionOccurred;
 		_document.TextBuffer.ContentTypeChanged -= OnContentTypeChanged;
-		UpdateRequestTokenSource(null, "source is being disposed");
+		UpdateRequestTokenSource(null);
 		return base.DisposeAsync();
 	}
 
@@ -69,7 +70,7 @@ internal class CodeiumProposalSource : ProposalSourceBase
 
         CancellationTokenSource cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         cancellationToken = cancellationTokenSource.Token;
-        UpdateRequestTokenSource(cancellationTokenSource, "new proposal requested");
+        UpdateRequestTokenSource(cancellationTokenSource);
 
         if (completionState != null)
         {
@@ -113,7 +114,7 @@ internal class CodeiumProposalSource : ProposalSourceBase
         }
     }
 
-    private void UpdateRequestTokenSource(CancellationTokenSource newSource, string reason)
+    private void UpdateRequestTokenSource(CancellationTokenSource newSource)
     {
         CancellationTokenSource cancellationTokenSource = Interlocked.Exchange(ref _requestTokenSource, newSource);
         if (cancellationTokenSource != null)
@@ -191,3 +192,5 @@ internal class CodeiumProposalSource : ProposalSourceBase
     }
 
 }
+
+#pragma warning restore CS0618 // Type or member is obsolete

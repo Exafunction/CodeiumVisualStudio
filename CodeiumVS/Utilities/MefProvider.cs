@@ -50,7 +50,7 @@ internal class MefProvider
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             // sastify mef import
-            _compositionService = Requires.NotNull(await ServiceProvider.GetGlobalServiceAsync(typeof(SComponentModel)) as IComponentModel);
+            _compositionService = Requires.NotNull(await ServiceProvider.GetGlobalServiceAsync(typeof(SComponentModel)) as IComponentModel, "_compositionService");
             _compositionService.DefaultCompositionService.SatisfyImportsOnce(this);
 
             // disabled because not needed right now

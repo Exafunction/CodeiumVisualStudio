@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace CodeiumVS;
 
+#pragma warning disable CS0618 // Type or member is obsolete
 internal class CodeiumProposalManager : ProposalManagerBase
 {
     private readonly IWpfTextView view;
@@ -62,3 +63,5 @@ internal class CodeiumProposalManager : ProposalManagerBase
         return value;
     }
 }
+
+#pragma warning restore CS0618 // Type or member is obsolete

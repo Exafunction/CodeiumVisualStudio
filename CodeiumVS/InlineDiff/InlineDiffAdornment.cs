@@ -26,13 +26,19 @@ using System.Windows.Controls;
 
 namespace CodeiumVs.InlineDiff;
 
+internal sealed class Components
+{
+    internal const string DiffAdornmentLayerName = "CodeiumInlineDiffAdornment";
+
+    [Export]
+    [Name(DiffAdornmentLayerName)]
+    [Order(After = "Text")]
+    [TextViewRole(PredefinedTextViewRoles.Document)]
+    internal AdornmentLayerDefinition viewLayerDefinition = null;
+}
+
 internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffAdornment>, ILineTransformSource, IOleCommandTarget
 {
-    [Export(typeof(AdornmentLayerDefinition))]
-    [Name("CodeiumInlineDiffAdornment")]
-    [Order(After = "Text")]
-    private static readonly AdornmentLayerDefinition _codeiumInlineDiffAdornment;
-
     private static readonly LineTransform _defaultTransform   = new(1.0);
     private static MethodInfo? _fnSetInterceptsAggregateFocus = null;
 
@@ -59,7 +65,7 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
     private double _codeBlockHeight    = 0;
 
     private LineTransform _lineTransform = _defaultTransform;
-    private ITagAggregator<InterLineAdornmentTag>? _tagAggregator = null;
+    //private ITagAggregator<InterLineAdornmentTag>? _tagAggregator = null;
 
     public bool HasAdornment => _adornment != null;
     public bool IsAdornmentFocused => HasAdornment && (_adornment.ActiveView != null) && _adornment.ActiveView.VisualElement.IsKeyboardFocused;
@@ -67,7 +73,7 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
     public InlineDiffAdornment(IWpfTextView view) : base(view)
     {
         _vsHostView = _hostView.ToIVsTextView();
-        _layer = _hostView.GetAdornmentLayer("CodeiumInlineDiffAdornment");
+        _layer = _hostView.GetAdornmentLayer(Components.DiffAdornmentLayerName);
 
         _hostView.Closed                += HostView_OnClosed;
         _hostView.LayoutChanged         += HostView_OnLayoutChanged;
@@ -610,19 +616,20 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
     /// <returns></returns>
     private bool IsPeekOnAdornment()
     {
-        ThreadHelper.ThrowIfNotOnUIThread("IsPeekOnAnchor");
-        _tagAggregator ??= IntellisenseUtilities.GetTagAggregator<InterLineAdornmentTag>(_hostView);
+        //Microsoft.VisualStudio.Text.Editor.InterLineAdornmentTag
+        //ThreadHelper.ThrowIfNotOnUIThread("IsPeekOnAnchor");
+        //_tagAggregator ??= IntellisenseUtilities.GetTagAggregator<InterLineAdornmentTag>(_hostView);
 
-        SnapshotSpan extent = _leftTrackingSpan.GetSpan(_hostView.TextSnapshot);
+        //SnapshotSpan extent = _leftTrackingSpan.GetSpan(_hostView.TextSnapshot);
 
-        foreach (IMappingTagSpan<InterLineAdornmentTag> tag in _tagAggregator.GetTags(extent))
-        {
-            if (!tag.Tag.IsAboveLine && tag.Span.GetSpans(_hostView.TextSnapshot).IntersectsWith(extent))
-            {
-                return true;
-            }
-        }
-        return false;
+        //foreach (IMappingTagSpan<InterLineAdornmentTag> tag in _tagAggregator.GetTags(extent))
+        //{
+        //    if (!tag.Tag.IsAboveLine && tag.Span.GetSpans(_hostView.TextSnapshot).IntersectsWith(extent))
+        //    {
+        //        return true;
+        //    }
+        //}
+        return true;
     }
 
 #pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread

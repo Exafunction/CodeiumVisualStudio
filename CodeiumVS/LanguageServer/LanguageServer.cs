@@ -1,4 +1,5 @@
 ﻿using CodeiumVS.Packets;
+using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -45,15 +46,24 @@ public class LanguageServer
     public async Task InitializeAsync()
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        
+        string ideVersion = "17.0", locale = "en-US";
 
-        EnvDTE.DTE VSDTE = (EnvDTE.DTE)Marshal.GetActiveObject("VisualStudio.DTE");
+        try
+        {
+            locale = CultureInfo.CurrentUICulture.Name;
+            Version? version = await VS.Shell.GetVsVersionAsync();
+            if (version != null) ideVersion = version.ToString();
+        }
+        catch (Exception) { }
+
         Metadata.request_id        = 0;
         Metadata.ide_name          = "visual_studio";
-        Metadata.ide_version       = VSDTE.Version;
+        Metadata.ide_version       = ideVersion;
         Metadata.extension_name    = Vsix.Name;
         Metadata.extension_version = Version;
         Metadata.session_id        = Guid.NewGuid().ToString();
-        Metadata.locale            = new CultureInfo(VSDTE.LocaleID).Name;
+        Metadata.locale            = locale;
         Metadata.disable_telemetry = false;
 
         await PrepareAsync();
@@ -167,9 +177,6 @@ public class LanguageServer
     // Download the language server (if not already) and start it
     public async Task PrepareAsync()
     {
-        string langServerFolder = Package.GetLanguageServerFolder();
-        Directory.CreateDirectory(langServerFolder);
-
         string binaryPath = Package.GetLanguageServerPath();
 
         if (File.Exists(binaryPath))
@@ -195,9 +202,13 @@ public class LanguageServer
         // until VS is closing, not sure how we can fix that without spawning a separate thread
         void ThreadDownloadLanguageServer()
         {
+            string langServerFolder = Package.GetLanguageServerFolder();
+            string downloadDest = Path.Combine(langServerFolder, "language-server.gz");
+
+            Directory.CreateDirectory(langServerFolder);
+            if (File.Exists(downloadDest)) File.Delete(downloadDest);
+
             Uri url = new($"https://github.com/Exafunction/codeium/releases/download/language-server-v{Version}/language_server_windows_x64.exe.gz");
-            string downloadDest = Path.Combine(Package.GetLanguageServerFolder(), "language-server.gz");
-            File.Delete(downloadDest);
 
             WebClient webClient = new();
 
@@ -280,8 +291,20 @@ public class LanguageServer
         string managerDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         string databaseDir = Package.GetDatabaseDirectory();
 
-        Directory.CreateDirectory(managerDir);
-        Directory.CreateDirectory(databaseDir);
+        try
+        {
+            Directory.CreateDirectory(managerDir);
+            Directory.CreateDirectory(databaseDir);
+        }
+        catch (Exception ex)
+        {
+            await Package.LogAsync($"LanguageServer.StartAsync: Failed to create directories; Exception: {ex}");
+            await VS.MessageBox.ShowErrorAsync(
+                "Codeium: Failed to create language server directories.",
+                "Please check the output window for more details."
+            );
+            return;
+        }
 
         process = new();
         process.StartInfo.FileName              = Package.GetLanguageServerPath();
@@ -301,10 +324,21 @@ public class LanguageServer
         process.Exited += LSP_OnExited;
 
         await Package.LogAsync("Starting language server");
-        process.Start();
-        process.BeginErrorReadLine();
 
-        Utilities.ProcessExtensions.MakeProcessExitOnParentExit(process);
+        try
+        {
+            process.Start();
+            process.BeginErrorReadLine();
+            Utilities.ProcessExtensions.MakeProcessExitOnParentExit(process);
+        }
+        catch (Exception ex)
+        {
+            await Package.LogAsync($"LanguageServer.StartAsync: Failed to start the language server; Exception: {ex}");
+            await VS.MessageBox.ShowErrorAsync(
+                "Codeium: Failed to start the language server.",
+                "Please check the output window for more details."
+            );
+        }
 
         string apiKeyFilePath = Package.GetAPIKeyPath();
         if (File.Exists(apiKeyFilePath))

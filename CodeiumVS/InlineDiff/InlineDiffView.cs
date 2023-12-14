@@ -12,6 +12,7 @@ using Microsoft.VisualStudio.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 
 namespace CodeiumVs.InlineDiff;
 
@@ -483,7 +484,7 @@ internal class InlineDiffView
         _viewer.Closed                        -= DifferenceViewer_OnClosed;
 
         // restore the selected line highlight for the host view
-        ShowSelectedLineForView(_hostView);
+        _hostView?.Options.SetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId, true);
     }
 
     /// <summary>
@@ -528,9 +529,9 @@ internal class InlineDiffView
     /// <param name="view"></param>
     private void ShowSelectedLineForView(IWpfTextView view)
     {
-        LeftView.Options.SetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId, (view == LeftView));
-        RightView.Options.SetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId, (view == RightView));
-        _hostView.Options.SetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId, (view == _hostView));
+        LeftView?.Options.SetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId, (view == LeftView));
+        RightView?.Options.SetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId, (view == RightView));
+        _hostView?.Options.SetOptionValue(DefaultWpfViewOptions.EnableHighlightCurrentLineId, (view == _hostView));
     }
 
     private void RightView_OnLostFocus(object sender, RoutedEventArgs e)

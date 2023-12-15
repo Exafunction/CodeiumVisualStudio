@@ -209,6 +209,7 @@ public class LanguageServer
             catch (Exception)
             {
                 await Package.LogAsync("Failed to get extension base url");
+                extensionBaseUrl = "https://github.com/Exafunction/codeium/releases/download";
             }
         }
         Metadata.extension_version = languageServerVersion;

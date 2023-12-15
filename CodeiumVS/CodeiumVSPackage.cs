@@ -236,7 +236,12 @@ public sealed class CodeiumVSPackage : ToolkitPackage
 
     public string GetLanguageServerPath()
     {
-        return Path.Combine(GetLanguageServerFolder(), "language_server_windows_x64.exe");
+        string binaryName = "language_server_windows_x64.exe";
+        if (SettingsPage.EnterpriseMode)
+        {
+            binaryName = "language_server_windows_x64_enterprise.exe";
+        }
+        return Path.Combine(GetLanguageServerFolder(), binaryName);
     }
 
     public string GetDatabaseDirectory()

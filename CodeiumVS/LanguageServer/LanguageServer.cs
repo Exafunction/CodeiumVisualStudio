@@ -21,7 +21,7 @@ namespace CodeiumVS;
 
 public class LanguageServer
 {
-    private const string Version = "1.6.7";
+    private const string Version = "1.6.10";
 
     private int Port = 0;
     private Process process;
@@ -192,9 +192,31 @@ public class LanguageServer
         var waitDialogFactory = (IVsThreadedWaitDialogFactory)await VS.Services.GetThreadedWaitDialogAsync();
         IVsThreadedWaitDialog4 progDialog = waitDialogFactory.CreateInstance();
 
+
+
+        string extensionBaseUrl = "https://github.com/Exafunction/codeium/releases/download";
+        string languageServerVersion = Version;
+        if (Package.SettingsPage.EnterpriseMode)
+        {
+            // Get the contents of /api/extension_base_url
+            try
+            {
+                string portalUrl = Package.SettingsPage.PortalUrl.TrimEnd('/');
+                string result = await new HttpClient().GetStringAsync(portalUrl + "/api/extension_base_url");
+                extensionBaseUrl = result.Trim().TrimEnd('/');
+                languageServerVersion = await new HttpClient().GetStringAsync(portalUrl + "/api/version");
+            }
+            catch (Exception)
+            {
+                await Package.LogAsync("Failed to get extension base url");
+                extensionBaseUrl = "https://github.com/Exafunction/codeium/releases/download";
+            }
+        }
+        Metadata.extension_version = languageServerVersion;
+
         progDialog.StartWaitDialog(
-            "Codeium", $"Downloading language server v{Version}", "", null,
-            $"Codeium: Downloading language server v{Version}", 0, false, true
+            "Codeium", $"Downloading language server v{languageServerVersion}", "", null,
+            $"Codeium: Downloading language server v{languageServerVersion}", 0, false, true
         );
 
         // the language server is downloaded in a thread so that it doesn't block the UI
@@ -208,7 +230,7 @@ public class LanguageServer
             Directory.CreateDirectory(langServerFolder);
             if (File.Exists(downloadDest)) File.Delete(downloadDest);
 
-            Uri url = new($"https://github.com/Exafunction/codeium/releases/download/language-server-v{Version}/language_server_windows_x64.exe.gz");
+            Uri url = new($"{extensionBaseUrl}/language-server-v{languageServerVersion}/language_server_windows_x64.exe.gz");
 
             WebClient webClient = new();
 
@@ -227,9 +249,9 @@ public class LanguageServer
                         double recievedBytesMb = e.BytesReceived / 1024.0 / 1024.0;
 
                         progDialog.UpdateProgress(
-                            $"Downloading language server v{Version} ({e.ProgressPercentage}%)",
+                            $"Downloading language server v{languageServerVersion} ({e.ProgressPercentage}%)",
                             $"{recievedBytesMb:f2}Mb / {totalBytesMb:f2}Mb",
-                            $"Codeium: Downloading language server v{Version} ({e.ProgressPercentage}%)",
+                            $"Codeium: Downloading language server v{languageServerVersion} ({e.ProgressPercentage}%)",
                             (int)e.BytesReceived, (int)e.TotalBytesToReceive, true, out _
                         );
 

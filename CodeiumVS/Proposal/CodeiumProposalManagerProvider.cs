@@ -7,6 +7,8 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace CodeiumVS;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+
 [Export(typeof(ProposalManagerProviderBase))]
 [Name("CodeiumProposalManagerProvider")]
 [Order(Before = "InlineCSharpProposalManagerProvider")]
@@ -19,3 +21,5 @@ internal class CodeiumProposalManagerProvider : ProposalManagerProviderBase
         return CodeiumProposalManager.TryCreateAsync(view, this);
     }
 }
+
+#pragma warning restore CS0618 // Type or member is obsolete

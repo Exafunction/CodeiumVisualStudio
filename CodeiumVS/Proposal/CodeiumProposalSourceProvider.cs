@@ -12,7 +12,8 @@ using CodeiumVS;
 
 namespace CodeiumVS;
 
-// this get called first
+#pragma warning disable CS0618 // Type or member is obsolete
+
 [Export(typeof(CodeiumProposalSourceProvider))]
 [Export(typeof(ProposalSourceProviderBase))]
 [Name("CodeiumProposalSourceProvider")]
@@ -27,7 +28,8 @@ internal class CodeiumProposalSourceProvider : ProposalSourceProviderBase
     internal CodeiumProposalSourceProvider(ITextDocumentFactoryService textDocumentFactoryService, SuggestionServiceBase suggestionServiceBase)
     {
         _textDocumentFactoryService = textDocumentFactoryService;
-        suggestionServiceBase.GetType().GetEvent("SuggestionAcceptedInternal", BindingFlags.Instance | BindingFlags.Public)?.AddEventHandler(suggestionServiceBase, new EventHandler<EventArgs>(OnSuggestionAccepted));
+        EventInfo? acceptedEvent = suggestionServiceBase.GetType().GetEvent("SuggestionAcceptedInternal", BindingFlags.Instance | BindingFlags.Public);
+        acceptedEvent?.AddEventHandler(suggestionServiceBase, new EventHandler<EventArgs>(OnSuggestionAccepted));
     }
 
     internal CodeiumProposalSource TryCreate(ITextView view)
@@ -36,8 +38,7 @@ internal class CodeiumProposalSourceProvider : ProposalSourceProviderBase
         wpfView = view as IWpfTextView;
         if (wpfView != null)
         {
-            ITextDocument document = null;
-            _textDocumentFactoryService.TryGetTextDocument(view.TextDataModel.DocumentBuffer, out document);
+            _textDocumentFactoryService.TryGetTextDocument(view.TextDataModel.DocumentBuffer, out ITextDocument document);
             if (document != null && IsAbsolutePath(document.FilePath))
             {
                 return view.Properties.GetOrCreateSingletonProperty(typeof(CodeiumProposalSource), () => new CodeiumProposalSource(wpfView, document));
@@ -57,12 +58,28 @@ internal class CodeiumProposalSourceProvider : ProposalSourceProviderBase
 
     private void OnSuggestionAccepted(object sender, EventArgs e)
     {
-        string proposalId = ((SuggestionAcceptedEventArgs)e).FinalProposal.ProposalId;
+        //string proposalId = ((SuggestionAcceptedEventArgs)e).FinalProposal.ProposalId;
 
-        CodeiumVSPackage.Instance.Log("Accepted completion " + proposalId);
+        // unfortunately in the SDK version 17.5.33428.388, there are no
+        // SuggestionAcceptedEventArgs so we have to use reflection here
+
+        FieldInfo? fieldFinalProposal = e.GetType().GetField("FinalProposal", BindingFlags.Instance | BindingFlags.Public);
+        if (fieldFinalProposal == null) return;
+
+        object finalProposal = fieldFinalProposal.GetValue(e);
+        if (finalProposal == null) return;
+
+        PropertyInfo? propertydProposalId = fieldFinalProposal.FieldType.GetProperty("ProposalId", BindingFlags.Instance | BindingFlags.Public);
+        if (propertydProposalId == null) return;
+
+        if (propertydProposalId.GetValue(finalProposal) is not string proposalId) return;
+
         ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
         {
+            await CodeiumVSPackage.Instance.LogAsync($"Accepted completion {proposalId}");
             await CodeiumVSPackage.Instance.LanguageServer.AcceptCompletionAsync(proposalId);
         }).FireAndForget(true);
     }
 }
+
+#pragma warning restore CS0618 // Type or member is obsolete

@@ -137,7 +137,7 @@
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.SDK">
-      <Version>17.8.37222</Version>
+      <Version>17.5.33428.388</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.SDK.VsixSuppression">
       <Version>14.1.37</Version>

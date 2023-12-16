@@ -63,7 +63,7 @@ public class ProcessExtensions
         public UIntPtr PeakJobMemoryUsed;
     }
 
-    public static void MakeProcessExitOnParentExit(Process process)
+    public static bool MakeProcessExitOnParentExit(Process process)
     {
         IntPtr hJob = CreateJobObject(IntPtr.Zero, null);
 
@@ -76,10 +76,11 @@ public class ProcessExtensions
 
         if (!SetInformationJobObject(hJob, JobObjectInfoType.ExtendedLimitInformation, extendedInfoPtr, (uint)length))
         {
-            throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+            return false;
         }
 
         AssignProcessToJobObject(hJob, process.Handle);
+        return true;
     }
 }
 

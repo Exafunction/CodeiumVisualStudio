@@ -7,20 +7,34 @@ using System.Collections.Generic;
 namespace CodeiumVS;
 
 #nullable enable
-public class NotificationInfoBar : IVsInfoBarUIEvents
+public class NotificationInfoBar : IVsInfoBarUIEvents, IVsShellPropertyEvents
 {
 
     private IVsInfoBarUIElement? view;
 
     private uint infoBarEventsCookie;
+    private uint shellPropertyEventsCookie;
 
+    private IVsShell? _vsShell;
     private IVsInfoBarHost? vsInfoBarHost;
+    private IVsInfoBarUIFactory? _vsInfoBarFactory;
 
     public bool IsShown { get; private set; }
 
     private Action? OnCloseCallback { get; set; }
 
     public IVsInfoBarUIElement? View => view;
+
+    public static readonly KeyValuePair<string, Action>[] SupportActions = [
+        new KeyValuePair<string, Action>("Ask for support on Discord", delegate
+        {
+            CodeiumVSPackage.OpenInBrowser("https://discord.gg/3XFf78nAx5");
+        }),
+        new KeyValuePair<string, Action>("Report issue on GitHub", delegate
+        {
+            CodeiumVSPackage.OpenInBrowser("https://github.com/Exafunction/CodeiumVisualStudio/issues/new");
+        }),
+    ];
 
     public NotificationInfoBar()
     {
@@ -33,19 +47,27 @@ public class NotificationInfoBar : IVsInfoBarUIEvents
 
         try
         {
-            IVsShell vsShell = ServiceProvider.GlobalProvider.GetService<SVsShell, IVsShell>();
-            IVsInfoBarUIFactory vsInfoBarFactory = ServiceProvider.GlobalProvider.GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>();
-            if (vsShell == null || vsInfoBarFactory == null) return;
-        
-            if (vsInfoBarFactory != null && ErrorHandler.Succeeded(vsShell.GetProperty((int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out var pvar)) && pvar is IVsInfoBarHost vsInfoBarHost)
+            _vsShell = ServiceProvider.GlobalProvider.GetService<SVsShell, IVsShell>();
+            _vsInfoBarFactory = ServiceProvider.GlobalProvider.GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>();
+            if (_vsShell == null || _vsInfoBarFactory == null) return;
+            
+            InfoBarModel infoBar = new(text, GetActionsItems(actions), icon ?? KnownMonikers.StatusInformation, canClose);
+
+            view = _vsInfoBarFactory.CreateInfoBar(infoBar);
+            view.Advise(this, out infoBarEventsCookie);
+
+            if (ErrorHandler.Succeeded(_vsShell.GetProperty((int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out var pvar)))
             {
-                InfoBarModel infoBar = new(text, GetActionsItems(actions), icon ?? KnownMonikers.StatusInformation, canClose);
-            
-                view = vsInfoBarFactory.CreateInfoBar(infoBar);
-                view.Advise(this, out infoBarEventsCookie);
-            
-                this.vsInfoBarHost = vsInfoBarHost;
-                this.vsInfoBarHost.AddInfoBar(view);
+                if (pvar is IVsInfoBarHost vsInfoBarHost)
+                {
+                    this.vsInfoBarHost = vsInfoBarHost;
+                    this.vsInfoBarHost.AddInfoBar(view);
+                }
+            }
+            else
+            {
+                // the MainWindowInfoBarHost has not been created yet, so we delay showing the notification
+                _vsShell.AdviseShellPropertyChanges(this, out shellPropertyEventsCookie);
 
                 IsShown = true;
                 OnCloseCallback = onCloseCallback;
@@ -107,6 +129,25 @@ public class NotificationInfoBar : IVsInfoBarUIEvents
     {
         ThreadHelper.ThrowIfNotOnUIThread("OnActionItemClicked");
         ((Action)actionItem.ActionContext)();
+    }
+
+    public int OnShellPropertyChange(int propid, object var)
+    {
+        ThreadHelper.ThrowIfNotOnUIThread("OnShellPropertyChange");
+
+        //if (propid == (int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost) // for some reaons, this doesn't work
+        if (_vsShell?.GetProperty((int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out var pvar) == VSConstants.S_OK)
+        {
+            _vsShell?.UnadviseShellPropertyChanges(shellPropertyEventsCookie);
+
+            if (pvar is IVsInfoBarHost vsInfoBarHost)
+            {
+                this.vsInfoBarHost = vsInfoBarHost;
+                this.vsInfoBarHost.AddInfoBar(view);
+            }
+        }
+
+        return VSConstants.S_OK;
     }
 }
 #nullable disable

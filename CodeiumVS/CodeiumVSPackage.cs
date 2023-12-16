@@ -192,7 +192,7 @@ public sealed class CodeiumVSPackage : ToolkitPackage
     }
 
     // Try three different ways to open url in the default browser
-    public void OpenInBrowser(string url)
+    public static void OpenInBrowser(string url)
     {
         Action<string>[] methods = [
             (_url) => {
@@ -215,11 +215,11 @@ public sealed class CodeiumVSPackage : ToolkitPackage
             }
             catch (Exception ex)
             {
-                Log($"Could not open in browser, encountered an exception: {ex}\n Retrying using another method");
+                Instance?.Log($"Could not open in browser, encountered an exception: {ex}\n Retrying using another method");
             }
         }
 
-        Log($"Codeium failed to open the browser, please use this URL instead: {url}");
+        Instance?.Log($"Codeium failed to open the browser, please use this URL instead: {url}");
         VS.MessageBox.Show("Codeium: Failed to open browser", $"Please use this URL instead (you can copy from the output window):\n{url}");
     }
 

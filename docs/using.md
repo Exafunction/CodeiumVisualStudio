@@ -72,4 +72,3 @@ When you have a warning, error, or diagnostic message in your code, hovering on 
 <p align="center">
   <image src="images/using_explain_problem.png"/>
 </p>
-

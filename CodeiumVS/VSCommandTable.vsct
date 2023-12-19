@@ -109,7 +109,7 @@
 					<LocCanonicalName>Codeium.RefactorCodeBlock</LocCanonicalName>
 				</Strings>
 			</Button>
-			
+
 			<!-- Generate Function Docstring -->
 			<Button guid="CodeiumVS" id="GenerateFunctionDocstring" priority="0x0002" type="Button">
 				<Parent guid="CodeiumVS" id="ContextGroupCodeium" />
@@ -122,7 +122,7 @@
 					<LocCanonicalName>Codeium.GenerateFunctionDocstring</LocCanonicalName>
 				</Strings>
 			</Button>
-			
+
 			<!-- Generate Function Unit Test -->
 			<Button guid="CodeiumVS" id="GenerateFunctionUnitTest" priority="0x0003" type="Button">
 				<Parent guid="CodeiumVS" id="ContextGroupCodeium" />
@@ -135,7 +135,7 @@
 					<LocCanonicalName>Codeium.GenerateFunctionUnitTest</LocCanonicalName>
 				</Strings>
 			</Button>
-			
+
 			<!-- Debug button --><!--
 			<Button guid="CodeiumVS" id="DebugButton" priority="0x0004" type="Button">
 				<Parent guid="CodeiumVS" id="ContextGroupCodeium" />
@@ -147,13 +147,13 @@
 					<LocCanonicalName>.Extensions.Codeium.DebugButton</LocCanonicalName>
 				</Strings>
 			</Button>-->
-			
+
 		</Buttons>
 
 	</Commands>
 
 	<Symbols>
-		
+
 		<GuidSymbol name="CodeiumVS" value="{61329f9d-a7a0-4910-ab50-a7a864a549fd}">
 			<IDSymbol name="ToolsSubMenuCodeium"        value="0x0001" />
 			<IDSymbol name="ToolsButtonsGroup"          value="0x0002" />
@@ -163,17 +163,17 @@
 			<IDSymbol name="SignIn"                     value="0x0101" />
 			<IDSymbol name="SignOut"                    value="0x0102" />
 			<IDSymbol name="EnterAuthToken"             value="0x0103" />
-			
+
 			<IDSymbol name="ExplainCodeBlock"           value="0x0104" />
 			<IDSymbol name="RefactorCodeBlock"          value="0x0105" />
 			<IDSymbol name="GenerateFunctionDocstring"  value="0x0106" />
 			<IDSymbol name="GenerateFunctionUnitTest"   value="0x0107" />
-			
+
 			<IDSymbol name="DebugButton"                value="0x0600" />
 		</GuidSymbol>
 
 		<GuidSymbol name="ChatToolWindow" value="{1a46fd64-28d5-434c-8eb3-17a02d419b53}"/>
-		
+
 	</Symbols>
 
 	<KeyBindings>
@@ -183,5 +183,5 @@
 		<KeyBinding guid="CodeiumVS" id="ExplainCodeBlock"  editor="GUID_TextEditorFactory"        mod1="Alt" mod2="Alt" key1="C" key2="E" />
 		<KeyBinding guid="CodeiumVS" id="RefactorCodeBlock" editor="GUID_TextEditorFactory"        mod1="Alt" mod2="Alt" key1="C" key2="R" />
 	</KeyBindings>
-	
+
 </CommandTable>

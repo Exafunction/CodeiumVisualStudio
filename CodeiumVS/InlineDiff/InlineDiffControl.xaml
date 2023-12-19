@@ -3,26 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0" 
+             xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
              xmlns:platform="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
              xmlns:toolkit="clr-namespace:Community.VisualStudio.Toolkit;assembly=Community.VisualStudio.Toolkit"
              xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
-             xmlns:imagecatalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog" 
-             
+             xmlns:imagecatalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+
              toolkit:Themes.UseVsTheme="True"
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="400"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              Background="Transparent"
-             
+
              PreviewKeyDown="UserControl_PreviewKeyDown"
              Name="InlineDiffControl_">
 
     <UserControl.Resources>
         <ResourceDictionary>
-            <!-- 
-            To customize a style provided by the toolkit, you need to make the resources 
+            <!--
+            To customize a style provided by the toolkit, you need to make the resources
             available by including the resource dictionary from the toolkit:
             -->
             <ResourceDictionary.MergedDictionaries>
@@ -34,7 +34,7 @@
             styles. These can be referenced using the keys from `Microsoft.VisualStudio.Shell.VsResourceKeys`.
             -->
             <Style x:Key="AcceptButton" TargetType="Button" BasedOn="{StaticResource {x:Static vsshell:VsResourceKeys.ThemedDialogButtonStyleKey}}">
-                <Setter Property="platform:ImageThemingUtilities.ImageBackgroundColor" 
+                <Setter Property="platform:ImageThemingUtilities.ImageBackgroundColor"
                         Value="{Binding Background, RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}"
                         />
 
@@ -56,9 +56,9 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
-            
+
             <Style x:Key="RejectButton" TargetType="Button" BasedOn="{StaticResource {x:Static vsshell:VsResourceKeys.ThemedDialogButtonStyleKey}}">
-                <Setter Property="platform:ImageThemingUtilities.ImageBackgroundColor" 
+                <Setter Property="platform:ImageThemingUtilities.ImageBackgroundColor"
                         Value="{Binding Background, RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}"
                         />
 
@@ -107,8 +107,8 @@
                         </TextBlock>
                     </Button>
 
-                    <Button Grid.Column="1" HorizontalAlignment="Left" Cursor="Hand" 
-                            Click="ButtonAccept_Click" Style="{StaticResource AcceptButton}" 
+                    <Button Grid.Column="1" HorizontalAlignment="Left" Cursor="Hand"
+                            Click="ButtonAccept_Click" Style="{StaticResource AcceptButton}"
                              ToolTip="Apply the proposal changes"
                             >
                         <TextBlock>
@@ -125,7 +125,7 @@
                     </Border>
                 </Grid>
             </Grid>
-            
+
         </StackPanel>
     </Grid>
 </UserControl>

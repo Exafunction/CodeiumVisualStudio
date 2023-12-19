@@ -17,18 +17,21 @@ using System.Threading;
 namespace CodeiumVS;
 
 //[ProvideAutoLoad(VSConstants.UICONTEXT.NoSolution_string, PackageAutoLoadFlags.BackgroundLoad)]
-//[ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)] // VisibilityConstraints example
+//[ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)] //
+// VisibilityConstraints example
 
 [Guid(PackageGuids.CodeiumVSString)]
 [InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Version)]
 [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 [ProvideMenuResource("Menus.ctmenu", 1)]
 [ProvideOptionPage(typeof(SettingsPage), "Codeium", "Codeium", 0, 0, true)]
-[ProvideToolWindow(typeof(ChatToolWindow),
-    MultiInstances = false,
-    Style = VsDockStyle.Tabbed, 
+[ProvideToolWindow(
+    typeof(ChatToolWindow), MultiInstances = false, Style = VsDockStyle.Tabbed,
     Orientation = ToolWindowOrientation.Right,
-    Window = "{3AE79031-E1BC-11D0-8F78-00A0C9110057}")] // default docking window, magic string for the guid of VSConstants.StandardToolWindows.SolutionExplorer
+    Window =
+        "{3AE79031-E1BC-11D0-8F78-00A0C9110057}")]  // default docking window, magic string for the
+                                                    // guid of
+                                                    // VSConstants.StandardToolWindows.SolutionExplorer
 public sealed class CodeiumVSPackage : ToolkitPackage
 {
     internal static CodeiumVSPackage? Instance { get; private set; }
@@ -39,36 +42,43 @@ public sealed class CodeiumVSPackage : ToolkitPackage
     public SettingsPage SettingsPage;
     public LanguageServer LanguageServer;
 
-    protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+    protected override async Task InitializeAsync(CancellationToken cancellationToken,
+                                                  IProgress<ServiceProgressData> progress)
     {
         Instance = this;
 
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-        LanguageServer   = new LanguageServer();
-        OutputWindow     = new OutputWindow();
+        LanguageServer = new LanguageServer();
+        OutputWindow = new OutputWindow();
         NotificationAuth = new NotificationInfoBar();
 
-        try 
+        try
         {
-            SettingsPage = GetDialogPage(typeof(SettingsPage)) as SettingsPage; 
+            SettingsPage = GetDialogPage(typeof(SettingsPage)) as SettingsPage;
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
 
         if (SettingsPage == null)
         {
-            await LogAsync($"CodeiumVSPackage.InitializeAsync: Failed to get settings page, using the default settings");
+            await LogAsync(
+                $"CodeiumVSPackage.InitializeAsync: Failed to get settings page, using the default settings");
             SettingsPage = new SettingsPage();
         }
 
-        try 
+        try
         {
             await this.RegisterCommandsAsync();
         }
         catch (Exception ex)
         {
-            await LogAsync($"CodeiumVSPackage.InitializeAsync: Failed to register commands; Exception {ex}");
-            await VS.MessageBox.ShowErrorAsync("Codeium: Failed to register commands.", "Codeium might not work correctly. Please check the output window for more details.");
+            await LogAsync(
+                $"CodeiumVSPackage.InitializeAsync: Failed to register commands; Exception {ex}");
+            await VS.MessageBox.ShowErrorAsync(
+                "Codeium: Failed to register commands.",
+                "Codeium might not work correctly. Please check the output window for more details.");
         }
 
         await LanguageServer.InitializeAsync();
@@ -93,7 +103,8 @@ public sealed class CodeiumVSPackage : ToolkitPackage
         if (Instance != null) return;
 
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-        IVsShell vsShell = (IVsShell)ServiceProvider.GlobalProvider.GetService(typeof(IVsShell)) ?? throw new NullReferenceException();
+        IVsShell vsShell = (IVsShell)ServiceProvider.GlobalProvider.GetService(typeof(IVsShell)) ??
+                           throw new NullReferenceException();
 
         Guid guidPackage = new(PackageGuids.CodeiumVSString);
         if (vsShell.IsPackageLoaded(ref guidPackage, out var _) == VSConstants.S_OK) return;
@@ -106,12 +117,14 @@ public sealed class CodeiumVSPackage : ToolkitPackage
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync();
 
-
-        if ((await GetServiceAsync(typeof(IMenuCommandService))) is OleMenuCommandService cmdService)
+        if ((await GetServiceAsync(typeof(IMenuCommandService)))is OleMenuCommandService cmdService)
         {
-            MenuCommand? commandSignIn = cmdService.FindCommand(new CommandID(PackageGuids.CodeiumVS, PackageIds.SignIn));
-            MenuCommand? commandSignOut = cmdService.FindCommand(new CommandID(PackageGuids.CodeiumVS, PackageIds.SignOut));
-            MenuCommand? commandEnterToken = cmdService.FindCommand(new CommandID(PackageGuids.CodeiumVS, PackageIds.EnterAuthToken));
+            MenuCommand? commandSignIn =
+                cmdService.FindCommand(new CommandID(PackageGuids.CodeiumVS, PackageIds.SignIn));
+            MenuCommand? commandSignOut =
+                cmdService.FindCommand(new CommandID(PackageGuids.CodeiumVS, PackageIds.SignOut));
+            MenuCommand? commandEnterToken = cmdService.FindCommand(
+                new CommandID(PackageGuids.CodeiumVS, PackageIds.EnterAuthToken));
 
             if (commandSignIn != null) commandSignIn.Visible = !IsSignedIn();
             if (commandSignOut != null) commandSignOut.Visible = IsSignedIn();
@@ -122,19 +135,24 @@ public sealed class CodeiumVSPackage : ToolkitPackage
         if (!IsSignedIn())
         {
             KeyValuePair<string, Action>[] actions = [
-                new KeyValuePair<string, Action>("Sign in", delegate 
-                { 
-                    ThreadHelper.JoinableTaskFactory.RunAsync(LanguageServer.SignInAsync).FireAndForget(true);
-                }),
-                new KeyValuePair<string, Action>("Use authentication token", delegate { new EnterTokenDialogWindow().ShowDialog(); }),
+                new KeyValuePair<string, Action>("Sign in",
+                                                 delegate {
+                                                     ThreadHelper.JoinableTaskFactory
+                                                         .RunAsync(LanguageServer.SignInAsync)
+                                                         .FireAndForget(true);
+                                                 }),
+                new KeyValuePair<string, Action>(
+                    "Use authentication token",
+                    delegate { new EnterTokenDialogWindow().ShowDialog(); }),
             ];
 
-            NotificationAuth.Show("[Codeium] To enable Codeium, please sign in to your account", KnownMonikers.AddUser, true, null, actions);
+            NotificationAuth.Show("[Codeium] To enable Codeium, please sign in to your account",
+                                  KnownMonikers.AddUser,
+                                  true,
+                                  null,
+                                  actions);
         }
-        else
-        {
-            await NotificationAuth.CloseAsync();
-        }
+        else { await NotificationAuth.CloseAsync(); }
 
         ChatToolWindow.Instance?.Reload();
     }
@@ -150,23 +168,23 @@ public sealed class CodeiumVSPackage : ToolkitPackage
             return clean;
         }
 
-        string urlAssociation = @"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http";
+        string urlAssociation =
+            @"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http";
         string browserPathKey = @"$BROWSER$\shell\open\command";
         try
         {
-            //Read default browser path from userChoiceLKey
-            RegistryKey userChoiceKey = Registry.CurrentUser.OpenSubKey(urlAssociation + @"\UserChoice", false);
+            // Read default browser path from userChoiceLKey
+            RegistryKey userChoiceKey =
+                Registry.CurrentUser.OpenSubKey(urlAssociation + @"\UserChoice", false);
 
-            //If user choice was not found, try machine default
+            // If user choice was not found, try machine default
             if (userChoiceKey == null)
             {
-                //Read default browser path from Win XP registry key
+                // Read default browser path from Win XP registry key
                 var browserKey = Registry.ClassesRoot.OpenSubKey(@"HTTP\shell\open\command", false);
 
-                //If browser path wasn’t found, try Win Vista (and newer) registry key
-                browserKey ??=
-                    Registry.CurrentUser.OpenSubKey(
-                    urlAssociation, false);
+                // If browser path wasn’t found, try Win Vista (and newer) registry key
+                browserKey ??= Registry.CurrentUser.OpenSubKey(urlAssociation, false);
                 var path = CleanifyBrowserPath(browserKey.GetValue(null) as string);
                 browserKey.Close();
                 return path;
@@ -195,15 +213,14 @@ public sealed class CodeiumVSPackage : ToolkitPackage
     public void OpenInBrowser(string url)
     {
         Action<string>[] methods = [
-            (_url) => {
+            (_url) =>
+            {
                 Process.Start(new ProcessStartInfo { FileName = _url, UseShellExecute = true });
             },
-            (_url) => {
-                Process.Start("explorer.exe", _url);
-            },
-            (_url) => {
-                Process.Start(GetDefaultBrowserPath(), _url);
-            }
+            (_url) =>
+            { Process.Start("explorer.exe", _url); },
+            (_url) =>
+            { Process.Start(GetDefaultBrowserPath(), _url); }
         ];
 
         foreach (var method in methods)
@@ -220,7 +237,9 @@ public sealed class CodeiumVSPackage : ToolkitPackage
         }
 
         Log($"Codeium failed to open the browser, please use this URL instead: {url}");
-        VS.MessageBox.Show("Codeium: Failed to open browser", $"Please use this URL instead (you can copy from the output window):\n{url}");
+        VS.MessageBox.Show(
+            "Codeium: Failed to open browser",
+            $"Please use this URL instead (you can copy from the output window):\n{url}");
     }
 
     public string GetAppDataPath()
@@ -254,15 +273,19 @@ public sealed class CodeiumVSPackage : ToolkitPackage
         return Path.Combine(GetAppDataPath(), "codeium_api_key");
     }
 
-    public bool IsSignedIn()                         { return LanguageServer.GetKey().Length > 0; }
-    public bool HasEnterprise()                      { return SettingsPage.EnterpriseMode;    }
+    public bool IsSignedIn()
+    {
+        return LanguageServer.GetKey().Length > 0;
+    }
+    public bool HasEnterprise()
+    {
+        return SettingsPage.EnterpriseMode;
+    }
 
     internal void Log(string v)
     {
-        ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
-        {
-            await LogAsync(v);
-        }).FireAndForget(true);
+        ThreadHelper.JoinableTaskFactory.RunAsync(async delegate { await LogAsync(v); })
+            .FireAndForget(true);
     }
 
     internal async Task LogAsync(string v)
@@ -272,17 +295,16 @@ public sealed class CodeiumVSPackage : ToolkitPackage
     }
 }
 
-
 // https://gist.github.com/madskristensen/4d205244dd92c37c82e7
 // this increase load time idk why, not needed now
-//public static class MefExtensions
+// public static class MefExtensions
 //{
 //    private static IComponentModel _compositionService;
 
 //    public static async Task SatisfyImportsOnceAsync(this object o)
 //    {
 //        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-//        _compositionService ??= ServiceProvider.GlobalProvider.GetService(typeof(SComponentModel)) as IComponentModel;
-//        _compositionService?.DefaultCompositionService.SatisfyImportsOnce(o);
+//        _compositionService ??= ServiceProvider.GlobalProvider.GetService(typeof(SComponentModel))
+//        as IComponentModel; _compositionService?.DefaultCompositionService.SatisfyImportsOnce(o);
 //    }
 //}

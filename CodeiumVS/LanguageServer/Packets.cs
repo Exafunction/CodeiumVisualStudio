@@ -8,49 +8,63 @@ namespace CodeiumVS.Packets;
 //   https://protogen.marcgravell.com/
 // </auto-generated>
 
-
 #region Designer generated code
 #pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192, IDE0028
 [global::ProtoBuf.ProtoContract()]
 public partial class GetCompletionsRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public Metadata metadata { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public Document document { get; set; }
+    public Document document {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public EditorOptions editor_options { get; set; }
+    public EditorOptions editor_options {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
-    public global::System.Collections.Generic.List<Document> other_documents { get; } = new global::System.Collections.Generic.List<Document>();
+    public global::System.Collections.Generic.List<Document> other_documents {
+        get;
+    } = new global::System.Collections.Generic.List<Document>();
 
     [global::ProtoBuf.ProtoMember(6)]
-    public MockResponseData mock_response_data { get; set; }
+    public MockResponseData mock_response_data {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(8)]
-    public bool disable_cache { get; set; }
+    public bool disable_cache {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(9)]
-    public global::System.Collections.Generic.List<CodeContextItem> oracle_items { get; } = new global::System.Collections.Generic.List<CodeContextItem>();
+    public global::System.Collections.Generic.List<CodeContextItem> oracle_items {
+        get;
+    } = new global::System.Collections.Generic.List<CodeContextItem>();
 
     [global::ProtoBuf.ProtoMember(10)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string model_name { get; set; } = "";
-
+    public string model_name {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class Metadata : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -58,78 +72,112 @@ public partial class Metadata : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(7)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string ide_version { get; set; } = "";
+    public string ide_version {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(12)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string extension_name { get; set; } = "";
+    public string extension_name {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string extension_version { get; set; } = "";
+    public string extension_version {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string api_key { get; set; } = "";
+    public string api_key {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string locale { get; set; } = "";
+    public string locale {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(5)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string os { get; set; } = "";
+    public string os {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(8)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string hardware { get; set; } = "";
+    public string hardware {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(6)]
-    public bool disable_telemetry { get; set; }
+    public bool disable_telemetry {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(10)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string session_id { get; set; } = "";
+    public string session_id {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(16)]
     [global::ProtoBuf.CompatibilityLevel(global::ProtoBuf.CompatibilityLevel.Level300)]
-    public global::System.DateTime? ls_timestamp { get; set; }
+    public global::System.DateTime? ls_timestamp {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(9)]
-    public ulong request_id { get; set; }
+    public ulong request_id {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(11)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string source_address { get; set; } = "";
+    public string source_address {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(13)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string user_agent { get; set; } = "";
+    public string user_agent {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(14)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string url { get; set; } = "";
+    public string url {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(17)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string extension_path { get; set; } = "";
+    public string extension_path {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(19)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string ip_address { get; set; } = "";
+    public string ip_address {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(20)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string user_id { get; set; } = "";
-
+    public string user_id {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class Document : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -137,106 +185,136 @@ public partial class Document : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string relative_path { get; set; } = "";
+    public string relative_path {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string text { get; set; } = "";
+    public string text {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string editor_language { get; set; } = "";
+    public string editor_language {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(5)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(6)]
-    public ulong cursor_offset { get; set; }
+    public ulong cursor_offset {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(8)]
-    public DocumentPosition cursor_position { get; set; }
+    public DocumentPosition cursor_position {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(7)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string line_ending { get; set; } = "";
+    public string line_ending {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(9)]
-    public Range visible_range { get; set; }
-
+    public Range visible_range {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class DocumentPosition : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public ulong row { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public ulong col { get; set; }
-
+    public ulong col {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class Range : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public ulong startOffset { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public ulong endOffset { get; set; }
+    public ulong endOffset {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public DocumentPosition startPosition { get; set; }
+    public DocumentPosition startPosition {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
-    public DocumentPosition endPosition { get; set; }
-
+    public DocumentPosition endPosition {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class EditorOptions : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public ulong tab_size { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public bool insert_spaces { get; set; }
+    public bool insert_spaces {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public bool disable_autocomplete_in_comments { get; set; }
-
+    public bool disable_autocomplete_in_comments {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class MockResponseData : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
-    public global::System.Collections.Generic.List<Completion> completions { get; } = new global::System.Collections.Generic.List<Completion>();
-
+    public global::System.Collections.Generic.List<Completion> completions {
+        get;
+    } = new global::System.Collections.Generic.List<Completion>();
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class Completion : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -244,108 +322,159 @@ public partial class Completion : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string text { get; set; } = "";
+    public string text {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string stop { get; set; } = "";
+    public string stop {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(5)]
-    public double score { get; set; }
+    public double score {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(6, IsPacked = true)]
-    public ulong[] tokens { get; set; }
+    public ulong[] tokens {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(7)]
-    public global::System.Collections.Generic.List<string> decodedTokens { get; } = new global::System.Collections.Generic.List<string>();
+    public global::System.Collections.Generic.List<string> decodedTokens {
+        get;
+    } = new global::System.Collections.Generic.List<string>();
 
     [global::ProtoBuf.ProtoMember(8, IsPacked = true)]
-    public double[] probabilities { get; set; }
+    public double[] probabilities {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(9, IsPacked = true)]
-    public double[] adjustedProbabilities { get; set; }
+    public double[] adjustedProbabilities {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(10)]
-    public ulong generatedLength { get; set; }
+    public ulong generatedLength {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(12)]
-    public StopReason stopReason { get; set; }
+    public StopReason stopReason {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(13, IsPacked = true)]
-    public global::System.Collections.Generic.List<FilterReason> filterReasons { get; } = new global::System.Collections.Generic.List<FilterReason>();
+    public global::System.Collections.Generic.List<FilterReason> filterReasons {
+        get;
+    } = new global::System.Collections.Generic.List<FilterReason>();
 
     [global::ProtoBuf.ProtoMember(14)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string originalText { get; set; } = "";
+    public string originalText {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
     [global::System.Obsolete]
-    public string prefix { get; set; } = "";
+    public string prefix {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(11)]
     [global::System.Obsolete]
-    public double entropy { get; set; }
-
+    public double entropy {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class CodeContextItem : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string absolute_path { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
-    public global::System.Collections.Generic.List<WorkspacePath> workspace_paths { get; } = new global::System.Collections.Generic.List<WorkspacePath>();
+    public global::System.Collections.Generic.List<WorkspacePath> workspace_paths {
+        get;
+    } = new global::System.Collections.Generic.List<WorkspacePath>();
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string node_name { get; set; } = "";
+    public string node_name {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
-    public global::System.Collections.Generic.List<string> node_lineage { get; } = new global::System.Collections.Generic.List<string>();
+    public global::System.Collections.Generic.List<string> node_lineage {
+        get;
+    } = new global::System.Collections.Generic.List<string>();
 
     [global::ProtoBuf.ProtoMember(5)]
-    public uint start_line { get; set; }
+    public uint start_line {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(12)]
-    public uint start_col { get; set; }
+    public uint start_col {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(6)]
-    public uint end_line { get; set; }
+    public uint end_line {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(13)]
-    public uint end_col { get; set; }
+    public uint end_col {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(7)]
-    public CodeContextType context_type { get; set; }
+    public CodeContextType context_type {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(10)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(11)]
     [global::ProtoBuf.ProtoMap]
-    public global::System.Collections.Generic.Dictionary<string, SnippetWithWordCount> snippet_by_type { get; } = new global::System.Collections.Generic.Dictionary<string, SnippetWithWordCount>();
+    public global::System.Collections.Generic
+        .Dictionary<string, SnippetWithWordCount> snippet_by_type {
+            get;
+        } = new global::System.Collections.Generic.Dictionary<string, SnippetWithWordCount>();
 
     [global::ProtoBuf.ProtoMember(14)]
-    public GitRepoInfo repo_info { get; set; }
+    public GitRepoInfo repo_info {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(15)]
-    public byte[] file_content_hash { get; set; }
-
+    public byte[] file_content_hash {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class WorkspacePath : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -353,16 +482,18 @@ public partial class WorkspacePath : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string relative_path { get; set; } = "";
-
+    public string relative_path {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class SnippetWithWordCount : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -370,29 +501,33 @@ public partial class SnippetWithWordCount : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::ProtoBuf.ProtoMap]
-    public global::System.Collections.Generic.Dictionary<string, WordCount> word_count_by_splitter { get; } = new global::System.Collections.Generic.Dictionary<string, WordCount>();
-
+    public global::System.Collections.Generic.Dictionary<string, WordCount> word_count_by_splitter {
+        get;
+    } = new global::System.Collections.Generic.Dictionary<string, WordCount>();
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class WordCount : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::ProtoBuf.ProtoMap]
-    public global::System.Collections.Generic.Dictionary<string, long> word_count_map { get; } = new global::System.Collections.Generic.Dictionary<string, long>();
-
+    public global::System.Collections.Generic.Dictionary<string, long> word_count_map {
+        get;
+    } = new global::System.Collections.Generic.Dictionary<string, long>();
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class GitRepoInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -400,344 +535,465 @@ public partial class GitRepoInfo : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string owner { get; set; } = "";
+    public string owner {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(5)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string repo_name { get; set; } = "";
+    public string repo_name {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string commit { get; set; } = "";
+    public string commit {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string version_alias { get; set; } = "";
-
+    public string version_alias {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class GetCompletionsResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public State state { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public global::System.Collections.Generic.List<CompletionItem> completionItems { get; } = new global::System.Collections.Generic.List<CompletionItem>();
+    public global::System.Collections.Generic.List<CompletionItem> completionItems {
+        get;
+    } = new global::System.Collections.Generic.List<CompletionItem>();
 
     [global::ProtoBuf.ProtoMember(7)]
-    public global::System.Collections.Generic.List<CompletionItem> filteredCompletionItems { get; } = new global::System.Collections.Generic.List<CompletionItem>();
+    public global::System.Collections.Generic.List<CompletionItem> filteredCompletionItems {
+        get;
+    } = new global::System.Collections.Generic.List<CompletionItem>();
 
     [global::ProtoBuf.ProtoMember(3)]
-    public RequestInfo requestInfo { get; set; }
+    public RequestInfo requestInfo {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
-    public LatencyInfo latencyInfo { get; set; }
+    public LatencyInfo latencyInfo {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string modelTag { get; set; } = "";
+    public string modelTag {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(6)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string promptId { get; set; } = "";
-
+    public string promptId {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class State : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public CodeiumState state { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string message { get; set; } = "";
-
+    public string message {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class CompletionItem : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public Completion completion { get; set; }
 
     [global::ProtoBuf.ProtoMember(5)]
-    public Suffix suffix { get; set; }
+    public Suffix suffix {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public Range range { get; set; }
+    public Range range {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public CompletionSource source { get; set; }
+    public CompletionSource source {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(8)]
-    public global::System.Collections.Generic.List<CompletionPart> completionParts { get; } = new global::System.Collections.Generic.List<CompletionPart>();
-
+    public global::System.Collections.Generic.List<CompletionPart> completionParts {
+        get;
+    } = new global::System.Collections.Generic.List<CompletionPart>();
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class Suffix : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string text { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
-    public long delta_cursor_offset { get; set; }
-
+    public long delta_cursor_offset {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class CompletionPart : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string text { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
-    public ulong offset { get; set; }
+    public ulong offset {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public CompletionPartType type { get; set; }
+    public CompletionPartType type {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string prefix { get; set; } = "";
+    public string prefix {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(5)]
-    public ulong line { get; set; }
-
+    public ulong line {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class RequestInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string prompt_id { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
-    public LineType line_type { get; set; }
+    public LineType line_type {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
-    public CompletionsRequest completions_request { get; set; }
+    public CompletionsRequest completions_request {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string typing_as_suggested_prompt_suffix { get; set; } = "";
-
+    public string typing_as_suggested_prompt_suffix {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class CompletionsRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public CompletionConfiguration configuration { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string prompt { get; set; } = "";
+    public string prompt {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(8)]
-    public global::System.Collections.Generic.List<PromptElementRange> prompt_element_ranges { get; } = new global::System.Collections.Generic.List<PromptElementRange>();
+    public global::System.Collections.Generic.List<PromptElementRange> prompt_element_ranges {
+        get;
+    } = new global::System.Collections.Generic.List<PromptElementRange>();
 
     [global::ProtoBuf.ProtoMember(9)]
-    public global::System.Collections.Generic.List<PromptElementKindInfo> prompt_element_kind_infos { get; } = new global::System.Collections.Generic.List<PromptElementKindInfo>();
+    public global::System.Collections.Generic
+        .List<PromptElementKindInfo> prompt_element_kind_infos {
+            get;
+        } = new global::System.Collections.Generic.List<PromptElementKindInfo>();
 
     [global::ProtoBuf.ProtoMember(11)]
-    public ulong prompt_latency_ms { get; set; }
+    public ulong prompt_latency_ms {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(12)]
-    public global::System.Collections.Generic.List<PromptStageLatency> prompt_stage_latencies { get; } = new global::System.Collections.Generic.List<PromptStageLatency>();
+    public global::System.Collections.Generic.List<PromptStageLatency> prompt_stage_latencies {
+        get;
+    } = new global::System.Collections.Generic.List<PromptStageLatency>();
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string editor_language { get; set; } = "";
+    public string editor_language {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string absolute_path { get; set; } = "";
+    public string absolute_path {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(6)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string relative_path { get; set; } = "";
+    public string relative_path {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(13)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string workspace { get; set; } = "";
+    public string workspace {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(7)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string experiment_features_json { get; set; } = "";
+    public string experiment_features_json {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(14)]
-    public bool has_line_suffix { get; set; }
+    public bool has_line_suffix {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(15)]
-    public bool should_inline_fim { get; set; }
+    public bool should_inline_fim {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(16)]
-    public Repository repository { get; set; }
+    public Repository repository {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(17)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string model_tag { get; set; } = "";
+    public string model_tag {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(18)]
-    public global::System.Collections.Generic.List<string> experiment_tags { get; } = new global::System.Collections.Generic.List<string>();
-
+    public global::System.Collections.Generic.List<string> experiment_tags {
+        get;
+    } = new global::System.Collections.Generic.List<string>();
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class CompletionConfiguration : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public ulong num_completions { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public ulong max_tokens { get; set; }
+    public ulong max_tokens {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public ulong max_newlines { get; set; }
+    public ulong max_newlines {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
-    public double min_log_probability { get; set; }
+    public double min_log_probability {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
-    public double temperature { get; set; }
+    public double temperature {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(6)]
-    public double first_temperature { get; set; }
+    public double first_temperature {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(7)]
-    public ulong top_k { get; set; }
+    public ulong top_k {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(8)]
-    public double top_p { get; set; }
+    public double top_p {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(9)]
-    public global::System.Collections.Generic.List<string> stop_patterns { get; } = new global::System.Collections.Generic.List<string>();
+    public global::System.Collections.Generic.List<string> stop_patterns {
+        get;
+    } = new global::System.Collections.Generic.List<string>();
 
     [global::ProtoBuf.ProtoMember(10)]
-    public ulong seed { get; set; }
+    public ulong seed {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(11)]
-    public double fim_eot_prob_threshold { get; set; }
+    public double fim_eot_prob_threshold {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(12)]
-    public bool use_fim_eot_threshold { get; set; }
+    public bool use_fim_eot_threshold {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(13)]
-    public bool do_not_score_stop_tokens { get; set; }
+    public bool do_not_score_stop_tokens {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(14)]
-    public bool sqrt_len_normalized_log_prob_score { get; set; }
-
+    public bool sqrt_len_normalized_log_prob_score {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class PromptElementRange : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public PromptElementKind kind { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public ulong byte_offset_start { get; set; }
+    public ulong byte_offset_start {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public ulong byte_offset_end { get; set; }
+    public ulong byte_offset_end {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
-    public ulong token_offset_start { get; set; }
+    public ulong token_offset_start {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
-    public ulong token_offset_end { get; set; }
-
+    public ulong token_offset_end {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class PromptElementKindInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public PromptElementKind kind { get; set; }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public bool enabled { get; set; }
+    public bool enabled {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
-    public ulong num_considered { get; set; }
+    public ulong num_considered {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
-    public ulong num_included { get; set; }
-
+    public ulong num_included {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class PromptStageLatency : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string name { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
-    public ulong latency_ms { get; set; }
-
+    public ulong latency_ms {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class Repository : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -745,81 +1001,107 @@ public partial class Repository : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string git_origin_url { get; set; } = "";
+    public string git_origin_url {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string git_upstream_url { get; set; } = "";
+    public string git_upstream_url {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string reported_name { get; set; } = "";
+    public string reported_name {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(5)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string model_name { get; set; } = "";
+    public string model_name {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(6)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string submodule_url { get; set; } = "";
+    public string submodule_url {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(7)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string submodule_path { get; set; } = "";
-
+    public string submodule_path {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class LatencyInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public ulong client_latency_ms { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public ulong prompt_latency_ms { get; set; }
+    public ulong prompt_latency_ms {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public global::System.Collections.Generic.List<PromptStageLatency> prompt_stage_latencies { get; } = new global::System.Collections.Generic.List<PromptStageLatency>();
+    public global::System.Collections.Generic.List<PromptStageLatency> prompt_stage_latencies {
+        get;
+    } = new global::System.Collections.Generic.List<PromptStageLatency>();
 
     [global::ProtoBuf.ProtoMember(4)]
-    public ulong debounce_latency_ms { get; set; }
+    public ulong debounce_latency_ms {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
-    public ulong rpc_latency_ms { get; set; }
+    public ulong rpc_latency_ms {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(6)]
-    public ulong network_latency_ms { get; set; }
-
+    public ulong network_latency_ms {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class GetProcessesResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public uint lspPort { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public uint chatWebServerPort { get; set; }
+    public uint chatWebServerPort {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public uint chatClientPort { get; set; }
-
+    public uint chatClientPort {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class WebServerRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public HandshakeRequest handshake_request
@@ -828,7 +1110,8 @@ public partial class WebServerRequest : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(1, value);
     }
     public bool ShouldSerializehandshake_request() => __pbn__payload.Is(1);
-    public void Resethandshake_request() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 1);
+    public void Resethandshake_request() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 1);
 
     private global::ProtoBuf.DiscriminatedUnionObject __pbn__payload;
 
@@ -839,7 +1122,8 @@ public partial class WebServerRequest : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(2, value);
     }
     public bool ShouldSerializeget_chat_message_request() => __pbn__payload.Is(2);
-    public void Resetget_chat_message_request() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 2);
+    public void Resetget_chat_message_request() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 2);
 
     [global::ProtoBuf.ProtoMember(3)]
     public RecordChatFeedbackRequest record_chat_feedback_request
@@ -848,7 +1132,8 @@ public partial class WebServerRequest : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(3, value);
     }
     public bool ShouldSerializerecord_chat_feedback_request() => __pbn__payload.Is(3);
-    public void Resetrecord_chat_feedback_request() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 3);
+    public void Resetrecord_chat_feedback_request() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 3);
 
     [global::ProtoBuf.ProtoMember(4)]
     public ClearConversation clear_conversation
@@ -857,7 +1142,8 @@ public partial class WebServerRequest : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(4, value);
     }
     public bool ShouldSerializeclear_conversation() => __pbn__payload.Is(4);
-    public void Resetclear_conversation() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 4);
+    public void Resetclear_conversation() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 4);
 
     [global::ProtoBuf.ProtoMember(5)]
     public OpenFilePointer open_file_pointer
@@ -866,7 +1152,8 @@ public partial class WebServerRequest : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(5, value);
     }
     public bool ShouldSerializeopen_file_pointer() => __pbn__payload.Is(5);
-    public void Resetopen_file_pointer() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 5);
+    public void Resetopen_file_pointer() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 5);
 
     [global::ProtoBuf.ProtoMember(6)]
     public CancelInfightMessage cancel_infight_message
@@ -875,7 +1162,8 @@ public partial class WebServerRequest : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(6, value);
     }
     public bool ShouldSerializecancel_infight_message() => __pbn__payload.Is(6);
-    public void Resetcancel_infight_message() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 6);
+    public void Resetcancel_infight_message() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 6);
 
     [global::ProtoBuf.ProtoMember(7)]
     public InsertCodeAtCursor insert_at_cursor
@@ -884,7 +1172,8 @@ public partial class WebServerRequest : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(7, value);
     }
     public bool ShouldSerializeinsert_at_cursor() => __pbn__payload.Is(7);
-    public void Resetinsert_at_cursor() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 7);
+    public void Resetinsert_at_cursor() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 7);
 
     [global::ProtoBuf.ProtoMember(8)]
     public ApplyDiff apply_diff
@@ -893,7 +1182,8 @@ public partial class WebServerRequest : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(8, value);
     }
     public bool ShouldSerializeapply_diff() => __pbn__payload.Is(8);
-    public void Resetapply_diff() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 8);
+    public void Resetapply_diff() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 8);
 
     [global::ProtoBuf.ProtoMember(9)]
     public Heartbeat heartbeat
@@ -902,7 +1192,8 @@ public partial class WebServerRequest : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(9, value);
     }
     public bool ShouldSerializeheartbeat() => __pbn__payload.Is(9);
-    public void Resetheartbeat() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 9);
+    public void Resetheartbeat() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 9);
 
     [global::ProtoBuf.ProtoMember(10)]
     public UpdateUserSettingsRequest update_user_settings
@@ -911,81 +1202,104 @@ public partial class WebServerRequest : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(10, value);
     }
     public bool ShouldSerializeupdate_user_settings() => __pbn__payload.Is(10);
-    public void Resetupdate_user_settings() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 10);
-
+    public void Resetupdate_user_settings() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 10);
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class HandshakeRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public Metadata metadata { get; set; }
 
     [global::ProtoBuf.ProtoMember(9)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string user_id { get; set; } = "";
-
+    public string user_id {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class GetChatMessageRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public Metadata metadata { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string prompt { get; set; } = "";
+    public string prompt {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
-    public global::System.Collections.Generic.List<ChatMessage> chat_messages { get; } = new global::System.Collections.Generic.List<ChatMessage>();
+    public global::System.Collections.Generic.List<ChatMessage> chat_messages {
+        get;
+    } = new global::System.Collections.Generic.List<ChatMessage>();
 
     [global::ProtoBuf.ProtoMember(5)]
-    public Document active_document { get; set; }
+    public Document active_document {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(6)]
-    public global::System.Collections.Generic.List<string> open_document_paths { get; } = new global::System.Collections.Generic.List<string>();
+    public global::System.Collections.Generic.List<string> open_document_paths {
+        get;
+    } = new global::System.Collections.Generic.List<string>();
 
     [global::ProtoBuf.ProtoMember(7)]
-    public global::System.Collections.Generic.List<string> workspace_paths { get; } = new global::System.Collections.Generic.List<string>();
+    public global::System.Collections.Generic.List<string> workspace_paths {
+        get;
+    } = new global::System.Collections.Generic.List<string>();
 
     [global::ProtoBuf.ProtoMember(8)]
-    public ContextInclusionType context_inclusion_type { get; set; }
-
+    public ContextInclusionType context_inclusion_type {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ChatMessage : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string message_id { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
-    public ChatMessageSource source { get; set; }
+    public ChatMessageSource source {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::ProtoBuf.CompatibilityLevel(global::ProtoBuf.CompatibilityLevel.Level300)]
-    public global::System.DateTime? timestamp { get; set; }
+    public global::System.DateTime? timestamp {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string conversation_id { get; set; } = "";
+    public string conversation_id {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(9)]
-    public bool in_progress { get; set; }
+    public bool in_progress {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
     public ChatMessageIntent intent
@@ -994,7 +1308,8 @@ public partial class ChatMessage : global::ProtoBuf.IExtensible
         set => __pbn__content = new global::ProtoBuf.DiscriminatedUnionObject(5, value);
     }
     public bool ShouldSerializeintent() => __pbn__content.Is(5);
-    public void Resetintent() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__content, 5);
+    public void Resetintent() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__content,
+                                                                                 5);
 
     private global::ProtoBuf.DiscriminatedUnionObject __pbn__content;
 
@@ -1005,7 +1320,8 @@ public partial class ChatMessage : global::ProtoBuf.IExtensible
         set => __pbn__content = new global::ProtoBuf.DiscriminatedUnionObject(6, value);
     }
     public bool ShouldSerializeaction() => __pbn__content.Is(6);
-    public void Resetaction() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__content, 6);
+    public void Resetaction() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__content,
+                                                                                 6);
 
     [global::ProtoBuf.ProtoMember(7)]
     public ChatMessageError error
@@ -1014,7 +1330,8 @@ public partial class ChatMessage : global::ProtoBuf.IExtensible
         set => __pbn__content = new global::ProtoBuf.DiscriminatedUnionObject(7, value);
     }
     public bool ShouldSerializeerror() => __pbn__content.Is(7);
-    public void Reseterror() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__content, 7);
+    public void Reseterror() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__content,
+                                                                                7);
 
     [global::ProtoBuf.ProtoMember(8)]
     public ChatMessageStatus status
@@ -1023,16 +1340,17 @@ public partial class ChatMessage : global::ProtoBuf.IExtensible
         set => __pbn__content = new global::ProtoBuf.DiscriminatedUnionObject(8, value);
     }
     public bool ShouldSerializestatus() => __pbn__content.Is(8);
-    public void Resetstatus() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__content, 8);
-
+    public void Resetstatus() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__content,
+                                                                                 8);
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public IntentGeneric generic
@@ -1041,7 +1359,8 @@ public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
         set => __pbn__intent = new global::ProtoBuf.DiscriminatedUnionObject(1, value);
     }
     public bool ShouldSerializegeneric() => __pbn__intent.Is(1);
-    public void Resetgeneric() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 1);
+    public void Resetgeneric() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent,
+                                                                                  1);
 
     private global::ProtoBuf.DiscriminatedUnionObject __pbn__intent;
 
@@ -1052,7 +1371,8 @@ public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
         set => __pbn__intent = new global::ProtoBuf.DiscriminatedUnionObject(2, value);
     }
     public bool ShouldSerializeexplain_function() => __pbn__intent.Is(2);
-    public void Resetexplain_function() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 2);
+    public void Resetexplain_function() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 2);
 
     [global::ProtoBuf.ProtoMember(3)]
     public IntentFunctionDocstring function_docstring
@@ -1061,7 +1381,8 @@ public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
         set => __pbn__intent = new global::ProtoBuf.DiscriminatedUnionObject(3, value);
     }
     public bool ShouldSerializefunction_docstring() => __pbn__intent.Is(3);
-    public void Resetfunction_docstring() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 3);
+    public void Resetfunction_docstring() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 3);
 
     [global::ProtoBuf.ProtoMember(4)]
     public IntentFunctionRefactor function_refactor
@@ -1070,7 +1391,8 @@ public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
         set => __pbn__intent = new global::ProtoBuf.DiscriminatedUnionObject(4, value);
     }
     public bool ShouldSerializefunction_refactor() => __pbn__intent.Is(4);
-    public void Resetfunction_refactor() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 4);
+    public void Resetfunction_refactor() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 4);
 
     [global::ProtoBuf.ProtoMember(5)]
     public IntentCodeBlockExplain explain_code_block
@@ -1079,7 +1401,8 @@ public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
         set => __pbn__intent = new global::ProtoBuf.DiscriminatedUnionObject(5, value);
     }
     public bool ShouldSerializeexplain_code_block() => __pbn__intent.Is(5);
-    public void Resetexplain_code_block() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 5);
+    public void Resetexplain_code_block() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 5);
 
     [global::ProtoBuf.ProtoMember(6)]
     public IntentCodeBlockRefactor code_block_refactor
@@ -1088,7 +1411,8 @@ public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
         set => __pbn__intent = new global::ProtoBuf.DiscriminatedUnionObject(6, value);
     }
     public bool ShouldSerializecode_block_refactor() => __pbn__intent.Is(6);
-    public void Resetcode_block_refactor() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 6);
+    public void Resetcode_block_refactor() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 6);
 
     [global::ProtoBuf.ProtoMember(7)]
     public IntentFunctionUnitTests function_unit_tests
@@ -1097,7 +1421,8 @@ public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
         set => __pbn__intent = new global::ProtoBuf.DiscriminatedUnionObject(7, value);
     }
     public bool ShouldSerializefunction_unit_tests() => __pbn__intent.Is(7);
-    public void Resetfunction_unit_tests() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 7);
+    public void Resetfunction_unit_tests() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 7);
 
     [global::ProtoBuf.ProtoMember(8)]
     public IntentProblemExplain problem_explain
@@ -1106,7 +1431,8 @@ public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
         set => __pbn__intent = new global::ProtoBuf.DiscriminatedUnionObject(8, value);
     }
     public bool ShouldSerializeproblem_explain() => __pbn__intent.Is(8);
-    public void Resetproblem_explain() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 8);
+    public void Resetproblem_explain() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 8);
 
     [global::ProtoBuf.ProtoMember(9)]
     public IntentGenerateCode generate_code
@@ -1115,7 +1441,8 @@ public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
         set => __pbn__intent = new global::ProtoBuf.DiscriminatedUnionObject(9, value);
     }
     public bool ShouldSerializegenerate_code() => __pbn__intent.Is(9);
-    public void Resetgenerate_code() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 9);
+    public void Resetgenerate_code() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 9);
 
     [global::ProtoBuf.ProtoMember(10)]
     public IntentClassExplain explain_class
@@ -1124,48 +1451,53 @@ public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
         set => __pbn__intent = new global::ProtoBuf.DiscriminatedUnionObject(10, value);
     }
     public bool ShouldSerializeexplain_class() => __pbn__intent.Is(10);
-    public void Resetexplain_class() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 10);
-
+    public void Resetexplain_class() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 10);
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class IntentGeneric : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string text { get; set; } = "";
-
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class IntentFunctionExplain : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public FunctionInfo function_info { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path { get; set; } = "";
-
+    public string file_path {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class FunctionInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1173,315 +1505,419 @@ public partial class FunctionInfo : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string clean_function { get; set; } = "";
+    public string clean_function {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string docstring { get; set; } = "";
+    public string docstring {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string node_name { get; set; } = "";
+    public string node_name {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(5)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string @params { get; set; } = "";
+    public string @params {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(6)]
-    public int definition_line { get; set; }
+    public int definition_line {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(7)]
-    public int start_line { get; set; }
+    public int start_line {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(8)]
-    public int end_line { get; set; }
+    public int end_line {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(9)]
-    public int start_col { get; set; }
+    public int start_col {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(10)]
-    public int end_col { get; set; }
+    public int end_col {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(11)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string leading_whitespace { get; set; } = "";
+    public string leading_whitespace {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(12)]
-    public Language language { get; set; }
-
+    public Language language {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class IntentFunctionDocstring : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public FunctionInfo function_info { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path { get; set; } = "";
-
+    public string file_path {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class IntentFunctionRefactor : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public FunctionInfo function_info { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path { get; set; } = "";
+    public string file_path {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string refactor_description { get; set; } = "";
-
+    public string refactor_description {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class IntentCodeBlockExplain : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public CodeBlockInfo code_block_info { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path { get; set; } = "";
-
+    public string file_path {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class CodeBlockInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string raw_source { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
-    public int start_line { get; set; }
+    public int start_line {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public int start_col { get; set; }
+    public int start_col {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
-    public int end_line { get; set; }
+    public int end_line {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
-    public int end_col { get; set; }
-
+    public int end_col {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class IntentCodeBlockRefactor : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public CodeBlockInfo code_block_info { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path { get; set; } = "";
+    public string file_path {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string refactor_description { get; set; } = "";
-
+    public string refactor_description {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class IntentFunctionUnitTests : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public FunctionInfo function_info { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path { get; set; } = "";
+    public string file_path {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string instructions { get; set; } = "";
-
+    public string instructions {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class IntentProblemExplain : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string diagnostic_message { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
-    public CodeBlockInfo problematic_code { get; set; }
+    public CodeBlockInfo problematic_code {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string surrounding_code_snippet { get; set; } = "";
+    public string surrounding_code_snippet {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path { get; set; } = "";
+    public string file_path {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(6)]
-    public int line_number { get; set; }
-
+    public int line_number {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class IntentGenerateCode : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string instruction { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path { get; set; } = "";
+    public string file_path {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
-    public int line_number { get; set; }
-
+    public int line_number {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class IntentClassExplain : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public ClassInfo class_info { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path { get; set; } = "";
-
+    public string file_path {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ClassInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string raw_source { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
-    public int start_line { get; set; }
+    public int start_line {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public int end_line { get; set; }
+    public int end_line {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
-    public int start_col { get; set; }
+    public int start_col {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
-    public int end_col { get; set; }
+    public int end_col {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(6)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string leading_whitespace { get; set; } = "";
+    public string leading_whitespace {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(7)]
-    public global::System.Collections.Generic.List<string> fields_and_constructors { get; } = new global::System.Collections.Generic.List<string>();
+    public global::System.Collections.Generic.List<string> fields_and_constructors {
+        get;
+    } = new global::System.Collections.Generic.List<string>();
 
     [global::ProtoBuf.ProtoMember(8)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string docstring { get; set; } = "";
+    public string docstring {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(9)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string node_name { get; set; } = "";
+    public string node_name {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(10)]
-    public global::System.Collections.Generic.List<FunctionInfo> methods { get; } = new global::System.Collections.Generic.List<FunctionInfo>();
+    public global::System.Collections.Generic.List<FunctionInfo> methods {
+        get;
+    } = new global::System.Collections.Generic.List<FunctionInfo>();
 
     [global::ProtoBuf.ProtoMember(11)]
-    public global::System.Collections.Generic.List<string> node_lineage { get; } = new global::System.Collections.Generic.List<string>();
+    public global::System.Collections.Generic.List<string> node_lineage {
+        get;
+    } = new global::System.Collections.Generic.List<string>();
 
     [global::ProtoBuf.ProtoMember(12)]
-    public bool is_exported { get; set; }
+    public bool is_exported {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(13)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(14)]
-    public int definition_line { get; set; }
-
+    public int definition_line {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ChatMessageAction : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(2)]
     public uint num_tokens { get; set; }
 
     [global::ProtoBuf.ProtoMember(4)]
-    public global::System.Collections.Generic.List<CodeContextItem> context_items { get; } = new global::System.Collections.Generic.List<CodeContextItem>();
+    public global::System.Collections.Generic.List<CodeContextItem> context_items {
+        get;
+    } = new global::System.Collections.Generic.List<CodeContextItem>();
 
     [global::ProtoBuf.ProtoMember(1)]
     public ChatMessageActionGeneric generic
@@ -1490,7 +1926,8 @@ public partial class ChatMessageAction : global::ProtoBuf.IExtensible
         set => __pbn__action = new global::ProtoBuf.DiscriminatedUnionObject(1, value);
     }
     public bool ShouldSerializegeneric() => __pbn__action.Is(1);
-    public void Resetgeneric() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__action, 1);
+    public void Resetgeneric() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__action,
+                                                                                  1);
 
     private global::ProtoBuf.DiscriminatedUnionObject __pbn__action;
 
@@ -1501,245 +1938,289 @@ public partial class ChatMessageAction : global::ProtoBuf.IExtensible
         set => __pbn__action = new global::ProtoBuf.DiscriminatedUnionObject(3, value);
     }
     public bool ShouldSerializeedit() => __pbn__action.Is(3);
-    public void Resetedit() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__action, 3);
-
+    public void Resetedit() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__action,
+                                                                               3);
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ChatMessageActionGeneric : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string text { get; set; } = "";
-
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ChatMessageActionEdit : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string file_path { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
-    public DiffBlock diff { get; set; }
+    public DiffBlock diff {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public Language language { get; set; }
+    public Language language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string text_pre { get; set; } = "";
+    public string text_pre {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(5)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string text_post { get; set; } = "";
-
+    public string text_post {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class DiffBlock : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public int start_line { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public int end_line { get; set; }
+    public int end_line {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public UnifiedDiff unified_diff { get; set; }
+    public UnifiedDiff unified_diff {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
-    public Language from_language { get; set; }
+    public Language from_language {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
-    public Language to_language { get; set; }
-
+    public Language to_language {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class UnifiedDiff : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(3)]
-    public global::System.Collections.Generic.List<UnifiedDiffLine> lines { get; } = new global::System.Collections.Generic.List<UnifiedDiffLine>();
+    public global::System.Collections.Generic.List<UnifiedDiffLine> lines {
+        get;
+    } = new global::System.Collections.Generic.List<UnifiedDiffLine>();
 
     [global::ProtoBuf.ProtoContract()]
     public partial class UnifiedDiffLine : global::ProtoBuf.IExtensible
     {
         private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+            bool createIfMissing) =>
+            global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData,
+                                                           createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1)]
         [global::System.ComponentModel.DefaultValue("")]
         public string text { get; set; } = "";
 
         [global::ProtoBuf.ProtoMember(2)]
-        public UnifiedDiffLineType type { get; set; }
-
+        public UnifiedDiffLineType type {
+            get; set;
+        }
     }
-
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ChatMessageError : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string text { get; set; } = "";
-
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ChatMessageStatus : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public ChatMessageStatusContextRelevancy context_relevancy { get; set; }
-
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ChatMessageStatusContextRelevancy : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public bool is_loading { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public bool is_relevant { get; set; }
+    public bool is_relevant {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public global::System.Collections.Generic.List<string> query_suggestions { get; } = new global::System.Collections.Generic.List<string>();
-
+    public global::System.Collections.Generic.List<string> query_suggestions {
+        get;
+    } = new global::System.Collections.Generic.List<string>();
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class RecordChatFeedbackRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public Metadata metadata { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string message_id { get; set; } = "";
+    public string message_id {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
-    public ChatFeedbackType feedback { get; set; }
+    public ChatFeedbackType feedback {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string reason { get; set; } = "";
+    public string reason {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(5)]
     [global::ProtoBuf.CompatibilityLevel(global::ProtoBuf.CompatibilityLevel.Level300)]
-    public global::System.DateTime? timestamp { get; set; }
-
+    public global::System.DateTime? timestamp {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ClearConversation : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string conversation_id { get; set; } = "";
-
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class OpenFilePointer : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string file_path { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
-    public int start_line { get; set; }
+    public int start_line {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public int start_col { get; set; }
+    public int start_col {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(4)]
-    public int end_line { get; set; }
+    public int end_line {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
-    public int end_col { get; set; }
-
+    public int end_col {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class CancelInfightMessage : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string stream_id { get; set; } = "";
-
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class InsertCodeAtCursor : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string text { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
-    public ActiveEditorType editor_type { get; set; }
-
+    public ActiveEditorType editor_type {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ApplyDiff : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1747,52 +2228,56 @@ public partial class ApplyDiff : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path { get; set; } = "";
+    public string file_path {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
-    public DiffBlock diff { get; set; }
-
+    public DiffBlock diff {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class Heartbeat : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class UpdateUserSettingsRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public UserSettings user_settings { get; set; }
-
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class UserSettings : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public bool open_most_recent_chat_conversation { get; set; }
-
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class WebServerResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public HandshakeResponse handshake_response
@@ -1801,7 +2286,8 @@ public partial class WebServerResponse : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(1, value);
     }
     public bool ShouldSerializehandshake_response() => __pbn__payload.Is(1);
-    public void Resethandshake_response() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 1);
+    public void Resethandshake_response() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 1);
 
     private global::ProtoBuf.DiscriminatedUnionObject __pbn__payload;
 
@@ -1812,7 +2298,8 @@ public partial class WebServerResponse : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(2, value);
     }
     public bool ShouldSerializestate_update() => __pbn__payload.Is(2);
-    public void Resetstate_update() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 2);
+    public void Resetstate_update() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 2);
 
     [global::ProtoBuf.ProtoMember(3)]
     public OpenFilePointer open_file_pointer
@@ -1821,7 +2308,8 @@ public partial class WebServerResponse : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(3, value);
     }
     public bool ShouldSerializeopen_file_pointer() => __pbn__payload.Is(3);
-    public void Resetopen_file_pointer() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 3);
+    public void Resetopen_file_pointer() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 3);
 
     [global::ProtoBuf.ProtoMember(4)]
     public InsertCodeAtCursor insert_at_cursor
@@ -1830,7 +2318,8 @@ public partial class WebServerResponse : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(4, value);
     }
     public bool ShouldSerializeinsert_at_cursor() => __pbn__payload.Is(4);
-    public void Resetinsert_at_cursor() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 4);
+    public void Resetinsert_at_cursor() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 4);
 
     [global::ProtoBuf.ProtoMember(5)]
     public ApplyDiff apply_diff
@@ -1839,7 +2328,8 @@ public partial class WebServerResponse : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(5, value);
     }
     public bool ShouldSerializeapply_diff() => __pbn__payload.Is(5);
-    public void Resetapply_diff() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 5);
+    public void Resetapply_diff() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 5);
 
     [global::ProtoBuf.ProtoMember(6)]
     public ErrorResponse error_response
@@ -1848,138 +2338,165 @@ public partial class WebServerResponse : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(6, value);
     }
     public bool ShouldSerializeerror_response() => __pbn__payload.Is(6);
-    public void Reseterror_response() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 6);
-
+    public void Reseterror_response() =>
+        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 6);
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class HandshakeResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public UserStatus user_status { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public ChatMessageState initial_state { get; set; }
+    public ChatMessageState initial_state {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string language_server_address { get; set; } = "";
-
+    public string language_server_address {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class UserStatus : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public bool pro { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public bool disable_telemetry { get; set; }
+    public bool disable_telemetry {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string name { get; set; } = "";
+    public string name {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(4)]
-    public bool ignore_chat_telemetry_setting { get; set; }
+    public bool ignore_chat_telemetry_setting {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(5)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string team_id { get; set; } = "";
+    public string team_id {
+        get; set;
+    } = "";
 
     [global::ProtoBuf.ProtoMember(6)]
-    public UserTeamStatus team_status { get; set; }
-
+    public UserTeamStatus team_status {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ChatMessageState : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
-    public global::System.Collections.Generic.List<ChatMessageWithFeedback> messages { get; } = new global::System.Collections.Generic.List<ChatMessageWithFeedback>();
+    public global::System.Collections.Generic.List<ChatMessageWithFeedback> messages {
+        get;
+    } = new global::System.Collections.Generic.List<ChatMessageWithFeedback>();
 
     [global::ProtoBuf.ProtoMember(2)]
-    public bool is_receiving_message { get; set; }
+    public bool is_receiving_message {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
-    public UserSettings user_settings { get; set; }
-
+    public UserSettings user_settings {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ChatMessageWithFeedback : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public ChatMessage message { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public ChatFeedbackType feedback { get; set; }
+    public ChatFeedbackType feedback {
+        get; set;
+    }
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string stream_id { get; set; } = "";
-
+    public string stream_id {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class StateUpdate : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public ChatMessageState state { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
-    public bool is_partial_update { get; set; }
-
+    public bool is_partial_update {
+        get; set;
+    }
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class ErrorResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string error { get; set; } = "";
-
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class GetAuthTokenRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class GetAuthTokenResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1987,29 +2504,31 @@ public partial class GetAuthTokenResponse : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string uuid { get; set; } = "";
-
+    public string uuid {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class RegisterUserRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string firebase_id_token { get; set; } = "";
-
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class RegisterUserResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -2017,32 +2536,36 @@ public partial class RegisterUserResponse : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string name { get; set; } = "";
-
+    public string name {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class AcceptCompletionRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
     public Metadata metadata { get; set; }
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string completion_id { get; set; } = "";
-
+    public string completion_id {
+        get; set;
+    } = "";
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class AcceptCompletionResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
+        bool createIfMissing) =>
+        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 }
 
 [global::ProtoBuf.ProtoContract()]

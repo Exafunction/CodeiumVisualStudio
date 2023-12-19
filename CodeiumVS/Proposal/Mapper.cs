@@ -7,16 +7,20 @@ using Microsoft.VisualStudio.Language.Intellisense.AsyncCompletion;
 using Microsoft.VisualStudio.Utilities;
 
 namespace CodeiumVS.Languages;
-public record LangInfo(string Name, string Identifier, Packets.Language Type, bool IsTypeCharTriggerSupported = false, bool IsFormatDocumentSupported = true, bool IsBraceSimulationSupported = false, bool IsIntelliSenseDisabled = true);
+public record LangInfo(string Name, string Identifier, Packets.Language Type,
+                       bool IsTypeCharTriggerSupported = false,
+                       bool IsFormatDocumentSupported = true,
+                       bool IsBraceSimulationSupported = false, bool IsIntelliSenseDisabled = true);
 
 internal class KnownLanguages
 {
-    public static LangInfo Fallback { get; } = new LangInfo("Plain Text", "plaintext", Packets.Language.LANGUAGE_UNSPECIFIED, IsTypeCharTriggerSupported: true, IsFormatDocumentSupported: false);
+    public static LangInfo Fallback { get; } =
+        new LangInfo("Plain Text", "plaintext", Packets.Language.LANGUAGE_UNSPECIFIED,
+                     IsTypeCharTriggerSupported: true, IsFormatDocumentSupported: false);
 
-
-    public static LangInfo[] Default { get; } =
-    [
+    public static LangInfo[] Default { get; } = [
         Fallback,
+        // clang-format off
         new LangInfo("ABAP"               , "abap"                     , Packets.Language.LANGUAGE_UNSPECIFIED),
         new LangInfo("Windows Bat"        , "bat"                      , Packets.Language.LANGUAGE_UNSPECIFIED),
         new LangInfo("BibTeX"             , "bibtex"                   , Packets.Language.LANGUAGE_UNSPECIFIED),
@@ -74,8 +78,8 @@ internal class KnownLanguages
         new LangInfo("XML"                , "xml"                      , Packets.Language.LANGUAGE_XML),
         new LangInfo("XSL"                , "xsl"                      , Packets.Language.LANGUAGE_XSL),
         new LangInfo("YAML"               , "yaml"                     , Packets.Language.LANGUAGE_YAML),
+        // clang-format on
     ];
-
 }
 internal class LanguageEqualityComparer : IEqualityComparer<LangInfo>
 {
@@ -94,63 +98,64 @@ internal class Mapper
 {
     private static readonly Dictionary<string, LangInfo> _languagesByIdentifier =
         KnownLanguages.Default.Distinct(new LanguageEqualityComparer())
-        .ToDictionary((LangInfo x) => x.Identifier.ToLowerInvariant());
+            .ToDictionary((LangInfo x) => x.Identifier.ToLowerInvariant());
 
-    private static readonly Dictionary<string, LangInfo> _languagesByName = 
+    private static readonly Dictionary<string, LangInfo> _languagesByName =
         KnownLanguages.Default.ToDictionary((LangInfo x) => x.Name.ToLowerInvariant());
 
-    private static readonly ConcurrentDictionary<IContentType, string  > _extensionByContentType               = new();
-    private static readonly ConcurrentDictionary<string      , LangInfo> _languageByExtension                  = new();
-    private static readonly ConcurrentDictionary<IContentType, LangInfo> _contentTypeMap                       = new();
-    private static readonly ConcurrentDictionary<IContentType, bool    > _formatDocumentSupportedByContentType = new();
+    private static readonly ConcurrentDictionary<IContentType, string> _extensionByContentType =
+        new();
+    private static readonly ConcurrentDictionary<string, LangInfo> _languageByExtension = new();
+    private static readonly ConcurrentDictionary<IContentType, LangInfo> _contentTypeMap = new();
+    private static readonly ConcurrentDictionary<IContentType, bool>
+        _formatDocumentSupportedByContentType = new();
 
     public static LangInfo GetLanguage(DocumentView docView)
     {
-        return GetLanguage(docView.TextBuffer.ContentType, Path.GetExtension(docView.FilePath)?.Trim('.'));
+        return GetLanguage(docView.TextBuffer.ContentType,
+                           Path.GetExtension(docView.FilePath)?.Trim('.'));
     }
-    
+
     public static LangInfo GetLanguage(IContentType contentType, string? fileExtension = null)
     {
         string fileExtension2 = fileExtension;
-        return _contentTypeMap.GetOrAdd(contentType, (IContentType ct) => FindLanguage(ct, fileExtension2));
+        return _contentTypeMap.GetOrAdd(contentType,
+                                        (IContentType ct) => FindLanguage(ct, fileExtension2));
     }
 
-
-    public static bool IsFormatDocumentSupported(IContentType contentType, string? fileExtension = null)
+    public static bool IsFormatDocumentSupported(IContentType contentType,
+                                                 string? fileExtension = null)
     {
         string fileExtension2 = fileExtension;
-        return _formatDocumentSupportedByContentType.GetOrAdd(contentType, (IContentType ct) => GetLanguage(ct, fileExtension2).IsFormatDocumentSupported);
+        return _formatDocumentSupportedByContentType.GetOrAdd(
+            contentType,
+            (IContentType ct) => GetLanguage(ct, fileExtension2).IsFormatDocumentSupported);
     }
 
     private static LangInfo FindLanguage(IContentType type, string? fileExtension)
     {
         string text = type.TypeName.ToLowerInvariant().Replace("projection", "").Trim();
         string text2 = type.DisplayName.ToLowerInvariant().Replace("projection", "").Trim();
-        if (_languagesByIdentifier.TryGetValue(text, out LangInfo value) || _languagesByName.TryGetValue(text, out value) || _languagesByIdentifier.TryGetValue(text2, out value) || _languagesByName.TryGetValue(text2, out value))
+        if (_languagesByIdentifier.TryGetValue(text, out LangInfo value) ||
+            _languagesByName.TryGetValue(text, out value) ||
+            _languagesByIdentifier.TryGetValue(text2, out value) ||
+            _languagesByName.TryGetValue(text2, out value))
         {
             return value;
         }
         foreach (IContentType baseType in type.BaseTypes)
         {
             LangInfo language = FindLanguage(baseType, null);
-            if (language is not null && language != KnownLanguages.Fallback)
-            {
-                return language;
-            }
+            if (language is not null && language != KnownLanguages.Fallback) { return language; }
         }
-        if (fileExtension == null)
-        {
-            _extensionByContentType.TryGetValue(type, out fileExtension);
-        }
+        if (fileExtension == null) { _extensionByContentType.TryGetValue(type, out fileExtension); }
         if (fileExtension != null && _languageByExtension.TryGetValue(fileExtension, out value))
         {
             return value;
         }
-        if (string.IsNullOrEmpty(fileExtension))
-        {
-            return KnownLanguages.Fallback;
-        }
-        if (_languagesByIdentifier.TryGetValue(fileExtension, out value) || _languagesByName.TryGetValue(fileExtension, out value))
+        if (string.IsNullOrEmpty(fileExtension)) { return KnownLanguages.Fallback; }
+        if (_languagesByIdentifier.TryGetValue(fileExtension, out value) ||
+            _languagesByName.TryGetValue(fileExtension, out value))
         {
             _extensionByContentType.TryAdd(type, fileExtension);
             _languageByExtension.TryAdd(fileExtension, value);

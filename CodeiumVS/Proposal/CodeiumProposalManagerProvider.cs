@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace CodeiumVS;
 
-#pragma warning disable CS0618 // Type or member is obsolete
+#pragma warning disable CS0618  // Type or member is obsolete
 
 [Export(typeof(ProposalManagerProviderBase))]
 [Name("CodeiumProposalManagerProvider")]
@@ -16,10 +16,11 @@ namespace CodeiumVS;
 [ContentType("any")]
 internal class CodeiumProposalManagerProvider : ProposalManagerProviderBase
 {
-    public override Task<ProposalManagerBase?> GetProposalManagerAsync(ITextView view, CancellationToken cancel)
+    public override Task<ProposalManagerBase?> GetProposalManagerAsync(ITextView view,
+                                                                       CancellationToken cancel)
     {
         return CodeiumProposalManager.TryCreateAsync(view, this);
     }
 }
 
-#pragma warning restore CS0618 // Type or member is obsolete
+#pragma warning restore CS0618  // Type or member is obsolete

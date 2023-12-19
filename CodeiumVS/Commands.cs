@@ -16,7 +16,8 @@ internal sealed class CommandOpenChatWindow : BaseCommand<CommandOpenChatWindow>
 {
     protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
     {
-        ToolWindowPane toolWindowPane = await CodeiumVSPackage.Instance.ShowToolWindowAsync(typeof(ChatToolWindow), 0, create: true, CodeiumVSPackage.Instance.DisposalToken);
+        ToolWindowPane toolWindowPane = await CodeiumVSPackage.Instance.ShowToolWindowAsync(
+            typeof(ChatToolWindow), 0, create: true, CodeiumVSPackage.Instance.DisposalToken);
         if (toolWindowPane == null || toolWindowPane.Frame == null)
         {
             throw new NotSupportedException("Cannot create Codeium chat tool window");
@@ -52,7 +53,7 @@ internal sealed class CommandEnterAuthToken : BaseCommand<CommandEnterAuthToken>
 }
 
 //[Command(PackageIds.DebugButton)]
-//internal sealed class CommandDebugButton : BaseCommand<CommandDebugButton>
+// internal sealed class CommandDebugButton : BaseCommand<CommandDebugButton>
 //{
 
 //    //protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
@@ -63,13 +64,14 @@ internal sealed class CommandEnterAuthToken : BaseCommand<CommandEnterAuthToken>
 // this class provide the code context for the 4 right-click menu commands
 // otherwise, those commands will need to do the same thing repeatedly
 // this is rather ugly, but it works
-internal class BaseCommandContextMenu<T> : BaseCommand<T> where T : class, new()
+internal class BaseCommandContextMenu<T> : BaseCommand<T>
+    where T : class, new()
 {
     internal static long lastQuery = 0;
     internal static bool is_visible = false;
 
     protected static DocumentView? docView;
-    protected static string text; // the selected text
+    protected static string text;  // the selected text
     protected static bool is_function = false;
     protected static int start_line, end_line;
     protected static int start_col, end_col;
@@ -88,8 +90,7 @@ internal class BaseCommandContextMenu<T> : BaseCommand<T> where T : class, new()
 
         // If there are no selection, and we couldn't find any block that the caret is in
         // then we don't want to show the command
-        is_visible = Command.Visible = ThreadHelper.JoinableTaskFactory.Run(async delegate
-        {
+        is_visible = Command.Visible = ThreadHelper.JoinableTaskFactory.Run(async delegate {
             is_function = false;
 
             // any interactions with the `IVsTextView` should be done on the main thread
@@ -99,9 +100,11 @@ internal class BaseCommandContextMenu<T> : BaseCommand<T> where T : class, new()
             {
                 docView = await VS.Documents.GetActiveDocumentViewAsync();
                 if (docView?.TextView == null) return false;
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                await CodeiumVSPackage.Instance.LogAsync($"BaseCommandContextMenu: Failed to get the active document view; Exception: {ex}");
+                await CodeiumVSPackage.Instance.LogAsync(
+                    $"BaseCommandContextMenu: Failed to get the active document view; Exception: {ex}");
                 return false;
             }
 
@@ -114,7 +117,8 @@ internal class BaseCommandContextMenu<T> : BaseCommand<T> where T : class, new()
             // if there is no selection, attempt to get the code block at the caret
             if (selection.SelectedSpans.Count == 0 || start_position == end_position)
             {
-                Span blockSpan = CodeAnalyzer.GetBlockSpan(docView.TextView, selection.Start.Position.Position, out var tag);
+                Span blockSpan = CodeAnalyzer.GetBlockSpan(
+                    docView.TextView, selection.Start.Position.Position, out var tag);
                 if (tag == null) return false;
 
                 start_position = blockSpan.Start;
@@ -128,15 +132,18 @@ internal class BaseCommandContextMenu<T> : BaseCommand<T> where T : class, new()
                 is_function = tag?.Type == "Member";
             }
 
-            ITextSnapshotLine selectionStart = docView.TextBuffer.CurrentSnapshot.GetLineFromPosition(start_position);
-            ITextSnapshotLine selectionEnd = docView.TextBuffer.CurrentSnapshot.GetLineFromPosition(end_position);
+            ITextSnapshotLine selectionStart =
+                docView.TextBuffer.CurrentSnapshot.GetLineFromPosition(start_position);
+            ITextSnapshotLine selectionEnd =
+                docView.TextBuffer.CurrentSnapshot.GetLineFromPosition(end_position);
 
             start_line = selectionStart.LineNumber + 1;
             end_line = selectionEnd.LineNumber + 1;
             start_col = start_position - selectionStart.Start.Position + 1;
             end_col = end_position - selectionEnd.Start.Position + 1;
 
-            text = docView.TextBuffer.CurrentSnapshot.GetText(start_position, end_position - start_position);
+            text = docView.TextBuffer.CurrentSnapshot.GetText(start_position,
+                                                              end_position - start_position);
 
             return true;
         });
@@ -144,7 +151,8 @@ internal class BaseCommandContextMenu<T> : BaseCommand<T> where T : class, new()
 
     protected async Task<FunctionInfo?> GetFunctionInfoAsync()
     {
-        FunctionBlock? func = await CodeAnalyzer.GetFunctionBlockAsync(docView.TextView, start_line, start_col);
+        FunctionBlock? func =
+            await CodeAnalyzer.GetFunctionBlockAsync(docView.TextView, start_line, start_col);
 
         if (func == null)
         {
@@ -152,8 +160,7 @@ internal class BaseCommandContextMenu<T> : BaseCommand<T> where T : class, new()
             return null;
         }
 
-        return new()
-        {
+        return new() {
             raw_source = text,
             clean_function = text,
             node_name = func.Name,
@@ -169,8 +176,7 @@ internal class BaseCommandContextMenu<T> : BaseCommand<T> where T : class, new()
 
     protected CodeBlockInfo GetCodeBlockInfo()
     {
-        return new()
-        {
+        return new() {
             raw_source = text,
             start_line = start_line,
             end_line = end_line,
@@ -186,12 +192,15 @@ internal class CommandExplainCodeBlock : BaseCommandContextMenu<CommandExplainCo
     protected override void BeforeQueryStatus(EventArgs e)
     {
         base.BeforeQueryStatus(e);
-        if (Command.Visible) Command.Text = is_function ? "Codeium: Explain Function" : "Codeium: Explain Code block";
+        if (Command.Visible)
+            Command.Text =
+                is_function ? "Codeium: Explain Function" : "Codeium: Explain Code block";
     }
 
     protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
     {
-        LanguageServerController controller = (Package as CodeiumVSPackage).LanguageServer.Controller;
+        LanguageServerController controller =
+            (Package as CodeiumVSPackage).LanguageServer.Controller;
 
         if (is_function)
         {
@@ -203,7 +212,8 @@ internal class CommandExplainCodeBlock : BaseCommandContextMenu<CommandExplainCo
         else
         {
             CodeBlockInfo codeBlockInfo = GetCodeBlockInfo();
-            await controller.ExplainCodeBlockAsync(docView.Document.FilePath, languageInfo.Type, codeBlockInfo);
+            await controller.ExplainCodeBlockAsync(
+                docView.Document.FilePath, languageInfo.Type, codeBlockInfo);
         }
     }
 }
@@ -214,48 +224,56 @@ internal class CommandRefactorCodeBlock : BaseCommandContextMenu<CommandRefactor
     protected override void BeforeQueryStatus(EventArgs e)
     {
         base.BeforeQueryStatus(e);
-        if (Command.Visible) Command.Text = is_function ? "Codeium: Refactor Function" : "Codeium: Refactor Code block";
+        if (Command.Visible)
+            Command.Text =
+                is_function ? "Codeium: Refactor Function" : "Codeium: Refactor Code block";
     }
 
     protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
     {
         // get the caret screen position and create the dialog at that position
-        TextBounds caretLine = docView.TextView.TextViewLines.GetCharacterBounds(docView.TextView.Caret.Position.BufferPosition);
+        TextBounds caretLine = docView.TextView.TextViewLines.GetCharacterBounds(
+            docView.TextView.Caret.Position.BufferPosition);
         Point caretScreenPos = docView.TextView.VisualElement.PointToScreen(
-            new Point(caretLine.Left - docView.TextView.ViewportLeft, caretLine.Top - docView.TextView.ViewportTop)
-        );
+            new Point(caretLine.Left - docView.TextView.ViewportLeft,
+                      caretLine.Top - docView.TextView.ViewportTop));
 
         // highlight the selected codeblock
         TextHighlighter? highlighter = TextHighlighter.GetInstance(docView.TextView);
         highlighter?.AddHighlight(start_position, end_position - start_position);
 
         var dialog = RefactorCodeDialogWindow.GetOrCreate();
-        string? prompt = await dialog.ShowAndGetPromptAsync(languageInfo, caretScreenPos.X, caretScreenPos.Y);
+        string? prompt =
+            await dialog.ShowAndGetPromptAsync(languageInfo, caretScreenPos.X, caretScreenPos.Y);
 
         highlighter?.ClearAll();
 
         // user did not select any of the prompt
         if (prompt == null) return;
 
-        LanguageServerController controller = (Package as CodeiumVSPackage).LanguageServer.Controller;
+        LanguageServerController controller =
+            (Package as CodeiumVSPackage).LanguageServer.Controller;
 
         if (is_function)
         {
             FunctionInfo? functionInfo = await GetFunctionInfoAsync();
 
             if (functionInfo != null)
-                await controller.RefactorFunctionAsync(prompt, docView.Document.FilePath, functionInfo);
+                await controller.RefactorFunctionAsync(
+                    prompt, docView.Document.FilePath, functionInfo);
         }
         else
         {
             CodeBlockInfo codeBlockInfo = GetCodeBlockInfo();
-            await controller.RefactorCodeBlockAsync(prompt, docView.Document.FilePath, languageInfo.Type, codeBlockInfo);
+            await controller.RefactorCodeBlockAsync(
+                prompt, docView.Document.FilePath, languageInfo.Type, codeBlockInfo);
         }
     }
 }
 
 [Command(PackageIds.GenerateFunctionUnitTest)]
-internal class CommandGenerateFunctionUnitTest : BaseCommandContextMenu<CommandGenerateFunctionUnitTest>
+internal class CommandGenerateFunctionUnitTest
+    : BaseCommandContextMenu<CommandGenerateFunctionUnitTest>
 {
     protected override void BeforeQueryStatus(EventArgs e)
     {
@@ -265,16 +283,19 @@ internal class CommandGenerateFunctionUnitTest : BaseCommandContextMenu<CommandG
 
     protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
     {
-        LanguageServerController controller = (Package as CodeiumVSPackage).LanguageServer.Controller;
+        LanguageServerController controller =
+            (Package as CodeiumVSPackage).LanguageServer.Controller;
         FunctionInfo? functionInfo = await GetFunctionInfoAsync();
 
         if (functionInfo != null)
-            await controller.GenerateFunctionUnitTestAsync("Generate unit test", docView.Document.FilePath, functionInfo);
+            await controller.GenerateFunctionUnitTestAsync(
+                "Generate unit test", docView.Document.FilePath, functionInfo);
     }
 }
 
 [Command(PackageIds.GenerateFunctionDocstring)]
-internal class CommandGenerateFunctionDocstring : BaseCommandContextMenu<CommandGenerateFunctionDocstring>
+internal class CommandGenerateFunctionDocstring
+    : BaseCommandContextMenu<CommandGenerateFunctionDocstring>
 {
     protected override void BeforeQueryStatus(EventArgs e)
     {
@@ -284,10 +305,12 @@ internal class CommandGenerateFunctionDocstring : BaseCommandContextMenu<Command
 
     protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
     {
-        LanguageServerController controller = (Package as CodeiumVSPackage).LanguageServer.Controller;
+        LanguageServerController controller =
+            (Package as CodeiumVSPackage).LanguageServer.Controller;
         FunctionInfo? functionInfo = await GetFunctionInfoAsync();
 
         if (functionInfo != null)
-            await controller.GenerateFunctionDocstringAsync(docView.Document.FilePath, functionInfo);
+            await controller.GenerateFunctionDocstringAsync(docView.Document.FilePath,
+                                                            functionInfo);
     }
 }

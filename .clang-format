@@ -1,0 +1,7 @@
+Language: CSharp
+BreakBeforeBraces: Allman
+IndentWidth: 4
+ColumnLimit: 100
+AllowShortBlocksOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: WithoutElse
+BinPackArguments: false

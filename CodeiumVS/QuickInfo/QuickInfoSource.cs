@@ -17,12 +17,14 @@ using System.Threading.Tasks;
 
 namespace CodeiumVS.QuickInfo;
 
-
-internal sealed class CodeiumAsyncQuickInfoSource(ITextBuffer textBuffer) :
-    PropertyOwnerExtension<ITextBuffer, CodeiumAsyncQuickInfoSource>(textBuffer), IAsyncQuickInfoSource, IDisposable
+internal sealed class CodeiumAsyncQuickInfoSource
+(ITextBuffer textBuffer)
+    : PropertyOwnerExtension<ITextBuffer, CodeiumAsyncQuickInfoSource>(textBuffer),
+      IAsyncQuickInfoSource,
+      IDisposable
 {
     private ITextView _tagAggregatorTextView;
-    private ITagAggregator<IErrorTag>? _tagAggregator;
+    private ITagAggregator<IErrorTag> ? _tagAggregator;
 
     private static readonly ImageId _icon = KnownMonikers.StatusInformation.ToImageId();
 
@@ -31,34 +33,32 @@ internal sealed class CodeiumAsyncQuickInfoSource(ITextBuffer textBuffer) :
         if (content is string str) return str;
         if (content is ClassifiedTextRun textRun) return textRun.Text;
 
-        if (content is ContainerElement containter) 
+        if (content is ContainerElement containter)
         {
             string text = string.Empty;
-            foreach (var element in containter.Elements)
-                text += GetQuickInfoItemText(element);
+            foreach (var element in containter.Elements) text += GetQuickInfoItemText(element);
             return text;
         }
-        
-        if (content is ClassifiedTextElement textElement) 
+
+        if (content is ClassifiedTextElement textElement)
         {
             string text = string.Empty;
-            foreach (var element in textElement.Runs)
-                text += GetQuickInfoItemText(element);
+            foreach (var element in textElement.Runs) text += GetQuickInfoItemText(element);
             return text;
         }
 
         return string.Empty;
     }
 
-    public async Task<QuickInfoItem> GetQuickInfoItemAsync(IAsyncQuickInfoSession session,CancellationToken cancellationToken)
+    public async Task<QuickInfoItem> GetQuickInfoItemAsync(IAsyncQuickInfoSession session,
+                                                           CancellationToken cancellationToken)
     {
-        if (_disposed || session.TextView.TextBuffer != _owner) 
-            return null;
+        if (_disposed || session.TextView.TextBuffer != _owner) return null;
 
         await GetTagAggregatorAsync(session.TextView);
 
         Assumes.True(_tagAggregator != null,
-            "Codeium Quick Info Source couldn't create a tag aggregator for error tags");
+                     "Codeium Quick Info Source couldn't create a tag aggregator for error tags");
 
         // Put together the span over which tags are to be discovered.
         // This will be the zero-length span at the trigger point of the session.
@@ -75,8 +75,8 @@ internal sealed class CodeiumAsyncQuickInfoSource(ITextBuffer textBuffer) :
         // Must be on main thread when dealing with tag aggregator
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-        // Ask for all of the error tags that intersect our query span.  We'll get back a list of mapping tag spans.
-        // The first of these is what we'll use for our quick info.
+        // Ask for all of the error tags that intersect our query span.  We'll get back a list of
+        // mapping tag spans. The first of these is what we'll use for our quick info.
         IEnumerable<IMappingTagSpan<IErrorTag>> tags = _tagAggregator.GetTags(querySpan);
         ITrackingSpan appToSpan = null;
 
@@ -87,14 +87,13 @@ internal sealed class CodeiumAsyncQuickInfoSource(ITextBuffer textBuffer) :
             NormalizedSnapshotSpanCollection applicableToSpans = tag.Span.GetSpans(currentSnapshot);
             if ((applicableToSpans.Count == 0) || (tag.Tag.ToolTipContent == null)) continue;
 
-            // We've found a error tag at the right location with a tag span that maps to our subject buffer.
-            appToSpan = currentSnapshot.CreateTrackingSpan(
-                applicableToSpans[0].Span, SpanTrackingMode.EdgeInclusive
-            );
+            // We've found a error tag at the right location with a tag span that maps to our
+            // subject buffer.
+            appToSpan = currentSnapshot.CreateTrackingSpan(applicableToSpans[0].Span,
+                                                           SpanTrackingMode.EdgeInclusive);
 
-            appToSpan = IntellisenseUtilities.GetEncapsulatingSpan(
-                session.TextView, appToSpan, appToSpan
-            );
+            appToSpan =
+                IntellisenseUtilities.GetEncapsulatingSpan(session.TextView, appToSpan, appToSpan);
 
             problemMessage += GetQuickInfoItemText(tag.Tag.ToolTipContent) + " and ";
         }
@@ -104,18 +103,21 @@ internal sealed class CodeiumAsyncQuickInfoSource(ITextBuffer textBuffer) :
             var hyperLink = ClassifiedTextElement.CreateHyperlink(
                 "Codeium: Explain Problem",
                 "Ask codeium to explain the problem",
-                () => {
-                    ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
-                    {
-                        // TODO: Has the package been loaded at this point?
-                        await CodeiumVSPackage.Instance.LanguageServer.Controller.ExplainProblemAsync(
-                            problemMessage.Substring(0, problemMessage.Length - 5), appToSpan.GetSpan(currentSnapshot)
-                        );
-                    }).FireAndForget(true);
-                }
-            );
+                () =>
+                {
+                    ThreadHelper.JoinableTaskFactory
+                        .RunAsync(async delegate {
+                            // TODO: Has the package been loaded at this point?
+                            await CodeiumVSPackage.Instance.LanguageServer.Controller
+                                .ExplainProblemAsync(
+                                    problemMessage.Substring(0, problemMessage.Length - 5),
+                                    appToSpan.GetSpan(currentSnapshot));
+                        })
+                        .FireAndForget(true);
+                });
 
-            ContainerElement container = new(ContainerElementStyle.Wrapped, new ImageElement(_icon), hyperLink);
+            ContainerElement container =
+                new(ContainerElementStyle.Wrapped, new ImageElement(_icon), hyperLink);
             return new QuickInfoItem(appToSpan, container);
         }
 
@@ -131,11 +133,11 @@ internal sealed class CodeiumAsyncQuickInfoSource(ITextBuffer textBuffer) :
         }
         else if (_tagAggregatorTextView != textView)
         {
-            throw new ArgumentException("The Codeium Quick Info Source cannot be shared between TextViews.");
+            throw new ArgumentException(
+                "The Codeium Quick Info Source cannot be shared between TextViews.");
         }
     }
 }
-
 
 [Export(typeof(IAsyncQuickInfoSourceProvider))]
 [Name("Codeium Quick Info Provider")]
@@ -145,6 +147,7 @@ internal sealed class AsyncQuickInfoSourceProvider : IAsyncQuickInfoSourceProvid
 {
     public IAsyncQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer)
     {
-        return CodeiumAsyncQuickInfoSource.GetOrCreate(textBuffer, () => new CodeiumAsyncQuickInfoSource(textBuffer));
+        return CodeiumAsyncQuickInfoSource.GetOrCreate(
+            textBuffer, () => new CodeiumAsyncQuickInfoSource(textBuffer));
     }
 }

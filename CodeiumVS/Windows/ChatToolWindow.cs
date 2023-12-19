@@ -20,8 +20,7 @@ public class ChatToolWindow : ToolWindowPane
 {
     internal static ChatToolWindow? Instance { get; private set; }
 
-    public ChatToolWindow()
-        : base(null)
+    public ChatToolWindow() : base(null)
     {
         Instance = this;
         Caption = "Codeium Chat";
@@ -30,9 +29,8 @@ public class ChatToolWindow : ToolWindowPane
 
     public void Reload()
     {
-        ThreadHelper.JoinableTaskFactory.RunAsync(
-            (Content as ChatToolWindowControl).ReloadAsync
-        ).FireAndForget();
+        ThreadHelper.JoinableTaskFactory.RunAsync((Content as ChatToolWindowControl).ReloadAsync)
+            .FireAndForget();
     }
 }
 
@@ -57,12 +55,14 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         package = CodeiumVSPackage.Instance;
 
         // set the default background color to avoid flashing a white window
-        webView.DefaultBackgroundColor = VSColorTheme.GetThemedColor(EnvironmentColors.ToolWindowBackgroundBrushKey);
+        webView.DefaultBackgroundColor =
+            VSColorTheme.GetThemedColor(EnvironmentColors.ToolWindowBackgroundBrushKey);
 
         // create webview2 environment and load the webview
         string webviewDirectory = Path.Combine(package.GetAppDataPath(), "webview2");
         Directory.CreateDirectory(webviewDirectory);
-        CoreWebView2Environment env = await CoreWebView2Environment.CreateAsync(null, webviewDirectory);
+        CoreWebView2Environment env =
+            await CoreWebView2Environment.CreateAsync(null, webviewDirectory);
         try
         {
             // Try Catch this in case it's causing problems
@@ -70,11 +70,11 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         }
         catch (Exception ex)
         {
-            await package.LogAsync($"Failed to initialize webview core enviroment. Exception: {ex}");
+            await package.LogAsync(
+                $"Failed to initialize webview core enviroment. Exception: {ex}");
             await VS.MessageBox.ShowErrorAsync(
-                "Codeium: Failed to initialize webview core enviroment", 
-                "Chat might be unavailable. Please see more details in the output window."
-            );
+                "Codeium: Failed to initialize webview core enviroment",
+                "Chat might be unavailable. Please see more details in the output window.");
         }
 
         _isInitialized = true;
@@ -91,14 +91,15 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         // add the info bar to notify the user when the webview failed to load
         var model = new InfoBarModel(
             new[] {
-                new InfoBarTextSpan("It looks like Codeium Chat is taking too long to load, do you want to reload? "),
+                new InfoBarTextSpan(
+                    "It looks like Codeium Chat is taking too long to load, do you want to reload? "),
                 new InfoBarHyperlink("Reload")
             },
             KnownMonikers.IntellisenseWarning,
-            true
-        );
+            true);
 
-        _infoBar = await VS.InfoBar.CreateAsync(ChatToolWindow.Instance.Frame as IVsWindowFrame, model);
+        _infoBar =
+            await VS.InfoBar.CreateAsync(ChatToolWindow.Instance.Frame as IVsWindowFrame, model);
         if (_infoBar != null) _infoBar.ActionItemClicked += InfoBar_OnActionItemClicked;
 
         // listen for theme changes
@@ -121,13 +122,15 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         // check again in 10 seconds to see if the dom content was loaded
         // if it's not, show the info bar and ask the user if they want to
         // reload the page
-        Task.Delay(10_000).ContinueWith(
-            (task) => {
-                if (_isChatPageLoaded) return;
-                _infoBar?.TryShowInfoBarUIAsync().FireAndForget();
-            },
-            TaskScheduler.Default
-        ).FireAndForget();
+        Task.Delay(10_000)
+            .ContinueWith(
+                (task) =>
+                {
+                    if (_isChatPageLoaded) return;
+                    _infoBar?.TryShowInfoBarUIAsync().FireAndForget();
+                },
+                TaskScheduler.Default)
+            .FireAndForget();
 
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -140,41 +143,38 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         string serverUrl = $"ws://127.0.0.1:{gpr.chatWebServerPort}";
         string clientUrl = $"http://127.0.0.1:{gpr.chatClientPort}";
 
-        Dictionary<string, string> data = new()
-        {
-            { "api_key"                   , metadata.api_key           },
-            { "extension_name"            , metadata.extension_name    },
-            { "extension_version"         , metadata.extension_version },
-            { "ide_name"                  , metadata.ide_name          },
-            { "ide_version"               , metadata.ide_version       },
-            { "locale"                    , metadata.locale            },
-            { "ide_telemetry_enabled"     , "true"                     },
-            { "app_name"                  , "Visual Studio"            },
-            { "web_server_url"            , serverUrl                  },
-            { "has_dev_extension"         , "false"                    },
-            { "open_file_pointer_enabled" , "true"                     },
-            { "diff_view_enabled"         , "true"                     },
-            { "insert_at_cursor_enabled"  , "true"                     },
-            {
-                "has_enterprise_extension",
-                package.HasEnterprise().ToString().ToLower()
-            }
-        };
+        Dictionary<string, string> data =
+            new() { { "api_key", metadata.api_key },
+                    { "extension_name", metadata.extension_name },
+                    { "extension_version", metadata.extension_version },
+                    { "ide_name", metadata.ide_name },
+                    { "ide_version", metadata.ide_version },
+                    { "locale", metadata.locale },
+                    { "ide_telemetry_enabled", "true" },
+                    { "app_name", "Visual Studio" },
+                    { "web_server_url", serverUrl },
+                    { "has_dev_extension", "false" },
+                    { "open_file_pointer_enabled", "true" },
+                    { "diff_view_enabled", "true" },
+                    { "insert_at_cursor_enabled", "true" },
+                    { "has_enterprise_extension", package.HasEnterprise().ToString().ToLower() } };
 
-        string uriString = clientUrl + "?" + string.Join("&", data.Select((pair) => $"{pair.Key}={pair.Value}"));
+        string uriString =
+            clientUrl + "?" + string.Join("&", data.Select((pair) => $"{pair.Key}={pair.Value}"));
 
         try
         {
-            if (webView.Source?.OriginalString == uriString) webView.Reload();
-            else webView.Source = new Uri(uriString);
+            if (webView.Source?.OriginalString == uriString)
+                webView.Reload();
+            else
+                webView.Source = new Uri(uriString);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await package.LogAsync($"Failed to open the chat page. Exception: {ex}");
             await VS.MessageBox.ShowErrorAsync(
                 "Codeium: Failed to open the chat page",
-                "We're sorry for the inconvenience. Please see more details in the output window."
-            );
+                "We're sorry for the inconvenience. Please see more details in the output window.");
         }
     }
 
@@ -183,28 +183,32 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
     /// </summary>
     private void WebView_OnGotFocus(object sender, System.Windows.RoutedEventArgs e)
     {
-        ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        ThreadHelper.JoinableTaskFactory
+            .RunAsync(async delegate {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            // the GotFocus event is fired event when the user is switching to another tab
-            // i don't know why this happens, but this is a workaround
+                // the GotFocus event is fired event when the user is switching to another tab
+                // i don't know why this happens, but this is a workaround
 
-            // code taken from VS.Windows.GetCurrentWindowAsync
-            IVsMonitorSelection? monitorSelection = await VS.Services.GetMonitorSelectionAsync();
-            monitorSelection.GetCurrentElementValue((uint)VSConstants.VSSELELEMID.SEID_WindowFrame, out object selection);
+                // code taken from VS.Windows.GetCurrentWindowAsync
+                IVsMonitorSelection? monitorSelection =
+                    await VS.Services.GetMonitorSelectionAsync();
+                monitorSelection.GetCurrentElementValue(
+                    (uint)VSConstants.VSSELELEMID.SEID_WindowFrame, out object selection);
 
-            IVsWindowFrame chatFrame = ChatToolWindow.Instance.Frame as IVsWindowFrame;
+                IVsWindowFrame chatFrame = ChatToolWindow.Instance.Frame as IVsWindowFrame;
 
-            if (selection is IVsWindowFrame6 frame && frame != chatFrame && !frame.IsInSameTabGroup(chatFrame))
-            {
-                chatFrame.Show();
-            }
+                if (selection is IVsWindowFrame6 frame && frame != chatFrame &&
+                    !frame.IsInSameTabGroup(chatFrame))
+                {
+                    chatFrame.Show();
+                }
 
-            // focus the text input
-            await webView.ExecuteScriptAsync("document.getElementsByClassName('ql-editor')[0].focus()");
-
-        }).FireAndForget();
+                // focus the text input
+                await webView.ExecuteScriptAsync(
+                    "document.getElementsByClassName('ql-editor')[0].focus()");
+            })
+            .FireAndForget();
     }
 
     /// <summary>
@@ -277,7 +281,7 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 	            --vscode-checkbox-background:              #{GetColor(CommonControlsColors.CheckBoxBackgroundBrushKey):x8};
 	            --vscode-checkbox-border:                  #{GetColor(CommonControlsColors.CheckBoxBorderBrushKey):x8};
 	            --vscode-checkbox-foreground:              #{GetColor(CommonControlsColors.CheckBoxTextBrushKey):x8};
-                
+
                 /* drop down */
 	            --vscode-settings-dropdownListBorder:      #{GetColor(EnvironmentColors.DropDownBorderBrushKey):x8};
 	            --vscode-dropdown-background:              #{GetColor(EnvironmentColors.DropDownBackgroundBrushKey):x8};
@@ -315,16 +319,17 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 
         string script = GetSetThemeScript();
         _themeScriptId = await webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(
+            // clang-format off
             @$"addEventListener(
                 ""DOMContentLoaded"",
                 (event) => {{
                     {script}
                 }}
             );"
+            // clang-format on
         );
 
-        if (execute)
-            await webView.ExecuteScriptAsync(script);
+        if (execute) await webView.ExecuteScriptAsync(script);
 
         return script;
     }
@@ -340,15 +345,13 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 
     private void VSColorTheme_ThemeChanged(ThemeChangedEventArgs e)
     {
-        ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
-        {
-            await AddThemeScriptOnLoadAsync(true);
-        }).FireAndForget();
+        ThreadHelper.JoinableTaskFactory
+            .RunAsync(async delegate { await AddThemeScriptOnLoadAsync(true); })
+            .FireAndForget();
     }
 
     private void WebView_OnDOMContentLoaded(object sender, CoreWebView2DOMContentLoadedEventArgs e)
     {
-        if (webView.Source.OriginalString != "about:blank")
-            _isChatPageLoaded = true;
+        if (webView.Source.OriginalString != "about:blank") _isChatPageLoaded = true;
     }
 }

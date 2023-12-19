@@ -8,11 +8,13 @@ using System.ComponentModel.Composition;
 
 namespace CodeiumVS.QuickInfo;
 
-internal class IntellisenseController : TextViewExtension<ITextView, IntellisenseController>, IIntellisenseController
+internal class IntellisenseController : TextViewExtension<ITextView, IntellisenseController>,
+                                        IIntellisenseController
 {
     private readonly IList<ITextBuffer> _subjectBuffer;
 
-    internal IntellisenseController(ITextView hostView, IList<ITextBuffer> subjectBuffers) : base(hostView)
+    internal IntellisenseController(ITextView hostView, IList<ITextBuffer> subjectBuffers)
+        : base(hostView)
     {
         _subjectBuffer = subjectBuffers;
         _hostView.MouseHover += OnTextViewMouseHover;
@@ -28,21 +30,17 @@ internal class IntellisenseController : TextViewExtension<ITextView, Intellisens
             new SnapshotPoint(_hostView.TextSnapshot, e.Position),
             PointTrackingMode.Positive,
             snapshot => _subjectBuffer.Contains(snapshot.TextBuffer),
-            PositionAffinity.Predecessor
-        );
+            PositionAffinity.Predecessor);
 
         if (!point.HasValue) return;
 
         // make a tracking point of the source
         ITrackingPoint triggerPoint = point.Value.Snapshot.CreateTrackingPoint(
-            point.Value.Position, PointTrackingMode.Positive
-        );
+            point.Value.Position, PointTrackingMode.Positive);
 
-        ThreadHelper.JoinableTaskFactory.Run(async delegate
-        {
+        ThreadHelper.JoinableTaskFactory.Run(async delegate {
             await MefProvider.Instance.AsyncQuickInfoBroker.TriggerQuickInfoAsync(
-                _hostView, triggerPoint, QuickInfoSessionOptions.TrackMouse
-            );
+                _hostView, triggerPoint, QuickInfoSessionOptions.TrackMouse);
         });
     }
 
@@ -55,13 +53,9 @@ internal class IntellisenseController : TextViewExtension<ITextView, Intellisens
         }
     }
 
-    public void ConnectSubjectBuffer(ITextBuffer subjectBuffer)
-    {
-    }
+    public void ConnectSubjectBuffer(ITextBuffer subjectBuffer) {}
 
-    public void DisconnectSubjectBuffer(ITextBuffer subjectBuffer)
-    {
-    }
+    public void DisconnectSubjectBuffer(ITextBuffer subjectBuffer) {}
 }
 
 // This causes it to call `TriggerQuickInfoAsync` too early and dead lock
@@ -71,9 +65,10 @@ internal class IntellisenseController : TextViewExtension<ITextView, Intellisens
 //[Export(typeof(IIntellisenseControllerProvider))]
 //[Name("Codeium Intellisense Controller Provider")]
 //[ContentType("any")]
-//internal sealed class IntellisenseControllerProvider : IIntellisenseControllerProvider
+// internal sealed class IntellisenseControllerProvider : IIntellisenseControllerProvider
 //{
-//    public IIntellisenseController TryCreateIntellisenseController(ITextView textView, IList<ITextBuffer> subjectBuffers)
+//    public IIntellisenseController TryCreateIntellisenseController(ITextView textView,
+//    IList<ITextBuffer> subjectBuffers)
 //    {
 //        return new IntellisenseController(textView, subjectBuffers);
 //    }

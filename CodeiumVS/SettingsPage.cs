@@ -13,11 +13,16 @@ public class SettingsPage : DialogPage
 
     [Category("Codeium")]
     [DisplayName("Enterprise Mode")]
-    [Description("Set this to True if using Visual Studio with Codeium Enterprise. Requires restart.")]
+    [Description(
+        "Set this to True if using Visual Studio with Codeium Enterprise. Requires restart.")]
     public bool EnterpriseMode
     {
-        get { return enterpriseMode;  }
-        set { enterpriseMode = value; }
+        get {
+            return enterpriseMode;
+        }
+        set {
+            enterpriseMode = value;
+        }
     }
 
     [Category("Codeium")]
@@ -25,8 +30,12 @@ public class SettingsPage : DialogPage
     [Description("URL of the Codeium Enterprise Portal. Requires restart.")]
     public string PortalUrl
     {
-        get { return portalUrl; }
-        set { portalUrl = value; }
+        get {
+            return portalUrl;
+        }
+        set {
+            portalUrl = value;
+        }
     }
 
     [Category("Codeium")]
@@ -34,18 +43,24 @@ public class SettingsPage : DialogPage
     [Description("API Url for Codeium Enterprise. Requires restart.")]
     public string ApiUrl
     {
-        get { return apiUrl; }
-        set { apiUrl = value; }
+        get {
+            return apiUrl;
+        }
+        set {
+            apiUrl = value;
+        }
     }
-
 
     [Category("Codeium")]
     [DisplayName("Enable comment completion")]
     [Description("Whether or not Codeium will provide completions for comments.")]
     public bool EnableCommentCompletion
     {
-        get { return enableCommentCompletion; }
-        set { enableCommentCompletion = value; }
+        get {
+            return enableCommentCompletion;
+        }
+        set {
+            enableCommentCompletion = value;
+        }
     }
-
 }

@@ -9,7 +9,6 @@ namespace CodeiumVS;
 #nullable enable
 public class NotificationInfoBar : IVsInfoBarUIEvents
 {
-
     private IVsInfoBarUIElement? view;
 
     private uint infoBarEventsCookie;
@@ -22,11 +21,10 @@ public class NotificationInfoBar : IVsInfoBarUIEvents
 
     public IVsInfoBarUIElement? View => view;
 
-    public NotificationInfoBar()
-    {
-    }
+    public NotificationInfoBar() {}
 
-    public void Show(string text, ImageMoniker? icon = null, bool canClose = true, Action? onCloseCallback = null, params KeyValuePair<string, Action>[] actions)
+    public void Show(string text, ImageMoniker? icon = null, bool canClose = true,
+                     Action? onCloseCallback = null, params KeyValuePair<string, Action>[] actions)
     {
         ThreadHelper.ThrowIfNotOnUIThread("Show");
         if (view != null) return;
@@ -34,16 +32,24 @@ public class NotificationInfoBar : IVsInfoBarUIEvents
         try
         {
             IVsShell vsShell = ServiceProvider.GlobalProvider.GetService<SVsShell, IVsShell>();
-            IVsInfoBarUIFactory vsInfoBarFactory = ServiceProvider.GlobalProvider.GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>();
+            IVsInfoBarUIFactory vsInfoBarFactory =
+                ServiceProvider.GlobalProvider
+                    .GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>();
             if (vsShell == null || vsInfoBarFactory == null) return;
-        
-            if (vsInfoBarFactory != null && ErrorHandler.Succeeded(vsShell.GetProperty((int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out var pvar)) && pvar is IVsInfoBarHost vsInfoBarHost)
+
+            if (vsInfoBarFactory != null &&
+                ErrorHandler.Succeeded(vsShell.GetProperty(
+                    (int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out var pvar)) &&
+                pvar is IVsInfoBarHost vsInfoBarHost)
             {
-                InfoBarModel infoBar = new(text, GetActionsItems(actions), icon ?? KnownMonikers.StatusInformation, canClose);
-            
+                InfoBarModel infoBar = new(text,
+                                           GetActionsItems(actions),
+                                           icon ?? KnownMonikers.StatusInformation,
+                                           canClose);
+
                 view = vsInfoBarFactory.CreateInfoBar(infoBar);
                 view.Advise(this, out infoBarEventsCookie);
-            
+
                 this.vsInfoBarHost = vsInfoBarHost;
                 this.vsInfoBarHost.AddInfoBar(view);
 
@@ -53,7 +59,8 @@ public class NotificationInfoBar : IVsInfoBarUIEvents
         }
         catch (Exception ex)
         {
-            CodeiumVSPackage.Instance?.Log($"NotificationInfoBar.Show: Failed to show notificaiton; Exception: {ex}");
+            CodeiumVSPackage.Instance?.Log(
+                $"NotificationInfoBar.Show: Failed to show notificaiton; Exception: {ex}");
             return;
         }
     }
@@ -74,17 +81,15 @@ public class NotificationInfoBar : IVsInfoBarUIEvents
                 view.Unadvise(infoBarEventsCookie);
                 infoBarEventsCookie = 0u;
             }
-            if (closeView)
-            {
-                view.Close();
-            }
+            if (closeView) { view.Close(); }
             view = null;
             IsShown = false;
             OnCloseCallback?.Invoke();
         }
     }
 
-    private IEnumerable<IVsInfoBarActionItem> GetActionsItems(params KeyValuePair<string, Action>[] actions)
+    private IEnumerable<IVsInfoBarActionItem> GetActionsItems(
+        params KeyValuePair<string, Action>[] actions)
     {
         ThreadHelper.ThrowIfNotOnUIThread("GetActionsItems");
         if (actions != null)
@@ -103,7 +108,8 @@ public class NotificationInfoBar : IVsInfoBarUIEvents
         Close(closeView: false);
     }
 
-    void IVsInfoBarUIEvents.OnActionItemClicked(IVsInfoBarUIElement infoBarUIElement, IVsInfoBarActionItem actionItem)
+    void IVsInfoBarUIEvents.OnActionItemClicked(IVsInfoBarUIElement infoBarUIElement,
+                                                IVsInfoBarActionItem actionItem)
     {
         ThreadHelper.ThrowIfNotOnUIThread("OnActionItemClicked");
         ((Action)actionItem.ActionContext)();

@@ -3,29 +3,29 @@
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0" 
+                        xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
                         xmlns:platform="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
                         xmlns:toolkit="clr-namespace:Community.VisualStudio.Toolkit;assembly=Community.VisualStudio.Toolkit"
                         xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
-                        xmlns:imagecatalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog" 
-                        
+                        xmlns:imagecatalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+
                         toolkit:Themes.UseVsTheme="True"
-                        
+
                         WindowStyle="None"
                         ResizeMode="CanResize"
                         mc:Ignorable="d"
-                        
+
                         Title="Codeium Refactor Code Block"
                         WindowStartupLocation="CenterOwner"
-                        
+
                         Width="450"
                         Height="450"
                         MinWidth="450"
                         MinHeight="200"
-                        
+
                         MouseLeftButtonDown="Window_MouseLeftButtonDown"
                         PreviewKeyDown="Window_PreviewKeyDown"
-                        
+
                         Background="{DynamicResource {x:Static platform:CommonControlsColors.ComboBoxListBackgroundBrushKey}}"
                         d:DesignHeight="450"
                         d:DesignWidth="450"
@@ -39,7 +39,7 @@
             <platform:BrushToColorConverter x:Key="BrushToColorConverter"/>
             <Style TargetType="Button">
 
-                <Setter Property="platform:ImageThemingUtilities.ImageBackgroundColor" 
+                <Setter Property="platform:ImageThemingUtilities.ImageBackgroundColor"
                         Value="{Binding Background, RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}"
                         />
 
@@ -68,7 +68,7 @@
                 </Style.Triggers>
             </Style>
             <Style x:Key="SendButton" TargetType="Button">
-                <Setter Property="platform:ImageThemingUtilities.ImageBackgroundColor" 
+                <Setter Property="platform:ImageThemingUtilities.ImageBackgroundColor"
                         Value="{Binding Background, RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}"
                         />
                 <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -105,7 +105,7 @@
                     <TextBox x:Name="InputPrompt" KeyDown="InputPrompt_KeyDown" TextChanged="InputPrompt_TextChanged" />
 
                     <Label x:Name="InputPromptHint" Margin="5,0,0,0"
-                       Foreground="{DynamicResource {x:Static platform:CommonControlsColors.TextBoxTextDisabledBrushKey}}" 
+                       Foreground="{DynamicResource {x:Static platform:CommonControlsColors.TextBoxTextDisabledBrushKey}}"
                        Padding="{Binding ElementName=InputPrompt, Path=Padding}">
                         Ask Codeium anything! Or you can just select from the presets below...
                     </Label>

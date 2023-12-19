@@ -319,17 +319,14 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 
         string script = GetSetThemeScript();
         _themeScriptId = await webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(
-            @$
-            "addEventListener(
-            "" DOMContentLoaded "",
-            (event) =>
-            {
-                {
-                    {
-                        script
-                    }
-                }
-            });"
+            // clang-format off
+            @$"addEventListener(
+                ""DOMContentLoaded"",
+                (event) => {{
+                    {script}
+                }}
+            );"
+            // clang-format on
         );
 
         if (execute) await webView.ExecuteScriptAsync(script);

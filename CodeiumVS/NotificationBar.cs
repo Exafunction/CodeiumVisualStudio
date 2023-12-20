@@ -26,21 +26,21 @@ public class NotificationInfoBar : IVsInfoBarUIEvents, IVsShellPropertyEvents
     public IVsInfoBarUIElement? View => view;
 
     public static readonly KeyValuePair<string, Action>[] SupportActions = [
-        new KeyValuePair<string, Action>("Ask for support on Discord", delegate
-        {
-            CodeiumVSPackage.OpenInBrowser("https://discord.gg/3XFf78nAx5");
-        }),
-        new KeyValuePair<string, Action>("Report issue on GitHub", delegate
-        {
-            CodeiumVSPackage.OpenInBrowser("https://github.com/Exafunction/CodeiumVisualStudio/issues/new");
-        }),
+        new KeyValuePair<string, Action>(
+            "Ask for support on Discord",
+            delegate { CodeiumVSPackage.OpenInBrowser("https://discord.gg/3XFf78nAx5"); }),
+        new KeyValuePair<string, Action>(
+            "Report issue on GitHub",
+            delegate {
+                CodeiumVSPackage.OpenInBrowser(
+                    "https://github.com/Exafunction/CodeiumVisualStudio/issues/new");
+            }),
     ];
 
-    public NotificationInfoBar()
-    {
-    }
+    public NotificationInfoBar() {}
 
-    public void Show(string text, ImageMoniker? icon = null, bool canClose = true, Action? onCloseCallback = null, params KeyValuePair<string, Action>[] actions)
+    public void Show(string text, ImageMoniker? icon = null, bool canClose = true,
+                     Action? onCloseCallback = null, params KeyValuePair<string, Action>[] actions)
     {
         ThreadHelper.ThrowIfNotOnUIThread("Show");
         if (view != null) return;
@@ -48,15 +48,18 @@ public class NotificationInfoBar : IVsInfoBarUIEvents, IVsShellPropertyEvents
         try
         {
             _vsShell = ServiceProvider.GlobalProvider.GetService<SVsShell, IVsShell>();
-            _vsInfoBarFactory = ServiceProvider.GlobalProvider.GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>();
+            _vsInfoBarFactory = ServiceProvider.GlobalProvider
+                                    .GetService<SVsInfoBarUIFactory, IVsInfoBarUIFactory>();
             if (_vsShell == null || _vsInfoBarFactory == null) return;
-            
-            InfoBarModel infoBar = new(text, GetActionsItems(actions), icon ?? KnownMonikers.StatusInformation, canClose);
+
+            InfoBarModel infoBar = new(
+                text, GetActionsItems(actions), icon ?? KnownMonikers.StatusInformation, canClose);
 
             view = _vsInfoBarFactory.CreateInfoBar(infoBar);
             view.Advise(this, out infoBarEventsCookie);
 
-            if (ErrorHandler.Succeeded(_vsShell.GetProperty((int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out var pvar)))
+            if (ErrorHandler.Succeeded(_vsShell.GetProperty(
+                    (int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out var pvar)))
             {
                 if (pvar is IVsInfoBarHost vsInfoBarHost)
                 {
@@ -66,7 +69,8 @@ public class NotificationInfoBar : IVsInfoBarUIEvents, IVsShellPropertyEvents
             }
             else
             {
-                // the MainWindowInfoBarHost has not been created yet, so we delay showing the notification
+                // the MainWindowInfoBarHost has not been created yet, so we delay showing the
+                // notification
                 _vsShell.AdviseShellPropertyChanges(this, out shellPropertyEventsCookie);
 
                 IsShown = true;
@@ -75,7 +79,8 @@ public class NotificationInfoBar : IVsInfoBarUIEvents, IVsShellPropertyEvents
         }
         catch (Exception ex)
         {
-            CodeiumVSPackage.Instance?.Log($"NotificationInfoBar.Show: Failed to show notificaiton; Exception: {ex}");
+            CodeiumVSPackage.Instance?.Log(
+                $"NotificationInfoBar.Show: Failed to show notificaiton; Exception: {ex}");
             return;
         }
     }
@@ -96,17 +101,15 @@ public class NotificationInfoBar : IVsInfoBarUIEvents, IVsShellPropertyEvents
                 view.Unadvise(infoBarEventsCookie);
                 infoBarEventsCookie = 0u;
             }
-            if (closeView)
-            {
-                view.Close();
-            }
+            if (closeView) { view.Close(); }
             view = null;
             IsShown = false;
             OnCloseCallback?.Invoke();
         }
     }
 
-    private IEnumerable<IVsInfoBarActionItem> GetActionsItems(params KeyValuePair<string, Action>[] actions)
+    private IEnumerable<IVsInfoBarActionItem>
+    GetActionsItems(params KeyValuePair<string, Action>[] actions)
     {
         ThreadHelper.ThrowIfNotOnUIThread("GetActionsItems");
         if (actions != null)
@@ -125,7 +128,8 @@ public class NotificationInfoBar : IVsInfoBarUIEvents, IVsShellPropertyEvents
         Close(closeView: false);
     }
 
-    void IVsInfoBarUIEvents.OnActionItemClicked(IVsInfoBarUIElement infoBarUIElement, IVsInfoBarActionItem actionItem)
+    void IVsInfoBarUIEvents.OnActionItemClicked(IVsInfoBarUIElement infoBarUIElement,
+                                                IVsInfoBarActionItem actionItem)
     {
         ThreadHelper.ThrowIfNotOnUIThread("OnActionItemClicked");
         ((Action)actionItem.ActionContext)();
@@ -135,8 +139,10 @@ public class NotificationInfoBar : IVsInfoBarUIEvents, IVsShellPropertyEvents
     {
         ThreadHelper.ThrowIfNotOnUIThread("OnShellPropertyChange");
 
-        //if (propid == (int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost) // for some reaons, this doesn't work
-        if (_vsShell?.GetProperty((int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out var pvar) == VSConstants.S_OK)
+        // if (propid == (int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost) // for some reaons, this
+        // doesn't work
+        if (_vsShell?.GetProperty((int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost,
+                                  out var pvar) == VSConstants.S_OK)
         {
             _vsShell?.UnadviseShellPropertyChanges(shellPropertyEventsCookie);
 

@@ -10,7 +10,8 @@ using System.Windows.Media;
 
 namespace CodeiumVS.Utilities;
 
-internal class TextHighlighter : TextViewExtension<ITextView, TextHighlighter>, ITagger<HighlightWordTag>
+internal class TextHighlighter : TextViewExtension<ITextView, TextHighlighter>,
+                                 ITagger<HighlightWordTag>
 {
     private readonly ITextBuffer _sourceBuffer;
     private readonly List<ITagSpan<HighlightWordTag>> _spans;
@@ -67,14 +68,17 @@ internal class TextHighlighter : TextViewExtension<ITextView, TextHighlighter>, 
     {
         lock (updateLock)
         {
-            TagsChanged?.Invoke(this, new SnapshotSpanEventArgs(new SnapshotSpan(_sourceBuffer.CurrentSnapshot, 0, _sourceBuffer.CurrentSnapshot.Length)));
+            TagsChanged?.Invoke(
+                this,
+                new SnapshotSpanEventArgs(new SnapshotSpan(
+                    _sourceBuffer.CurrentSnapshot, 0, _sourceBuffer.CurrentSnapshot.Length)));
         }
     }
 }
 
 internal class HighlightWordTag : TextMarkerTag
 {
-    public HighlightWordTag() : base("MarkerFormatDefinition/HighlightWordFormatDefinition") { }
+    public HighlightWordTag() : base("MarkerFormatDefinition/HighlightWordFormatDefinition") {}
 }
 
 [Export(typeof(EditorFormatDefinition))]
@@ -84,7 +88,8 @@ internal class HighlightWordFormatDefinition : MarkerFormatDefinition
 {
     public HighlightWordFormatDefinition()
     {
-        var c1 = VSColorTheme.GetThemedColor(CommonControlsColors.ComboBoxTextInputSelectionBrushKey);
+        var c1 =
+            VSColorTheme.GetThemedColor(CommonControlsColors.ComboBoxTextInputSelectionBrushKey);
         var c2 = VSColorTheme.GetThemedColor(EnvironmentColors.SystemWindowTextBrushKey);
         BackgroundColor = Color.FromArgb(c1.A, c1.R, c1.G, c1.B);
         ForegroundColor = Color.FromArgb(c2.A, c2.R, c2.G, c2.B);
@@ -98,10 +103,12 @@ internal class HighlightWordFormatDefinition : MarkerFormatDefinition
 [TagType(typeof(HighlightWordTag))]
 internal class HighlightWordTaggerProvider : IViewTaggerProvider
 {
-    public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
+    public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer)
+        where T : ITag
     {
-        // Provide highlighting only on the top buffer 
+        // Provide highlighting only on the top buffer
         if (textView.TextBuffer != buffer) return null;
-        return TextHighlighter.GetOrCreate(textView, () => new TextHighlighter(textView, buffer)) as ITagger<T>;
+        return TextHighlighter.GetOrCreate(textView, () => new TextHighlighter(textView, buffer))
+            as ITagger<T>;
     }
 }

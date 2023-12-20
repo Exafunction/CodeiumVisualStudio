@@ -11,15 +11,14 @@ public partial class InlineDiffControl : UserControl
     public Action? OnRejected;
     public Action? OnAccepted;
     internal readonly InlineDiffView _inlineDiffView;
-    
+
     public double ButtonsGridHeight => ButtonsGrid.ActualHeight;
     public double TopOffset => _areButtonsOnTop ? ButtonsGridHeight : 0;
 
     public bool AreButtonsOnTop
     {
         get => _areButtonsOnTop;
-        set
-        {
+        set {
             if (_areButtonsOnTop == value) return;
 
             MainStackPanel.Children.Clear();
@@ -53,7 +52,8 @@ public partial class InlineDiffControl : UserControl
 
     private void LeftView_ViewportWidthChanged(object sender, EventArgs e)
     {
-        ButtonColumn1.Width = new GridLength(ContentBorder.Margin.Left + _inlineDiffView.LeftView.ViewportWidth);
+        ButtonColumn1.Width =
+            new GridLength(ContentBorder.Margin.Left + _inlineDiffView.LeftView.ViewportWidth);
     }
 
     private void ButtonReject_Click(object sender, RoutedEventArgs e)
@@ -68,7 +68,6 @@ public partial class InlineDiffControl : UserControl
 
     private void UserControl_PreviewKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Escape)
-            OnRejected?.Invoke();
+        if (e.Key == Key.Escape) OnRejected?.Invoke();
     }
 }

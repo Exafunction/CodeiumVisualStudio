@@ -29,9 +29,9 @@ namespace CodeiumVS;
     typeof(ChatToolWindow), MultiInstances = false, Style = VsDockStyle.Tabbed,
     Orientation = ToolWindowOrientation.Right,
     Window =
-        "{3AE79031-E1BC-11D0-8F78-00A0C9110057}")] // default docking window, magic string for the
-                                                   // guid of
-                                                   // VSConstants.StandardToolWindows.SolutionExplorer
+        "{3AE79031-E1BC-11D0-8F78-00A0C9110057}")]  // default docking window, magic string for the
+                                                    // guid of
+                                                    // VSConstants.StandardToolWindows.SolutionExplorer
 public sealed class CodeiumVSPackage : ToolkitPackage
 {
     internal static CodeiumVSPackage? Instance { get; private set; }
@@ -264,12 +264,24 @@ public sealed class CodeiumVSPackage : ToolkitPackage
         return Path.Combine(GetLanguageServerFolder(), binaryName);
     }
 
-    public string GetDatabaseDirectory() { return Path.Combine(GetAppDataPath(), "database"); }
+    public string GetDatabaseDirectory()
+    {
+        return Path.Combine(GetAppDataPath(), "database");
+    }
 
-    public string GetAPIKeyPath() { return Path.Combine(GetAppDataPath(), "codeium_api_key"); }
+    public string GetAPIKeyPath()
+    {
+        return Path.Combine(GetAppDataPath(), "codeium_api_key");
+    }
 
-    public bool IsSignedIn() { return LanguageServer.GetKey().Length > 0; }
-    public bool HasEnterprise() { return SettingsPage.EnterpriseMode; }
+    public bool IsSignedIn()
+    {
+        return LanguageServer.GetKey().Length > 0;
+    }
+    public bool HasEnterprise()
+    {
+        return SettingsPage.EnterpriseMode;
+    }
 
     internal void Log(string v)
     {

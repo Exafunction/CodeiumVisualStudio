@@ -34,7 +34,7 @@ public partial class EnterTokenDialogWindowControl : UserControl
 
     private void BtnOKClicked(object sender, RoutedEventArgs e)
     {
-        _= CodeiumVSPackage.Instance.LanguageServer.SignInWithAuthTokenAsync(authTokenInput.Text);
+        _ = CodeiumVSPackage.Instance.LanguageServer.SignInWithAuthTokenAsync(authTokenInput.Text);
         Window.GetWindow(this).Close();
     }
     private void BtnCancelClicked(object sender, RoutedEventArgs e)
@@ -42,14 +42,17 @@ public partial class EnterTokenDialogWindowControl : UserControl
         Window.GetWindow(this).Close();
     }
 
-    private void HelpLinkClicked(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+    private void HelpLinkClicked(object sender,
+                                 System.Windows.Navigation.RequestNavigateEventArgs e)
     {
         SettingsPage settingsPage = CodeiumVSPackage.Instance.SettingsPage;
 
         string state = Guid.NewGuid().ToString();
-        string portalUrl = settingsPage.EnterpriseMode ? settingsPage.PortalUrl : "https://www.codeium.com";
+        string portalUrl =
+            settingsPage.EnterpriseMode ? settingsPage.PortalUrl : "https://www.codeium.com";
         string redirectUrl = "show-auth-token";
-        string url = $"{portalUrl}/profile?response_type=token&redirect_uri={redirectUrl}&state={state}&scope=openid%20profile%20email&redirect_parameters_type=query";
+        string url =
+            $"{portalUrl}/profile?response_type=token&redirect_uri={redirectUrl}&state={state}&scope=openid%20profile%20email&redirect_parameters_type=query";
 
         CodeiumVSPackage.OpenInBrowser(url);
     }

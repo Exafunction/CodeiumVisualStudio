@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace CodeiumVS.Utilities;
 
 internal abstract class PropertyOwnerExtension<OwnerType, ExtensionType> : IDisposable
-    where OwnerType     : IPropertyOwner
+    where OwnerType : IPropertyOwner
     where ExtensionType : class
 {
     protected bool _disposed = false;
@@ -23,7 +23,9 @@ internal abstract class PropertyOwnerExtension<OwnerType, ExtensionType> : IDisp
 
     public static ExtensionType? GetInstance(OwnerType owner)
     {
-        return owner.Properties.TryGetProperty(typeof(ExtensionType), out ExtensionType instance) ? instance : null;
+        return owner.Properties.TryGetProperty(typeof(ExtensionType), out ExtensionType instance)
+                   ? instance
+                   : null;
     }
 
     public static ExtensionType GetOrCreate(OwnerType owner, Func<ExtensionType> creator)
@@ -39,8 +41,9 @@ internal abstract class PropertyOwnerExtension<OwnerType, ExtensionType> : IDisp
     }
 }
 
-internal abstract class TextViewExtension<ViewType, ExtensionType> : PropertyOwnerExtension<ViewType, ExtensionType>
-    where ViewType      : ITextView
+internal abstract class TextViewExtension<ViewType, ExtensionType>
+    : PropertyOwnerExtension<ViewType, ExtensionType>
+    where ViewType : ITextView
     where ExtensionType : class
 {
     protected ViewType _hostView => _owner;
@@ -62,18 +65,18 @@ internal abstract class TextViewExtension<ViewType, ExtensionType> : PropertyOwn
     }
 }
 
-internal class FunctionBlock(string fullname, string name, string @params, TextSpan span)
+internal class FunctionBlock
+(string fullname, string name, string @params, TextSpan span)
 {
     // full name of the function, including namespaces and classes
     public readonly string FullName = fullname;
 
     // short name of the function
     public readonly string Name = name;
-    
+
     // parameters, not including the braces
     public readonly string Params = @params;
 
     // span of the function body
     public readonly TextSpan Span = span;
 }
-

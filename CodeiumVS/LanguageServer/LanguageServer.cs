@@ -91,16 +91,25 @@ public class LanguageServer
         Controller.Disconnect();
     }
 
-    public int GetPort() { return _port; }
-    public string GetKey() { return _metadata.api_key; }
-    public string GetVersion() { return _languageServerVersion; }
-    public bool IsReady() { return _port != 0; }
+    public int GetPort()
+    {
+        return _port;
+    }
+    public string GetKey()
+    {
+        return _metadata.api_key;
+    }
+    public string GetVersion()
+    {
+        return _languageServerVersion;
+    }
+    public bool IsReady()
+    {
+        return _port != 0;
+    }
     public async Task WaitReadyAsync()
     {
-        while (!IsReady())
-        {
-            await Task.Delay(50);
-        }
+        while (!IsReady()) { await Task.Delay(50); }
     }
 
     // Get API key from the authentication token

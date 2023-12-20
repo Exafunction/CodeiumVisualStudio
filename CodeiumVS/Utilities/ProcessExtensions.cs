@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace CodeiumVS.Utilities;
 
-#pragma warning disable IDE0049 // Name can be simplified
+#pragma warning disable IDE0049  // Name can be simplified
 
 public class ProcessExtensions
 {
@@ -14,7 +14,9 @@ public class ProcessExtensions
     private static extern IntPtr CreateJobObject(IntPtr a, string lpName);
 
     [DllImport("kernel32.dll")]
-    private static extern bool SetInformationJobObject(IntPtr hJob, JobObjectInfoType infoType, IntPtr lpJobObjectInfo, uint cbJobObjectInfoLength);
+    private static extern bool SetInformationJobObject(IntPtr hJob, JobObjectInfoType infoType,
+                                                       IntPtr lpJobObjectInfo,
+                                                       uint cbJobObjectInfoLength);
 
     private enum JobObjectInfoType
     {
@@ -68,13 +70,14 @@ public class ProcessExtensions
         IntPtr hJob = CreateJobObject(IntPtr.Zero, null);
 
         var info = new JOBOBJECT_EXTENDED_LIMIT_INFORMATION();
-        info.BasicLimitInformation.LimitFlags = 0x2000; // JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+        info.BasicLimitInformation.LimitFlags = 0x2000;  // JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
 
         int length = Marshal.SizeOf(typeof(JOBOBJECT_EXTENDED_LIMIT_INFORMATION));
         IntPtr extendedInfoPtr = Marshal.AllocHGlobal(length);
         Marshal.StructureToPtr(info, extendedInfoPtr, false);
 
-        if (!SetInformationJobObject(hJob, JobObjectInfoType.ExtendedLimitInformation, extendedInfoPtr, (uint)length))
+        if (!SetInformationJobObject(
+                hJob, JobObjectInfoType.ExtendedLimitInformation, extendedInfoPtr, (uint)length))
         {
             return false;
         }
@@ -84,4 +87,4 @@ public class ProcessExtensions
     }
 }
 
-#pragma warning restore IDE0049 // Name can be simplified
+#pragma warning restore IDE0049  // Name can be simplified

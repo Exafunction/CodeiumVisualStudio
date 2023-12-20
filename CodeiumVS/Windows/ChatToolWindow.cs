@@ -279,7 +279,7 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 	            --vscode-checkbox-background:              #{GetColor(CommonControlsColors.CheckBoxBackgroundBrushKey):x8};
 	            --vscode-checkbox-border:                  #{GetColor(CommonControlsColors.CheckBoxBorderBrushKey):x8};
 	            --vscode-checkbox-foreground:              #{GetColor(CommonControlsColors.CheckBoxTextBrushKey):x8};
-                
+
                 /* drop down */
 	            --vscode-settings-dropdownListBorder:      #{GetColor(EnvironmentColors.DropDownBorderBrushKey):x8};
 	            --vscode-dropdown-background:              #{GetColor(EnvironmentColors.DropDownBackgroundBrushKey):x8};

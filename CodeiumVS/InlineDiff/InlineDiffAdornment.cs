@@ -37,49 +37,52 @@ internal sealed class Components
     internal AdornmentLayerDefinition viewLayerDefinition = null;
 }
 
-internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffAdornment>, ILineTransformSource, IOleCommandTarget
+internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffAdornment>,
+                                     ILineTransformSource,
+                                     IOleCommandTarget
 {
-    private static readonly LineTransform _defaultTransform   = new(1.0);
+    private static readonly LineTransform _defaultTransform = new(1.0);
     private static MethodInfo? _fnSetInterceptsAggregateFocus = null;
 
-    private readonly IAdornmentLayer   _layer;
-    private readonly IVsTextView       _vsHostView;
+    private readonly IAdornmentLayer _layer;
+    private readonly IVsTextView _vsHostView;
     private readonly IOleCommandTarget _nextCommand;
 
-    private InlineDiffView?            _adornment = null;
+    private InlineDiffView? _adornment = null;
 
-    private ITrackingSpan?             _leftTrackingSpan;
-    private ITrackingSpan?             _rightTrackingSpan;
-    private ITrackingSpan?             _trackingSpanExtended;
+    private ITrackingSpan? _leftTrackingSpan;
+    private ITrackingSpan? _rightTrackingSpan;
+    private ITrackingSpan? _trackingSpanExtended;
 
-    private IProjectionBuffer?         _leftProjectionBuffer;
-    private IProjectionBuffer?         _rightProjectionBuffer;
+    private IProjectionBuffer? _leftProjectionBuffer;
+    private IProjectionBuffer? _rightProjectionBuffer;
 
-    private IReadOnlyRegion?           _leftReadOnlyRegion;
+    private IReadOnlyRegion? _leftReadOnlyRegion;
 
-    private ITextBuffer?               _rightSourceBuffer;
-    private IVsWindowFrame?            _rightWindowFrame;
-    private ITextDocument?             _rightTextDocument;
+    private ITextBuffer? _rightSourceBuffer;
+    private IVsWindowFrame? _rightWindowFrame;
+    private ITextDocument? _rightTextDocument;
 
-    private double _adornmentTop       = 0;
-    private double _codeBlockHeight    = 0;
+    private double _adornmentTop = 0;
+    private double _codeBlockHeight = 0;
 
     private LineTransform _lineTransform = _defaultTransform;
-    //private ITagAggregator<InterLineAdornmentTag>? _tagAggregator = null;
+    // private ITagAggregator<InterLineAdornmentTag>? _tagAggregator = null;
 
     public bool HasAdornment => _adornment != null;
-    public bool IsAdornmentFocused => HasAdornment && (_adornment.ActiveView != null) && _adornment.ActiveView.VisualElement.IsKeyboardFocused;
+    public bool IsAdornmentFocused => HasAdornment && (_adornment.ActiveView != null) &&
+                                      _adornment.ActiveView.VisualElement.IsKeyboardFocused;
 
     public InlineDiffAdornment(IWpfTextView view) : base(view)
     {
         _vsHostView = _hostView.ToIVsTextView();
         _layer = _hostView.GetAdornmentLayer(Components.DiffAdornmentLayerName);
 
-        _hostView.Closed                += HostView_OnClosed;
-        _hostView.LayoutChanged         += HostView_OnLayoutChanged;
-        _hostView.ViewportLeftChanged   += HostView_OnLayoutChanged;
-        _hostView.ViewportWidthChanged  += HostView_OnLayoutChanged;
-        _hostView.ZoomLevelChanged      += HostView_OnZoomLevelChanged;
+        _hostView.Closed += HostView_OnClosed;
+        _hostView.LayoutChanged += HostView_OnLayoutChanged;
+        _hostView.ViewportLeftChanged += HostView_OnLayoutChanged;
+        _hostView.ViewportWidthChanged += HostView_OnLayoutChanged;
+        _hostView.ZoomLevelChanged += HostView_OnZoomLevelChanged;
         _hostView.Caret.PositionChanged += HostView_OnCaretPositionChanged;
 
         _vsHostView.AddCommandFilter(this, out _nextCommand);
@@ -91,14 +94,18 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
             try
             {
                 string name = "Microsoft.VisualStudio.Text.Internal";
-                Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(assembly => assembly.GetName().Name == name);
+                Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(
+                    assembly => assembly.GetName().Name == name);
 
-                Type type = assembly?.GetType("Microsoft.VisualStudio.Text.Editor.AggregateFocusInterceptor");
-                _fnSetInterceptsAggregateFocus = type?.GetMethod("SetInterceptsAggregateFocus", BindingFlags.Static | BindingFlags.Public);
+                Type type = assembly?.GetType(
+                    "Microsoft.VisualStudio.Text.Editor.AggregateFocusInterceptor");
+                _fnSetInterceptsAggregateFocus = type?.GetMethod(
+                    "SetInterceptsAggregateFocus", BindingFlags.Static | BindingFlags.Public);
             }
             catch (Exception ex)
             {
-                CodeiumVSPackage.Instance?.Log($"InlineDiffAdornment: Failed to get the SetInterceptsAggregateFocus method; Exception: {ex}");
+                CodeiumVSPackage.Instance?.Log(
+                    $"InlineDiffAdornment: Failed to get the SetInterceptsAggregateFocus method; Exception: {ex}");
             }
         }
     }
@@ -122,42 +129,50 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
         // for the OpenDocumentViaProject and IsPeekOnAdornment
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-        Assumes.True(position > 0 && length > 0 && (position + length) <= _hostView.TextSnapshot.Length,
-            "InlineDiffAdornment.CreateDiff: Invalid position and length parameter"
-        );
         Assumes.True(
-            MefProvider.Instance.TextDocumentFactoryService.TryGetTextDocument(_hostView.TextDataModel.DocumentBuffer, out var textDocument),
-            "InlineDiffAdornment.CreateDiff: Could not get text document for the current host view"
-        );
+            position > 0 && length > 0 && (position + length) <= _hostView.TextSnapshot.Length,
+            "InlineDiffAdornment.CreateDiff: Invalid position and length parameter");
+        Assumes.True(
+            MefProvider.Instance.TextDocumentFactoryService.TryGetTextDocument(
+                _hostView.TextDataModel.DocumentBuffer, out var textDocument),
+            "InlineDiffAdornment.CreateDiff: Could not get text document for the current host view");
 
         // create a temporary file to store the diff
         string rightFileName = Path.GetTempFileName() + Path.GetExtension(textDocument.FilePath);
         try
         {
-            // create the projection buffers, left projects onto host view, right projects onto a temp file
+            // create the projection buffers, left projects onto host view, right projects onto a
+            // temp file
             CreateLeftProjectionBuffer(position, length);
             CreateRightProjectionBuffer(rightFileName, position, length, replacement);
 
-            _adornment = new InlineDiffView(_hostView, _leftProjectionBuffer, _hostView.TextDataModel.DocumentBuffer, _rightProjectionBuffer, _rightSourceBuffer);
+            _adornment = new InlineDiffView(_hostView,
+                                            _leftProjectionBuffer,
+                                            _hostView.TextDataModel.DocumentBuffer,
+                                            _rightProjectionBuffer,
+                                            _rightSourceBuffer);
         }
         catch (Exception ex)
         {
-            await CodeiumVSPackage.Instance?.LogAsync($"InlineDiffAdornment.CreateDiffAsync: Exception: {ex}");
+            await CodeiumVSPackage.Instance?.LogAsync(
+                $"InlineDiffAdornment.CreateDiffAsync: Exception: {ex}");
             await DisposeDiffAsync();
             return;
         }
 
-        _adornment.VisualElement.GotFocus    += Adornment_OnGotFocus;
-        _adornment.VisualElement.LostFocus   += Adornment_OnLostFocus;
+        _adornment.VisualElement.GotFocus += Adornment_OnGotFocus;
+        _adornment.VisualElement.LostFocus += Adornment_OnLostFocus;
         _adornment.VisualElement.SizeChanged += Adornment_OnSizeChanged;
-        _adornment.VisualElement.OnAccepted   = Adornment_OnAccepted;
-        _adornment.VisualElement.OnRejected   = Adornment_OnRejected;
+        _adornment.VisualElement.OnAccepted = Adornment_OnAccepted;
+        _adornment.VisualElement.OnRejected = Adornment_OnRejected;
 
         // set the scale factor for CrispImage, without this, it'll be blurry
-        _adornment.VisualElement.SetValue(CrispImage.ScaleFactorProperty, _hostView.ZoomLevel * 0.01);
+        _adornment.VisualElement.SetValue(CrispImage.ScaleFactorProperty,
+                                          _hostView.ZoomLevel * 0.01);
 
         // close the peek view if it's open
-        if (!_hostView.Roles.Contains(PredefinedTextViewRoles.EmbeddedPeekTextView) && IsPeekOnAdornment())
+        if (!_hostView.Roles.Contains(PredefinedTextViewRoles.EmbeddedPeekTextView) &&
+            IsPeekOnAdornment())
             MefProvider.Instance.PeekBroker.DismissPeekSession(_hostView);
 
         // close any auto completion windows that's open
@@ -176,10 +191,9 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
 
     public void CreateDiff(int position, int length, string replacement)
     {
-        ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
-        {
-            await CreateDiffAsync(position, length, replacement);
-        }).FireAndForget(true);
+        ThreadHelper.JoinableTaskFactory
+            .RunAsync(async delegate { await CreateDiffAsync(position, length, replacement); })
+            .FireAndForget(true);
     }
 
     /// <summary>
@@ -199,18 +213,18 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
 
         RemoveLeftReadOnlyRegion();
 
-        _adornment              = null;
+        _adornment = null;
 
-        _leftTrackingSpan      = null;
-        _rightTrackingSpan     = null;
-        _trackingSpanExtended  = null;
+        _leftTrackingSpan = null;
+        _rightTrackingSpan = null;
+        _trackingSpanExtended = null;
 
-        _leftProjectionBuffer  = null;
+        _leftProjectionBuffer = null;
         _rightProjectionBuffer = null;
 
-        _rightSourceBuffer     = null;
-        _rightWindowFrame      = null;
-        _codeBlockHeight       = 0;
+        _rightSourceBuffer = null;
+        _rightWindowFrame = null;
+        _codeBlockHeight = 0;
 
         UpdateAdornment();
         RefreshLineTransform();
@@ -220,7 +234,8 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
     {
         if (_leftReadOnlyRegion != null)
         {
-            using IReadOnlyRegionEdit readOnlyRegionEdit = _hostView.TextBuffer.CreateReadOnlyRegionEdit();
+            using IReadOnlyRegionEdit readOnlyRegionEdit =
+                _hostView.TextBuffer.CreateReadOnlyRegionEdit();
             readOnlyRegionEdit.RemoveReadOnlyRegion(_leftReadOnlyRegion);
             readOnlyRegionEdit.Apply();
             _leftReadOnlyRegion = null;
@@ -243,7 +258,8 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
     /// <param name="position"></param>
     /// <param name="length"></param>
     /// <returns></returns>
-    private static ITrackingSpan CreateTrackingSpan(ITextSnapshot snapshot, int position, int length)
+    private static ITrackingSpan CreateTrackingSpan(ITextSnapshot snapshot, int position,
+                                                    int length)
     {
         // don't use _hostView.TextViewLines.GetTextViewLineContainingBufferPosition here
         // because if the line is not currently on the screen, it won't be in the TextViewLines
@@ -261,14 +277,17 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
     /// <param name="length"></param>
     /// <param name="trackingSpan"></param>
     /// <returns></returns>
-    private static IProjectionBuffer CreateProjectionBuffer(ITextSnapshot snapshot, int position, int length, out ITrackingSpan trackingSpan)
+    private static IProjectionBuffer CreateProjectionBuffer(ITextSnapshot snapshot, int position,
+                                                            int length,
+                                                            out ITrackingSpan trackingSpan)
     {
         trackingSpan = CreateTrackingSpan(snapshot, position, length);
 
         List<object> sourceSpans = [trackingSpan];
         var options = ProjectionBufferOptions.PermissiveEdgeInclusiveSourceSpans;
 
-        return MefProvider.Instance.ProjectionBufferFactoryService.CreateProjectionBuffer(null, sourceSpans, options);
+        return MefProvider.Instance.ProjectionBufferFactoryService.CreateProjectionBuffer(
+            null, sourceSpans, options);
     }
 
     /// <summary>
@@ -278,15 +297,17 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
     /// <param name="length"></param>
     private void CreateLeftProjectionBuffer(int position, int length)
     {
-        _leftProjectionBuffer = CreateProjectionBuffer(_hostView.TextSnapshot, position, length, out _leftTrackingSpan);
+        _leftProjectionBuffer =
+            CreateProjectionBuffer(_hostView.TextSnapshot, position, length, out _leftTrackingSpan);
 
         // make sure that the user cannot edit the left buffer while we're showing the diff
-        using IReadOnlyRegionEdit readOnlyRegionEdit = _hostView.TextBuffer.CreateReadOnlyRegionEdit();
+        using IReadOnlyRegionEdit readOnlyRegionEdit =
+            _hostView.TextBuffer.CreateReadOnlyRegionEdit();
 
         _leftReadOnlyRegion = readOnlyRegionEdit.CreateReadOnlyRegion(
             _leftTrackingSpan.GetSpan(_hostView.TextSnapshot),
-            SpanTrackingMode.EdgeInclusive, EdgeInsertionMode.Deny
-        );
+            SpanTrackingMode.EdgeInclusive,
+            EdgeInsertionMode.Deny);
 
         readOnlyRegionEdit.Apply();
     }
@@ -299,7 +320,8 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
     /// <param name="position"></param>
     /// <param name="length"></param>
     /// <param name="replacement"></param>
-    private void CreateRightProjectionBuffer(string tempFileName, int position, int length, string replacement)
+    private void CreateRightProjectionBuffer(string tempFileName, int position, int length,
+                                             string replacement)
     {
         ThreadHelper.ThrowIfNotOnUIThread("CreateRightBuffer");
 
@@ -311,28 +333,28 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
 
         // open the temporary file
         int openingResult = MefProvider.Instance.DocumentOpeningService.OpenDocumentViaProject(
-            tempFileName, Guid.Empty, out var _, out var _, out var _, out _rightWindowFrame
-        );
-
-        Assumes.True(ErrorHandler.Succeeded(openingResult),
-            "InlineDiffAdornment.CreateRightProjectionBuffer: Could not open the document for temporary file"
-        );
-
-        VsShellUtilities.GetTextView(_rightWindowFrame).GetBuffer(out var sourceTextLines);
-        Assumes.True(sourceTextLines != null,
-            "InlineDiffAdornment.CreateRightProjectionBuffer: Could not get source text lines"
-        );
-
-        _rightSourceBuffer = MefProvider.Instance.EditorAdaptersFactoryService.GetDocumentBuffer(sourceTextLines);
-
-        Assumes.True(_rightSourceBuffer != null,
-            "InlineDiffAdornment.CreateRightProjectionBuffer: Could not create source buffer"
-        );
+            tempFileName, Guid.Empty, out var _, out var _, out var _, out _rightWindowFrame);
 
         Assumes.True(
-            MefProvider.Instance.TextDocumentFactoryService.TryGetTextDocument(_rightSourceBuffer, out _rightTextDocument),
-            "InlineDiffAdornment.CreateRightProjectionBuffer: Could not get text document for the temp file"
-        );
+            ErrorHandler.Succeeded(openingResult),
+            "InlineDiffAdornment.CreateRightProjectionBuffer: Could not open the document for temporary file");
+
+        VsShellUtilities.GetTextView(_rightWindowFrame).GetBuffer(out var sourceTextLines);
+        Assumes.True(
+            sourceTextLines != null,
+            "InlineDiffAdornment.CreateRightProjectionBuffer: Could not get source text lines");
+
+        _rightSourceBuffer =
+            MefProvider.Instance.EditorAdaptersFactoryService.GetDocumentBuffer(sourceTextLines);
+
+        Assumes.True(
+            _rightSourceBuffer != null,
+            "InlineDiffAdornment.CreateRightProjectionBuffer: Could not create source buffer");
+
+        Assumes.True(
+            MefProvider.Instance.TextDocumentFactoryService.TryGetTextDocument(
+                _rightSourceBuffer, out _rightTextDocument),
+            "InlineDiffAdornment.CreateRightProjectionBuffer: Could not get text document for the temp file");
 
         // apply the diff
         using ITextEdit textEdit = _rightSourceBuffer.CreateEdit();
@@ -343,11 +365,13 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
         _rightTextDocument.UpdateDirtyState(false, DateTime.UtcNow);
 
         // create the right projection buffer that projects onto the temporary file
-        _rightProjectionBuffer = CreateProjectionBuffer(snapshot, position, replacement.Length, out _rightTrackingSpan);
+        _rightProjectionBuffer =
+            CreateProjectionBuffer(snapshot, position, replacement.Length, out _rightTrackingSpan);
     }
 
     /// <summary>
-    /// Get the extended tracking span of the diff, meaning up and down one line from the actual diff.
+    /// Get the extended tracking span of the diff, meaning up and down one line from the actual
+    /// diff.
     /// </summary>
     /// <param name="position"></param>
     /// <param name="length"></param>
@@ -364,9 +388,9 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
         if (endLine.LineNumber <= _hostView.TextSnapshot.LineCount - 1)
             endLine = _hostView.TextSnapshot.GetLineFromLineNumber(endLine.LineNumber + 1);
 
-        _trackingSpanExtended = CreateTrackingSpan(
-            _hostView.TextSnapshot, startLine.Start.Position, endLine.End.Position - startLine.Start.Position
-        );
+        _trackingSpanExtended = CreateTrackingSpan(_hostView.TextSnapshot,
+                                                   startLine.Start.Position,
+                                                   endLine.End.Position - startLine.Start.Position);
     }
 
     /// <summary>
@@ -376,8 +400,10 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
     {
         SnapshotPoint pointStart = _leftTrackingSpan.GetStartPoint(_hostView.TextSnapshot);
         SnapshotPoint pointEnd = _leftTrackingSpan.GetEndPoint(_hostView.TextSnapshot);
-        ITextViewLine lineStart = _hostView.TextViewLines.GetTextViewLineContainingBufferPosition(pointStart);
-        ITextViewLine lineEnd = _hostView.TextViewLines.GetTextViewLineContainingBufferPosition(pointEnd);
+        ITextViewLine lineStart =
+            _hostView.TextViewLines.GetTextViewLineContainingBufferPosition(pointStart);
+        ITextViewLine lineEnd =
+            _hostView.TextViewLines.GetTextViewLineContainingBufferPosition(pointEnd);
 
         // the lines are out of view, so they're null
         if (lineStart != null && lineEnd != null)
@@ -435,22 +461,25 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
         {
             try
             {
-                SnapshotPoint point = new(_adornment.ActiveView.TextSnapshot, position - span.Start.Position);
+                SnapshotPoint point =
+                    new(_adornment.ActiveView.TextSnapshot, position - span.Start.Position);
                 _adornment.ActiveView.Caret.MoveTo(point);
                 _adornment.ActiveVsView?.SendExplicitFocus();
             }
-            catch (ArgumentOutOfRangeException) { }
+            catch (ArgumentOutOfRangeException)
+            {
+            }
         }
     }
 
     private void HostView_OnClosed(object sender, EventArgs e)
     {
         DisposeDiff();
-        _hostView.Closed                -= HostView_OnClosed;
-        _hostView.LayoutChanged         -= HostView_OnLayoutChanged;
-        _hostView.ViewportLeftChanged   -= HostView_OnLayoutChanged;
-        _hostView.ViewportWidthChanged  -= HostView_OnLayoutChanged;
-        _hostView.ZoomLevelChanged      -= HostView_OnZoomLevelChanged;
+        _hostView.Closed -= HostView_OnClosed;
+        _hostView.LayoutChanged -= HostView_OnLayoutChanged;
+        _hostView.ViewportLeftChanged -= HostView_OnLayoutChanged;
+        _hostView.ViewportWidthChanged -= HostView_OnLayoutChanged;
+        _hostView.ZoomLevelChanged -= HostView_OnZoomLevelChanged;
         _hostView.Caret.PositionChanged -= HostView_OnCaretPositionChanged;
     }
 
@@ -466,7 +495,9 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
         // apply the replacement
         using (ITextEdit textEdit = _leftProjectionBuffer.CreateEdit())
         {
-            textEdit.Replace(0, _leftProjectionBuffer.CurrentSnapshot.Length, _rightProjectionBuffer.CurrentSnapshot.GetText());
+            textEdit.Replace(0,
+                             _leftProjectionBuffer.CurrentSnapshot.Length,
+                             _rightProjectionBuffer.CurrentSnapshot.GetText());
             textEdit.Apply();
         }
 
@@ -481,10 +512,13 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
             dte?.ExecuteCommand("Edit.FormatSelection");
 
             // this doesn't work
-            //var guid = VSConstants.CMDSETID.StandardCommandSet2K_guid;
-            //Exec(ref guid, (uint)VSConstants.VSStd2KCmdID.FORMATSELECTION, 0, IntPtr.Zero, IntPtr.Zero);
+            // var guid = VSConstants.CMDSETID.StandardCommandSet2K_guid;
+            // Exec(ref guid, (uint)VSConstants.VSStd2KCmdID.FORMATSELECTION, 0, IntPtr.Zero,
+            // IntPtr.Zero);
         }
-        catch (Exception) { } // COMException
+        catch (Exception)
+        {
+        }  // COMException
 
         DisposeDiff();
     }
@@ -527,10 +561,10 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
         }
         catch (Exception ex)
         {
-            CodeiumVSPackage.Instance?.Log($"InlineDiffAdornment: SetHostViewInterceptsAggregateFocus({intercept}) failed; Exception: {ex}");
+            CodeiumVSPackage.Instance?.Log(
+                $"InlineDiffAdornment: SetHostViewInterceptsAggregateFocus({intercept}) failed; Exception: {ex}");
         }
     }
-
 
     /// <summary>
     /// Update the position and width of the adornment then show it on the screen.
@@ -544,9 +578,9 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
         }
 
         SnapshotPoint point = _leftTrackingSpan.GetStartPoint(_hostView.TextSnapshot);
-        IWpfTextViewLine containningLine = _hostView.TextViewLines.GetTextViewLineContainingBufferPosition(point);
-        if (containningLine != null)
-            _adornmentTop = containningLine.TextTop;
+        IWpfTextViewLine containningLine =
+            _hostView.TextViewLines.GetTextViewLineContainingBufferPosition(point);
+        if (containningLine != null) _adornmentTop = containningLine.TextTop;
 
         // set the buttons position to be on top of the diff view if it's visible
         bool btnsShouldOnTop = _adornmentTop > _hostView.ViewportTop;
@@ -557,23 +591,28 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
             // make sure it updates
             _hostView.QueuePostLayoutAction(RefreshLineTransform);
         }
-        
-        //double glyphWidth = _hostView.FormattedLineSource.ColumnWidth;
+
+        // double glyphWidth = _hostView.FormattedLineSource.ColumnWidth;
         Canvas.SetLeft(_adornment.VisualElement, 0);
         Canvas.SetTop(_adornment.VisualElement, _adornmentTop - _adornment.VisualElement.TopOffset);
 
         // `_hostView.ViewportLeft` is the horizontal scroll position
         _adornment.VisualElement.Width = _hostView.ViewportLeft + _hostView.ViewportWidth;
 
-        // Note that if we remove the adornments before calling `GetTextViewLineContainingBufferPosition`
-        // it will return null, because the text view line got removed from TextViewLines
+        // Note that if we remove the adornments before calling
+        // `GetTextViewLineContainingBufferPosition` it will return null, because the text view line
+        // got removed from TextViewLines
 
         // I don't even know why we have to remove the adornment before adding it again
         // no documentation mentioned ANYTHING about this. All code snippets and even
         // the official overview do this. But here's the thing: it works just fine even
         // if we removed these two lines. Why, microsoft, why?
         _layer.RemoveAllAdornments();
-        _layer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, _adornment.VisualElement, null);
+        _layer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled,
+                            null,
+                            null,
+                            _adornment.VisualElement,
+                            null);
     }
 
     /// <summary>
@@ -587,7 +626,8 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
         _hostView.DisplayTextLineContainingBufferPosition(default, 0.0, (ViewRelativePosition)4);
     }
 
-    LineTransform ILineTransformSource.GetLineTransform(ITextViewLine line, double yPosition, ViewRelativePosition placement)
+    LineTransform ILineTransformSource.GetLineTransform(ITextViewLine line, double yPosition,
+                                                        ViewRelativePosition placement)
     {
         if (_leftTrackingSpan != null)
         {
@@ -595,7 +635,10 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
 
             if (point.Position >= line.Extent.Start && point.Position <= line.Extent.End)
             {
-                return new LineTransform(0.0, _adornment.VisualElement.ActualHeight - _adornment.VisualElement.TopOffset - _codeBlockHeight, 1.0);
+                return new LineTransform(0.0,
+                                         _adornment.VisualElement.ActualHeight -
+                                             _adornment.VisualElement.TopOffset - _codeBlockHeight,
+                                         1.0);
             }
             else if (_adornment.VisualElement.TopOffset > 0)
             {
@@ -616,23 +659,25 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
     /// <returns></returns>
     private bool IsPeekOnAdornment()
     {
-        //Microsoft.VisualStudio.Text.Editor.InterLineAdornmentTag
-        //ThreadHelper.ThrowIfNotOnUIThread("IsPeekOnAnchor");
-        //_tagAggregator ??= IntellisenseUtilities.GetTagAggregator<InterLineAdornmentTag>(_hostView);
+        // Microsoft.VisualStudio.Text.Editor.InterLineAdornmentTag
+        // ThreadHelper.ThrowIfNotOnUIThread("IsPeekOnAnchor");
+        //_tagAggregator ??=
+        // IntellisenseUtilities.GetTagAggregator<InterLineAdornmentTag>(_hostView);
 
-        //SnapshotSpan extent = _leftTrackingSpan.GetSpan(_hostView.TextSnapshot);
+        // SnapshotSpan extent = _leftTrackingSpan.GetSpan(_hostView.TextSnapshot);
 
-        //foreach (IMappingTagSpan<InterLineAdornmentTag> tag in _tagAggregator.GetTags(extent))
+        // foreach (IMappingTagSpan<InterLineAdornmentTag> tag in _tagAggregator.GetTags(extent))
         //{
-        //    if (!tag.Tag.IsAboveLine && tag.Span.GetSpans(_hostView.TextSnapshot).IntersectsWith(extent))
-        //    {
-        //        return true;
-        //    }
-        //}
+        //     if (!tag.Tag.IsAboveLine &&
+        //     tag.Span.GetSpans(_hostView.TextSnapshot).IntersectsWith(extent))
+        //     {
+        //         return true;
+        //     }
+        // }
         return true;
     }
 
-#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
+#pragma warning disable VSTHRD010  // Invoke single-threaded types on Main thread
 
     // By default, the adornments doesn't received the keyboard inputs it deserved, sadly.
     // We have to "hook" the host view commands filter list and check if our adornments
@@ -640,20 +685,22 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
     //
     // I had spent an embarrassing amount of time to come up with this solution.
     //
-    // A good reference: https://joshvarty.com/2014/08/01/ripping-the-visual-studio-editor-apart-with-projection-buffers/
+    // A good reference:
+    // https://joshvarty.com/2014/08/01/ripping-the-visual-studio-editor-apart-with-projection-buffers/
 
     public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
     {
-        IOleCommandTarget _commandTarget = IsAdornmentFocused ?
-            _adornment.ActiveVsView as IOleCommandTarget : _nextCommand;
+        IOleCommandTarget _commandTarget =
+            IsAdornmentFocused ? _adornment.ActiveVsView as IOleCommandTarget : _nextCommand;
 
         return _commandTarget.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText);
     }
 
-    public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
+    public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn,
+                    IntPtr pvaOut)
     {
-        IOleCommandTarget _commandTarget = IsAdornmentFocused ?
-            _adornment.ActiveVsView as IOleCommandTarget : _nextCommand;
+        IOleCommandTarget _commandTarget =
+            IsAdornmentFocused ? _adornment.ActiveVsView as IOleCommandTarget : _nextCommand;
 
         // handle caret transistion from the diff view to host view
         if (pguidCmdGroup == VSConstants.CMDSETID.StandardCommandSet2K_guid && IsAdornmentFocused)
@@ -661,11 +708,11 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
             var view = _adornment.ActiveView;
             int position = view.Caret.Position.BufferPosition.Position;
             int lineNo = view.TextSnapshot.GetLineNumberFromPosition(position);
-            
-            bool isUp    = (nCmdID == (uint)VSConstants.VSStd2KCmdID.UP);
-            bool isDown  = (nCmdID == (uint)VSConstants.VSStd2KCmdID.DOWN);
+
+            bool isUp = (nCmdID == (uint)VSConstants.VSStd2KCmdID.UP);
+            bool isDown = (nCmdID == (uint)VSConstants.VSStd2KCmdID.DOWN);
             bool isRight = (nCmdID == (uint)VSConstants.VSStd2KCmdID.RIGHT);
-            bool isLeft  = (nCmdID == (uint)VSConstants.VSStd2KCmdID.LEFT);
+            bool isLeft = (nCmdID == (uint)VSConstants.VSStd2KCmdID.LEFT);
 
             SnapshotPoint? point = null;
 
@@ -680,13 +727,15 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
             else if (isLeft && position == 0)
             {
                 point = _trackingSpanExtended.GetStartPoint(_hostView.TextSnapshot);
-                var viewLine = _hostView.TextViewLines.GetTextViewLineContainingBufferPosition(point.Value);
+                var viewLine =
+                    _hostView.TextViewLines.GetTextViewLineContainingBufferPosition(point.Value);
                 point = viewLine.End;
             }
             else if (isRight && position == view.TextSnapshot.Length - 1)
             {
                 point = _trackingSpanExtended.GetEndPoint(_hostView.TextSnapshot);
-                var viewLine = _hostView.TextViewLines.GetTextViewLineContainingBufferPosition(point.Value);
+                var viewLine =
+                    _hostView.TextViewLines.GetTextViewLineContainingBufferPosition(point.Value);
                 point = viewLine.Start;
             }
 
@@ -694,13 +743,12 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
             {
                 if ((isUp || isDown))
                 {
-                    ITextViewLine viewLine = _hostView.TextViewLines.GetTextViewLineContainingBufferPosition(point.Value);
+                    ITextViewLine viewLine =
+                        _hostView.TextViewLines.GetTextViewLineContainingBufferPosition(
+                            point.Value);
                     if (viewLine != null) _hostView.Caret.MoveTo(viewLine);
                 }
-                else
-                {
-                    _hostView.Caret.MoveTo(point.Value);
-                }
+                else { _hostView.Caret.MoveTo(point.Value); }
 
                 _hostView.Caret.EnsureVisible();
                 _hostView.VisualElement.Focus();
@@ -709,7 +757,7 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
 
         return _commandTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
     }
-#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
+#pragma warning restore VSTHRD010  // Invoke single-threaded types on Main thread
 }
 
 [Export(typeof(ILineTransformSourceProvider))]

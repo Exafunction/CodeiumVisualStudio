@@ -12,10 +12,9 @@ using CodeiumVS.Languages;
 
 namespace CodeiumVS;
 
-#pragma warning disable CS0618 // Type or member is obsolete
+#pragma warning disable CS0618  // Type or member is obsolete
 internal class CodeiumProposalSource : ProposalSourceBase
 {
-
     private readonly CodeiumVSPackage package;
 
     private readonly IWpfTextView _view;
@@ -39,14 +38,14 @@ internal class CodeiumProposalSource : ProposalSourceBase
         document.TextBuffer.ContentTypeChanged += OnContentTypeChanged;
         RefreshLanguage();
     }
-    
-	public override Task DisposeAsync()
-	{
-		_document.FileActionOccurred -= OnFileActionOccurred;
-		_document.TextBuffer.ContentTypeChanged -= OnContentTypeChanged;
-		UpdateRequestTokenSource(null);
-		return base.DisposeAsync();
-	}
+
+    public override Task DisposeAsync()
+    {
+        _document.FileActionOccurred -= OnFileActionOccurred;
+        _document.TextBuffer.ContentTypeChanged -= OnContentTypeChanged;
+        UpdateRequestTokenSource(null);
+        return base.DisposeAsync();
+    }
 
     public static int Utf16OffsetToUtf8Offset(string str, int utf16Offset)
     {
@@ -59,16 +58,20 @@ internal class CodeiumProposalSource : ProposalSourceBase
         return Encoding.UTF8.GetString(bytes.Take(utf8Offset).ToArray()).Length;
     }
 
-    public override async Task<ProposalCollectionBase> RequestProposalsAsync(VirtualSnapshotPoint caret, CompletionState completionState, ProposalScenario scenario, char triggeringCharacter, CancellationToken cancellationToken)
+    public override async Task<ProposalCollectionBase> RequestProposalsAsync(
+        VirtualSnapshotPoint caret, CompletionState completionState, ProposalScenario scenario,
+        char triggeringCharacter, CancellationToken cancellationToken)
     {
         if (!package.IsSignedIn())
         {
             return new ProposalCollection("codeium", new List<Proposal>(0));
         }
 
-        await package.LogAsync($"RequestProposalsAsync - Language: {_language.Name}; Caret: {caret.Position.Position}; ASCII: {_document.Encoding.IsSingleByte}");
+        await package.LogAsync(
+            $"RequestProposalsAsync - Language: {_language.Name}; Caret: {caret.Position.Position}; ASCII: {_document.Encoding.IsSingleByte}");
 
-        CancellationTokenSource cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        CancellationTokenSource cancellationTokenSource =
+            CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         cancellationToken = cancellationTokenSource.Token;
         UpdateRequestTokenSource(cancellationTokenSource);
 
@@ -77,16 +80,15 @@ internal class CodeiumProposalSource : ProposalSourceBase
             DateTime utcNow = DateTime.UtcNow;
             TimeSpan timeSpan = _intelliSenseDelay - (utcNow - _lastRequest);
             _lastRequest = utcNow;
-            if (timeSpan > TimeSpan.Zero)
-            {
-                await Task.Delay(timeSpan, cancellationToken);
-            }
+            if (timeSpan > TimeSpan.Zero) { await Task.Delay(timeSpan, cancellationToken); }
         }
         try
         {
             string text = _document.TextBuffer.CurrentSnapshot.GetText();
-            int cursorPosition = _document.Encoding.IsSingleByte ? caret.Position.Position : Utf16OffsetToUtf8Offset(text, caret.Position.Position);
-            
+            int cursorPosition = _document.Encoding.IsSingleByte
+                                     ? caret.Position.Position
+                                     : Utf16OffsetToUtf8Offset(text, caret.Position.Position);
+
             VirtualSnapshotPoint newCaret = caret.TranslateTo(caret.Position.Snapshot);
 
             IList<Packets.CompletionItem>? list = await package.LanguageServer.GetCompletionsAsync(
@@ -97,8 +99,7 @@ internal class CodeiumProposalSource : ProposalSourceBase
                 _view.Options.GetOptionValue(DefaultOptions.NewLineCharacterOptionId),
                 _view.Options.GetOptionValue(DefaultOptions.TabSizeOptionId),
                 _view.Options.GetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId),
-                cancellationToken
-            );
+                cancellationToken);
 
             if (list != null && list.Count > 0)
             {
@@ -109,14 +110,16 @@ internal class CodeiumProposalSource : ProposalSourceBase
         }
         catch (Exception ex)
         {
-            await package.LogAsync($"Encountered exception when generating completions: {ex.Message} {ex}");
+            await package.LogAsync(
+                $"Encountered exception when generating completions: {ex.Message} {ex}");
             return new ProposalCollection("codeium", new List<Proposal>(0));
         }
     }
 
     private void UpdateRequestTokenSource(CancellationTokenSource newSource)
     {
-        CancellationTokenSource cancellationTokenSource = Interlocked.Exchange(ref _requestTokenSource, newSource);
+        CancellationTokenSource cancellationTokenSource =
+            Interlocked.Exchange(ref _requestTokenSource, newSource);
         if (cancellationTokenSource != null)
         {
             cancellationTokenSource.Cancel();
@@ -124,7 +127,9 @@ internal class CodeiumProposalSource : ProposalSourceBase
         }
     }
 
-    internal ProposalCollectionBase ProposalsFromCompletions(IList<Packets.CompletionItem> completionItems, VirtualSnapshotPoint caret, CompletionState completionState, string text)
+    internal ProposalCollectionBase ProposalsFromCompletions(
+        IList<Packets.CompletionItem> completionItems, VirtualSnapshotPoint caret,
+        CompletionState completionState, string text)
     {
         if (completionItems == null || completionItems.Count == 0)
         {
@@ -138,7 +143,7 @@ internal class CodeiumProposalSource : ProposalSourceBase
             int startOffset = (int)completionItem.range.startOffset;
             int endOffset = (int)completionItem.range.endOffset;
             int insertionStart = (int)completionItem.completionParts[0].offset;
-            
+
             if (!_document.Encoding.IsSingleByte)
             {
                 startOffset = Utf8OffsetToUtf16Offset(text, startOffset);
@@ -146,29 +151,32 @@ internal class CodeiumProposalSource : ProposalSourceBase
                 insertionStart = Utf8OffsetToUtf16Offset(text, insertionStart);
             }
 
-            string text2 = 
-                caret.IsInVirtualSpace ?
-                completionItems[i].completion.text.TrimStart() :
-                completionItems[i].completion.text.Substring(insertionStart - startOffset);
+            string text2 =
+                caret.IsInVirtualSpace
+                    ? completionItems[i].completion.text.TrimStart()
+                    : completionItems[i].completion.text.Substring(insertionStart - startOffset);
 
             if (completionState != null)
             {
-                string text3 = completionState.SelectedItem.Substring(completionState.ApplicableToSpan.Length);
-                if (!text2.StartsWith(text3))
-                {
-                    continue;
-                }
+                string text3 =
+                    completionState.SelectedItem.Substring(completionState.ApplicableToSpan.Length);
+                if (!text2.StartsWith(text3)) { continue; }
                 text2 = text2.Substring(text3.Length);
             }
 
-            SnapshotSpan span = new(caret.Position.Snapshot, insertionStart, endOffset - insertionStart);
+            SnapshotSpan span =
+                new(caret.Position.Snapshot, insertionStart, endOffset - insertionStart);
             ProposedEdit[] array = [new ProposedEdit(span, text2)];
 
-            Proposal proposal = new(
-                null, array, caret, completionState,
-                ProposalFlags.SingleTabToAccept | ProposalFlags.ShowCommitHighlight | ProposalFlags.FormatAfterCommit,
-                null, completionItem.completion.completionId
-            );
+            Proposal proposal =
+                new(null,
+                    array,
+                    caret,
+                    completionState,
+                    ProposalFlags.SingleTabToAccept | ProposalFlags.ShowCommitHighlight |
+                        ProposalFlags.FormatAfterCommit,
+                    null,
+                    completionItem.completion.completionId);
 
             list.Add(proposal);
         }
@@ -188,9 +196,9 @@ internal class CodeiumProposalSource : ProposalSourceBase
 
     private void RefreshLanguage()
     {
-        _language = Mapper.GetLanguage(_document.TextBuffer.ContentType, Path.GetExtension(_document.FilePath)?.Trim('.'));
+        _language = Mapper.GetLanguage(_document.TextBuffer.ContentType,
+                                       Path.GetExtension(_document.FilePath)?.Trim('.'));
     }
-
 }
 
-#pragma warning restore CS0618 // Type or member is obsolete
+#pragma warning restore CS0618  // Type or member is obsolete

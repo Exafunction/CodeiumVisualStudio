@@ -348,7 +348,7 @@ internal static class WebChatServer
 
     internal static bool Send(this WebServerRequest request, WebSocket ws)
     {
-        if (!ws.IsAlive)
+        if (ws == null || !ws.IsAlive)
         {
             CodeiumVSPackage.Instance.Log(
                 "Language Server Controller: Unable to send the request because the connection is closed.");

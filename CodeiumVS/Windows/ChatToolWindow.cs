@@ -1,11 +1,9 @@
-﻿using Community.VisualStudio.Toolkit;
-using Microsoft.VisualStudio;
+﻿using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Web.WebView2.Core;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -352,6 +350,10 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 
     private void WebView_OnDOMContentLoaded(object sender, CoreWebView2DOMContentLoadedEventArgs e)
     {
-        if (webView.Source.OriginalString != "about:blank") _isChatPageLoaded = true;
+        if (webView.Source.OriginalString != "about:blank")
+        {
+            _isChatPageLoaded = true;
+            _infoBar.Close();
+        }
     }
 }

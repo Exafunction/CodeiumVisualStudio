@@ -69,6 +69,7 @@
     <Compile Include="QuickInfo\IntellisenseController.cs" />
     <Compile Include="QuickInfo\QuickInfoSource.cs" />
     <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="Utilities\FileUtilities.cs" />
     <Compile Include="Utilities\IntellisenseUtilities.cs" />
     <Compile Include="Utilities\ProcessExtensions.cs" />
     <Compile Include="Utilities\TextHighlighter.cs" />

@@ -71,7 +71,7 @@ internal class BaseCommandContextMenu<T> : BaseCommand<T>
     internal static bool is_visible = false;
 
     protected static DocumentView? docView;
-    protected static string text;  // the selected text
+    protected static string text; // the selected text
     protected static bool is_function = false;
     protected static int start_line, end_line;
     protected static int start_col, end_col;

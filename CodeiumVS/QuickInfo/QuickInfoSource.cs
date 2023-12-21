@@ -20,8 +20,7 @@ namespace CodeiumVS.QuickInfo;
 internal sealed class CodeiumAsyncQuickInfoSource
 (ITextBuffer textBuffer)
     : PropertyOwnerExtension<ITextBuffer, CodeiumAsyncQuickInfoSource>(textBuffer),
-      IAsyncQuickInfoSource,
-      IDisposable
+      IAsyncQuickInfoSource, IDisposable
 {
     private ITextView _tagAggregatorTextView;
     private ITagAggregator<IErrorTag> ? _tagAggregator;
@@ -36,14 +35,16 @@ internal sealed class CodeiumAsyncQuickInfoSource
         if (content is ContainerElement containter)
         {
             string text = string.Empty;
-            foreach (var element in containter.Elements) text += GetQuickInfoItemText(element);
+            foreach (var element in containter.Elements)
+                text += GetQuickInfoItemText(element);
             return text;
         }
 
         if (content is ClassifiedTextElement textElement)
         {
             string text = string.Empty;
-            foreach (var element in textElement.Runs) text += GetQuickInfoItemText(element);
+            foreach (var element in textElement.Runs)
+                text += GetQuickInfoItemText(element);
             return text;
         }
 

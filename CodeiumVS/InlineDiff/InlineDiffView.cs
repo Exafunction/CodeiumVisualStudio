@@ -41,10 +41,7 @@ internal class InlineDiffView
                                            e.BeforeContentType, e.AfterContentType));
         }
 
-        public void Dispose()
-        {
-            DocumentBuffer.ContentTypeChanged -= OnContentTypeChanged;
-        }
+        public void Dispose() { DocumentBuffer.ContentTypeChanged -= OnContentTypeChanged; }
     }
 
     private readonly IWpfTextView _hostView;
@@ -570,10 +567,7 @@ internal class InlineDiffView
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void DiffView_OnViewportHeightChanged(object sender, EventArgs e)
-    {
-        RecalculateSize();
-    }
+    private void DiffView_OnViewportHeightChanged(object sender, EventArgs e) { RecalculateSize(); }
 
     /// <summary>
     /// Show the "selected line highlight" (i.e. the grey rectangle surrounding the line) for this

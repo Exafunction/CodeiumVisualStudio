@@ -12,7 +12,7 @@ using CodeiumVS.Languages;
 
 namespace CodeiumVS;
 
-#pragma warning disable CS0618  // Type or member is obsolete
+#pragma warning disable CS0618 // Type or member is obsolete
 internal class CodeiumProposalSource : ProposalSourceBase
 {
     private readonly CodeiumVSPackage package;
@@ -58,9 +58,10 @@ internal class CodeiumProposalSource : ProposalSourceBase
         return Encoding.UTF8.GetString(bytes.Take(utf8Offset).ToArray()).Length;
     }
 
-    public override async Task<ProposalCollectionBase> RequestProposalsAsync(
-        VirtualSnapshotPoint caret, CompletionState completionState, ProposalScenario scenario,
-        char triggeringCharacter, CancellationToken cancellationToken)
+    public override async Task<ProposalCollectionBase>
+    RequestProposalsAsync(VirtualSnapshotPoint caret, CompletionState completionState,
+                          ProposalScenario scenario, char triggeringCharacter,
+                          CancellationToken cancellationToken)
     {
         if (!package.IsSignedIn())
         {
@@ -201,4 +202,4 @@ internal class CodeiumProposalSource : ProposalSourceBase
     }
 }
 
-#pragma warning restore CS0618  // Type or member is obsolete
+#pragma warning restore CS0618 // Type or member is obsolete

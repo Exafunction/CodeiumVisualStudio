@@ -129,9 +129,9 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
         // for the OpenDocumentViaProject and IsPeekOnAdornment
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-        Assumes.True(
-            position > 0 && length > 0 && (position + length) <= _hostView.TextSnapshot.Length,
-            "InlineDiffAdornment.CreateDiff: Invalid position and length parameter");
+        Assumes.True(position > 0 && length > 0 &&
+                         (position + length) <= _hostView.TextSnapshot.Length,
+                     "InlineDiffAdornment.CreateDiff: Invalid position and length parameter");
         Assumes.True(
             MefProvider.Instance.TextDocumentFactoryService.TryGetTextDocument(
                 _hostView.TextDataModel.DocumentBuffer, out var textDocument),
@@ -518,7 +518,7 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
         }
         catch (Exception)
         {
-        }  // COMException
+        } // COMException
 
         DisposeDiff();
     }
@@ -526,10 +526,7 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
     /// <summary>
     /// The proposed diff has been rejected by the user.
     /// </summary>
-    private void Adornment_OnRejected()
-    {
-        DisposeDiff();
-    }
+    private void Adornment_OnRejected() { DisposeDiff(); }
 
     private void Adornment_OnSizeChanged(object sender, SizeChangedEventArgs e)
     {
@@ -677,7 +674,7 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
         return true;
     }
 
-#pragma warning disable VSTHRD010  // Invoke single-threaded types on Main thread
+#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
 
     // By default, the adornments doesn't received the keyboard inputs it deserved, sadly.
     // We have to "hook" the host view commands filter list and check if our adornments
@@ -757,7 +754,7 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
 
         return _commandTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
     }
-#pragma warning restore VSTHRD010  // Invoke single-threaded types on Main thread
+#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
 }
 
 [Export(typeof(ILineTransformSourceProvider))]

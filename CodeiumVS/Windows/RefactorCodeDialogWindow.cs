@@ -171,19 +171,13 @@ public partial class RefactorCodeDialogWindow : DialogWindow
             hwnd, 20, ref value, System.Runtime.InteropServices.Marshal.SizeOf(value));
     }
 
-    protected override void OnDeactivated(EventArgs e)
-    {
-        CloseDialog();
-    }
+    protected override void OnDeactivated(EventArgs e) { CloseDialog(); }
 
     [DllImport("dwmapi.dll", PreserveSig = true)]
     public static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref bool attrValue,
                                                    int attrSize);
 
-    private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        DragMove();
-    }
+    private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { DragMove(); }
 
     private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
     {

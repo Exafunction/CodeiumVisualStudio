@@ -53,10 +53,7 @@ internal abstract class TextViewExtension<ViewType, ExtensionType>
         _hostView.Closed += HostView_Closed;
     }
 
-    private void HostView_Closed(object sender, EventArgs e)
-    {
-        Dispose();
-    }
+    private void HostView_Closed(object sender, EventArgs e) { Dispose(); }
 
     public override void Dispose()
     {

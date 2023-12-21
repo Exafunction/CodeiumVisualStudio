@@ -13,14 +13,11 @@ public class LanguageServerController
 {
     readonly CodeiumVSPackage Package;
     public WebSocket? ws = null;
-    public LanguageServerController()
-    {
-        Package = CodeiumVSPackage.Instance;
-    }
+    public LanguageServerController() { Package = CodeiumVSPackage.Instance; }
 
     public async Task ConnectAsync()
     {
-#pragma warning disable VSTHRD103  // Call async methods when in an async method
+#pragma warning disable VSTHRD103 // Call async methods when in an async method
         void OnOpen(object sender, EventArgs e)
         {
             Package.Log($"Language Server Controller: Connected to {ws.Url}");
@@ -76,7 +73,7 @@ public class LanguageServerController
             Package.Log(
                 $"Language Server Controller: Error '{error.Message}'; Exception: {error.Exception}");
         }
-#pragma warning restore VSTHRD103  // Call async methods when in an async method
+#pragma warning restore VSTHRD103 // Call async methods when in an async method
 
         GetProcessesResponse? result = await Package.LanguageServer.GetProcessesAsync();
 
@@ -94,7 +91,7 @@ public class LanguageServerController
             .RunAsync(async delegate {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                 DocumentView docView = await VS.Documents.GetActiveDocumentViewAsync();
-                if (docView?.TextView == null) return;  // not a text window
+                if (docView?.TextView == null) return; // not a text window
 
                 ITextSelection selection = docView.TextView.Selection;
 

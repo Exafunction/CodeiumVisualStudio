@@ -27,10 +27,7 @@ public class EnterTokenDialogWindow : DialogWindow
 }
 public partial class EnterTokenDialogWindowControl : UserControl
 {
-    public EnterTokenDialogWindowControl()
-    {
-        InitializeComponent();
-    }
+    public EnterTokenDialogWindowControl() { InitializeComponent(); }
 
     private void BtnOKClicked(object sender, RoutedEventArgs e)
     {

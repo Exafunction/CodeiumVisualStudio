@@ -88,10 +88,7 @@ internal class LanguageEqualityComparer : IEqualityComparer<LangInfo>
         return x.Identifier.Equals(y.Identifier, StringComparison.OrdinalIgnoreCase);
     }
 
-    public int GetHashCode(LangInfo obj)
-    {
-        return obj.Identifier.GetHashCode();
-    }
+    public int GetHashCode(LangInfo obj) { return obj.Identifier.GetHashCode(); }
 }
 
 internal class Mapper

@@ -12,7 +12,7 @@ using CodeiumVS;
 
 namespace CodeiumVS;
 
-#pragma warning disable CS0618  // Type or member is obsolete
+#pragma warning disable CS0618 // Type or member is obsolete
 
 [Export(typeof(CodeiumProposalSourceProvider))]
 [Export(typeof(ProposalSourceProviderBase))]
@@ -92,4 +92,4 @@ internal class CodeiumProposalSourceProvider : ProposalSourceProviderBase
     }
 }
 
-#pragma warning restore CS0618  // Type or member is obsolete
+#pragma warning restore CS0618 // Type or member is obsolete

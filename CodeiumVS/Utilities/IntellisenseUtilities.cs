@@ -66,8 +66,8 @@ internal static class IntellisenseUtilities
         return spans[0].Snapshot.CreateTrackingSpan(spans[0], trackingSpan.TrackingMode);
     }
 
-    private static NormalizedSnapshotSpanCollection MapTrackingSpanToSpansOnBuffer(
-        ITextView textView, ITrackingSpan trackingSpan)
+    private static NormalizedSnapshotSpanCollection
+    MapTrackingSpanToSpansOnBuffer(ITextView textView, ITrackingSpan trackingSpan)
     {
         return textView.BufferGraph.MapUpToBuffer(
             trackingSpan.GetSpan(trackingSpan.TextBuffer.CurrentSnapshot),

@@ -22,19 +22,25 @@ internal static class FileUtilities
                 try
                 {
                     string orignalFileName = Path.GetFileName(path);
-                    string randomPath = Path.Combine(Path.GetDirectoryName(path), orignalFileName + "_deleted_" + Path.GetRandomFileName());
+                    string randomPath =
+                        Path.Combine(Path.GetDirectoryName(path),
+                                     orignalFileName + "_deleted_" + Path.GetRandomFileName());
                     File.Move(path, randomPath);
                 }
                 catch (Exception ex2)
                 {
-                    CodeiumVSPackage.Instance?.Log($"Failed to move the file why trying to delete it, exception: {ex2}");
-                    VS.MessageBox.ShowError($"Codeium: Failed to move the file why trying to delete it: {path}", "Please see the output windows for more details");
+                    CodeiumVSPackage.Instance?.Log(
+                        $"Failed to move the file why trying to delete it, exception: {ex2}");
+                    VS.MessageBox.ShowError(
+                        $"Codeium: Failed to move the file why trying to delete it: {path}",
+                        "Please see the output windows for more details");
                 }
             }
             else
             {
                 CodeiumVSPackage.Instance?.Log($"Failed to delete file, exception: {ex}");
-                VS.MessageBox.ShowError($"Codeium: Failed to delete file: {path}", "Please see the output windows for more details");
+                VS.MessageBox.ShowError($"Codeium: Failed to delete file: {path}",
+                                        "Please see the output windows for more details");
             }
         }
     }

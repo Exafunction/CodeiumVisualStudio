@@ -141,7 +141,10 @@ internal static class CodeAnalyzer
 
         if (splits.Length >= 2)
         {
-            for (int i = 1; i < splits.Length; i++) { parameters += splits[i] + "("; }
+            for (int i = 1; i < splits.Length; i++)
+            {
+                parameters += splits[i] + "(";
+            }
 
             parameters = parameters.Substring(0, parameters.LastIndexOf(')'));
         }

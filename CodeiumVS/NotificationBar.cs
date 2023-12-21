@@ -107,8 +107,8 @@ public class NotificationInfoBar : IVsInfoBarUIEvents, IVsShellPropertyEvents
         }
     }
 
-    private IEnumerable<IVsInfoBarActionItem> GetActionsItems(
-        params KeyValuePair<string, Action>[] actions)
+    private IEnumerable<IVsInfoBarActionItem>
+    GetActionsItems(params KeyValuePair<string, Action>[] actions)
     {
         ThreadHelper.ThrowIfNotOnUIThread("GetActionsItems");
         if (actions != null)

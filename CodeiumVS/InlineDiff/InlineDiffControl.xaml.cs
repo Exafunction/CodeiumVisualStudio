@@ -56,15 +56,9 @@ public partial class InlineDiffControl : UserControl
             new GridLength(ContentBorder.Margin.Left + _inlineDiffView.LeftView.ViewportWidth);
     }
 
-    private void ButtonReject_Click(object sender, RoutedEventArgs e)
-    {
-        OnRejected?.Invoke();
-    }
+    private void ButtonReject_Click(object sender, RoutedEventArgs e) { OnRejected?.Invoke(); }
 
-    private void ButtonAccept_Click(object sender, RoutedEventArgs e)
-    {
-        OnAccepted?.Invoke();
-    }
+    private void ButtonAccept_Click(object sender, RoutedEventArgs e) { OnAccepted?.Invoke(); }
 
     private void UserControl_PreviewKeyDown(object sender, KeyEventArgs e)
     {

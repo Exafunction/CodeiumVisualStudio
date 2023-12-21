@@ -24,7 +24,7 @@ namespace CodeiumVS;
 public class LanguageServer
 {
     private string _languageServerURL;
-    private string _languageServerVersion = "1.6.10";
+    private string _languageServerVersion = "1.6.13";
 
     private int _port = 0;
     private Process _process;
@@ -91,25 +91,16 @@ public class LanguageServer
         Controller.Disconnect();
     }
 
-    public int GetPort()
-    {
-        return _port;
-    }
-    public string GetKey()
-    {
-        return _metadata.api_key;
-    }
-    public string GetVersion()
-    {
-        return _languageServerVersion;
-    }
-    public bool IsReady()
-    {
-        return _port != 0;
-    }
+    public int GetPort() { return _port; }
+    public string GetKey() { return _metadata.api_key; }
+    public string GetVersion() { return _languageServerVersion; }
+    public bool IsReady() { return _port != 0; }
     public async Task WaitReadyAsync()
     {
-        while (!IsReady()) { await Task.Delay(50); }
+        while (!IsReady())
+        {
+            await Task.Delay(50);
+        }
     }
 
     // Get API key from the authentication token

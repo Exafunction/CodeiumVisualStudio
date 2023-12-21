@@ -14,8 +14,8 @@ namespace CodeiumVS.Packets;
 public partial class GetCompletionsRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -62,8 +62,8 @@ public partial class GetCompletionsRequest : global::ProtoBuf.IExtensible
 public partial class Metadata : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -175,8 +175,8 @@ public partial class Metadata : global::ProtoBuf.IExtensible
 public partial class Document : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -232,8 +232,8 @@ public partial class Document : global::ProtoBuf.IExtensible
 public partial class DocumentPosition : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -249,8 +249,8 @@ public partial class DocumentPosition : global::ProtoBuf.IExtensible
 public partial class Range : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -276,8 +276,8 @@ public partial class Range : global::ProtoBuf.IExtensible
 public partial class EditorOptions : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -298,8 +298,8 @@ public partial class EditorOptions : global::ProtoBuf.IExtensible
 public partial class MockResponseData : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -312,8 +312,8 @@ public partial class MockResponseData : global::ProtoBuf.IExtensible
 public partial class Completion : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -396,8 +396,8 @@ public partial class Completion : global::ProtoBuf.IExtensible
 public partial class CodeContextItem : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -472,8 +472,8 @@ public partial class CodeContextItem : global::ProtoBuf.IExtensible
 public partial class WorkspacePath : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -491,8 +491,8 @@ public partial class WorkspacePath : global::ProtoBuf.IExtensible
 public partial class SnippetWithWordCount : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -510,8 +510,8 @@ public partial class SnippetWithWordCount : global::ProtoBuf.IExtensible
 public partial class WordCount : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -525,8 +525,8 @@ public partial class WordCount : global::ProtoBuf.IExtensible
 public partial class GitRepoInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -562,8 +562,8 @@ public partial class GitRepoInfo : global::ProtoBuf.IExtensible
 public partial class GetCompletionsResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -606,8 +606,8 @@ public partial class GetCompletionsResponse : global::ProtoBuf.IExtensible
 public partial class State : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -624,8 +624,8 @@ public partial class State : global::ProtoBuf.IExtensible
 public partial class CompletionItem : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -656,8 +656,8 @@ public partial class CompletionItem : global::ProtoBuf.IExtensible
 public partial class Suffix : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -674,8 +674,8 @@ public partial class Suffix : global::ProtoBuf.IExtensible
 public partial class CompletionPart : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -708,8 +708,8 @@ public partial class CompletionPart : global::ProtoBuf.IExtensible
 public partial class RequestInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -737,8 +737,8 @@ public partial class RequestInfo : global::ProtoBuf.IExtensible
 public partial class CompletionsRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -837,8 +837,8 @@ public partial class CompletionsRequest : global::ProtoBuf.IExtensible
 public partial class CompletionConfiguration : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -914,8 +914,8 @@ public partial class CompletionConfiguration : global::ProtoBuf.IExtensible
 public partial class PromptElementRange : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -946,8 +946,8 @@ public partial class PromptElementRange : global::ProtoBuf.IExtensible
 public partial class PromptElementKindInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -973,8 +973,8 @@ public partial class PromptElementKindInfo : global::ProtoBuf.IExtensible
 public partial class PromptStageLatency : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -991,8 +991,8 @@ public partial class PromptStageLatency : global::ProtoBuf.IExtensible
 public partial class Repository : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1040,8 +1040,8 @@ public partial class Repository : global::ProtoBuf.IExtensible
 public partial class LatencyInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1077,8 +1077,8 @@ public partial class LatencyInfo : global::ProtoBuf.IExtensible
 public partial class GetProcessesResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1099,8 +1099,8 @@ public partial class GetProcessesResponse : global::ProtoBuf.IExtensible
 public partial class WebServerRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1182,8 +1182,8 @@ public partial class WebServerRequest : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(8, value);
     }
     public bool ShouldSerializeapply_diff() => __pbn__payload.Is(8);
-    public void Resetapply_diff() =>
-        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 8);
+    public void
+    Resetapply_diff() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 8);
 
     [global::ProtoBuf.ProtoMember(9)]
     public Heartbeat heartbeat
@@ -1192,8 +1192,8 @@ public partial class WebServerRequest : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(9, value);
     }
     public bool ShouldSerializeheartbeat() => __pbn__payload.Is(9);
-    public void Resetheartbeat() =>
-        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 9);
+    public void
+    Resetheartbeat() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 9);
 
     [global::ProtoBuf.ProtoMember(10)]
     public UpdateUserSettingsRequest update_user_settings
@@ -1210,8 +1210,8 @@ public partial class WebServerRequest : global::ProtoBuf.IExtensible
 public partial class HandshakeRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1228,8 +1228,8 @@ public partial class HandshakeRequest : global::ProtoBuf.IExtensible
 public partial class GetChatMessageRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1271,8 +1271,8 @@ public partial class GetChatMessageRequest : global::ProtoBuf.IExtensible
 public partial class ChatMessage : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1348,8 +1348,8 @@ public partial class ChatMessage : global::ProtoBuf.IExtensible
 public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1431,8 +1431,8 @@ public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
         set => __pbn__intent = new global::ProtoBuf.DiscriminatedUnionObject(8, value);
     }
     public bool ShouldSerializeproblem_explain() => __pbn__intent.Is(8);
-    public void Resetproblem_explain() =>
-        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 8);
+    public void
+    Resetproblem_explain() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 8);
 
     [global::ProtoBuf.ProtoMember(9)]
     public IntentGenerateCode generate_code
@@ -1441,8 +1441,8 @@ public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
         set => __pbn__intent = new global::ProtoBuf.DiscriminatedUnionObject(9, value);
     }
     public bool ShouldSerializegenerate_code() => __pbn__intent.Is(9);
-    public void Resetgenerate_code() =>
-        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 9);
+    public void
+    Resetgenerate_code() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 9);
 
     [global::ProtoBuf.ProtoMember(10)]
     public IntentClassExplain explain_class
@@ -1451,16 +1451,16 @@ public partial class ChatMessageIntent : global::ProtoBuf.IExtensible
         set => __pbn__intent = new global::ProtoBuf.DiscriminatedUnionObject(10, value);
     }
     public bool ShouldSerializeexplain_class() => __pbn__intent.Is(10);
-    public void Resetexplain_class() =>
-        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 10);
+    public void
+    Resetexplain_class() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__intent, 10);
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class IntentGeneric : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1472,8 +1472,8 @@ public partial class IntentGeneric : global::ProtoBuf.IExtensible
 public partial class IntentFunctionExplain : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1495,8 +1495,8 @@ public partial class IntentFunctionExplain : global::ProtoBuf.IExtensible
 public partial class FunctionInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1568,8 +1568,8 @@ public partial class FunctionInfo : global::ProtoBuf.IExtensible
 public partial class IntentFunctionDocstring : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1591,8 +1591,8 @@ public partial class IntentFunctionDocstring : global::ProtoBuf.IExtensible
 public partial class IntentFunctionRefactor : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1620,8 +1620,8 @@ public partial class IntentFunctionRefactor : global::ProtoBuf.IExtensible
 public partial class IntentCodeBlockExplain : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1643,8 +1643,8 @@ public partial class IntentCodeBlockExplain : global::ProtoBuf.IExtensible
 public partial class CodeBlockInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1676,8 +1676,8 @@ public partial class CodeBlockInfo : global::ProtoBuf.IExtensible
 public partial class IntentCodeBlockRefactor : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1705,8 +1705,8 @@ public partial class IntentCodeBlockRefactor : global::ProtoBuf.IExtensible
 public partial class IntentFunctionUnitTests : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1734,8 +1734,8 @@ public partial class IntentFunctionUnitTests : global::ProtoBuf.IExtensible
 public partial class IntentProblemExplain : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1774,8 +1774,8 @@ public partial class IntentProblemExplain : global::ProtoBuf.IExtensible
 public partial class IntentGenerateCode : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1803,8 +1803,8 @@ public partial class IntentGenerateCode : global::ProtoBuf.IExtensible
 public partial class IntentClassExplain : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1826,8 +1826,8 @@ public partial class IntentClassExplain : global::ProtoBuf.IExtensible
 public partial class ClassInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1907,8 +1907,8 @@ public partial class ClassInfo : global::ProtoBuf.IExtensible
 public partial class ChatMessageAction : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(2)]
@@ -1946,8 +1946,8 @@ public partial class ChatMessageAction : global::ProtoBuf.IExtensible
 public partial class ChatMessageActionGeneric : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1959,8 +1959,8 @@ public partial class ChatMessageActionGeneric : global::ProtoBuf.IExtensible
 public partial class ChatMessageActionEdit : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -1994,8 +1994,8 @@ public partial class ChatMessageActionEdit : global::ProtoBuf.IExtensible
 public partial class DiffBlock : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2026,8 +2026,8 @@ public partial class DiffBlock : global::ProtoBuf.IExtensible
 public partial class UnifiedDiff : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(3)]
@@ -2039,8 +2039,8 @@ public partial class UnifiedDiff : global::ProtoBuf.IExtensible
     public partial class UnifiedDiffLine : global::ProtoBuf.IExtensible
     {
         private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-            bool createIfMissing) =>
+        global::ProtoBuf.IExtension
+            global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
             global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData,
                                                            createIfMissing);
 
@@ -2059,8 +2059,8 @@ public partial class UnifiedDiff : global::ProtoBuf.IExtensible
 public partial class ChatMessageError : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2072,8 +2072,8 @@ public partial class ChatMessageError : global::ProtoBuf.IExtensible
 public partial class ChatMessageStatus : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2084,8 +2084,8 @@ public partial class ChatMessageStatus : global::ProtoBuf.IExtensible
 public partial class ChatMessageStatusContextRelevancy : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2106,8 +2106,8 @@ public partial class ChatMessageStatusContextRelevancy : global::ProtoBuf.IExten
 public partial class RecordChatFeedbackRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2141,8 +2141,8 @@ public partial class RecordChatFeedbackRequest : global::ProtoBuf.IExtensible
 public partial class ClearConversation : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2154,8 +2154,8 @@ public partial class ClearConversation : global::ProtoBuf.IExtensible
 public partial class OpenFilePointer : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2187,8 +2187,8 @@ public partial class OpenFilePointer : global::ProtoBuf.IExtensible
 public partial class CancelInfightMessage : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2200,8 +2200,8 @@ public partial class CancelInfightMessage : global::ProtoBuf.IExtensible
 public partial class InsertCodeAtCursor : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2218,8 +2218,8 @@ public partial class InsertCodeAtCursor : global::ProtoBuf.IExtensible
 public partial class ApplyDiff : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2242,8 +2242,8 @@ public partial class ApplyDiff : global::ProtoBuf.IExtensible
 public partial class Heartbeat : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 }
 
@@ -2251,8 +2251,8 @@ public partial class Heartbeat : global::ProtoBuf.IExtensible
 public partial class UpdateUserSettingsRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2263,8 +2263,8 @@ public partial class UpdateUserSettingsRequest : global::ProtoBuf.IExtensible
 public partial class UserSettings : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2275,8 +2275,8 @@ public partial class UserSettings : global::ProtoBuf.IExtensible
 public partial class WebServerResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2298,8 +2298,8 @@ public partial class WebServerResponse : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(2, value);
     }
     public bool ShouldSerializestate_update() => __pbn__payload.Is(2);
-    public void Resetstate_update() =>
-        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 2);
+    public void
+    Resetstate_update() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 2);
 
     [global::ProtoBuf.ProtoMember(3)]
     public OpenFilePointer open_file_pointer
@@ -2328,8 +2328,8 @@ public partial class WebServerResponse : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(5, value);
     }
     public bool ShouldSerializeapply_diff() => __pbn__payload.Is(5);
-    public void Resetapply_diff() =>
-        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 5);
+    public void
+    Resetapply_diff() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 5);
 
     [global::ProtoBuf.ProtoMember(6)]
     public ErrorResponse error_response
@@ -2338,16 +2338,16 @@ public partial class WebServerResponse : global::ProtoBuf.IExtensible
         set => __pbn__payload = new global::ProtoBuf.DiscriminatedUnionObject(6, value);
     }
     public bool ShouldSerializeerror_response() => __pbn__payload.Is(6);
-    public void Reseterror_response() =>
-        global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 6);
+    public void
+    Reseterror_response() => global::ProtoBuf.DiscriminatedUnionObject.Reset(ref __pbn__payload, 6);
 }
 
 [global::ProtoBuf.ProtoContract()]
 public partial class HandshakeResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2369,8 +2369,8 @@ public partial class HandshakeResponse : global::ProtoBuf.IExtensible
 public partial class UserStatus : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2408,8 +2408,8 @@ public partial class UserStatus : global::ProtoBuf.IExtensible
 public partial class ChatMessageState : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2432,8 +2432,8 @@ public partial class ChatMessageState : global::ProtoBuf.IExtensible
 public partial class ChatMessageWithFeedback : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2455,8 +2455,8 @@ public partial class ChatMessageWithFeedback : global::ProtoBuf.IExtensible
 public partial class StateUpdate : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2472,8 +2472,8 @@ public partial class StateUpdate : global::ProtoBuf.IExtensible
 public partial class ErrorResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2485,8 +2485,8 @@ public partial class ErrorResponse : global::ProtoBuf.IExtensible
 public partial class GetAuthTokenRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 }
 
@@ -2494,8 +2494,8 @@ public partial class GetAuthTokenRequest : global::ProtoBuf.IExtensible
 public partial class GetAuthTokenResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2513,8 +2513,8 @@ public partial class GetAuthTokenResponse : global::ProtoBuf.IExtensible
 public partial class RegisterUserRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2526,8 +2526,8 @@ public partial class RegisterUserRequest : global::ProtoBuf.IExtensible
 public partial class RegisterUserResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2545,8 +2545,8 @@ public partial class RegisterUserResponse : global::ProtoBuf.IExtensible
 public partial class AcceptCompletionRequest : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [global::ProtoBuf.ProtoMember(1)]
@@ -2563,8 +2563,8 @@ public partial class AcceptCompletionRequest : global::ProtoBuf.IExtensible
 public partial class AcceptCompletionResponse : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(
-        bool createIfMissing) =>
+    global::ProtoBuf.IExtension
+        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 }
 

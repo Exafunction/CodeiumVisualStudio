@@ -51,10 +51,7 @@ internal class TextHighlighter : TextViewExtension<ITextView, TextHighlighter>,
         SynchronousUpdate();
     }
 
-    public void AddHighlight(int position, int length)
-    {
-        AddHighlight(new Span(position, length));
-    }
+    public void AddHighlight(int position, int length) { AddHighlight(new Span(position, length)); }
 
     public void HighlightBlock(int position)
     {

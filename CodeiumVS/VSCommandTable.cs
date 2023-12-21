@@ -5,35 +5,35 @@
 // ------------------------------------------------------------------------------
 namespace CodeiumVS
 {
-    using System;
+using System;
 
-    /// <summary>
-    /// Helper class that exposes all GUIDs used across VS Package.
-    /// </summary>
-    internal sealed partial class PackageGuids
-    {
-        public const string CodeiumVSString = "61329f9d-a7a0-4910-ab50-a7a864a549fd";
-        public static Guid CodeiumVS = new Guid(CodeiumVSString);
+/// <summary>
+/// Helper class that exposes all GUIDs used across VS Package.
+/// </summary>
+internal sealed partial class PackageGuids
+{
+    public const string CodeiumVSString = "61329f9d-a7a0-4910-ab50-a7a864a549fd";
+    public static Guid CodeiumVS = new Guid(CodeiumVSString);
 
-        public const string ChatToolWindowString = "1a46fd64-28d5-434c-8eb3-17a02d419b53";
-        public static Guid ChatToolWindow = new Guid(ChatToolWindowString);
-    }
-    /// <summary>
-    /// Helper class that encapsulates all CommandIDs uses across VS Package.
-    /// </summary>
-    internal sealed partial class PackageIds
-    {
-        public const int ToolsSubMenuCodeium = 0x0001;
-        public const int ToolsButtonsGroup = 0x0002;
-        public const int ContextGroupCodeium = 0x0003;
-        public const int OpenChatWindow = 0x0100;
-        public const int SignIn = 0x0101;
-        public const int SignOut = 0x0102;
-        public const int EnterAuthToken = 0x0103;
-        public const int ExplainCodeBlock = 0x0104;
-        public const int RefactorCodeBlock = 0x0105;
-        public const int GenerateFunctionDocstring = 0x0106;
-        public const int GenerateFunctionUnitTest = 0x0107;
-        public const int DebugButton = 0x0600;
-    }
+    public const string ChatToolWindowString = "1a46fd64-28d5-434c-8eb3-17a02d419b53";
+    public static Guid ChatToolWindow = new Guid(ChatToolWindowString);
+}
+/// <summary>
+/// Helper class that encapsulates all CommandIDs uses across VS Package.
+/// </summary>
+internal sealed partial class PackageIds
+{
+    public const int ToolsSubMenuCodeium = 0x0001;
+    public const int ToolsButtonsGroup = 0x0002;
+    public const int ContextGroupCodeium = 0x0003;
+    public const int OpenChatWindow = 0x0100;
+    public const int SignIn = 0x0101;
+    public const int SignOut = 0x0102;
+    public const int EnterAuthToken = 0x0103;
+    public const int ExplainCodeBlock = 0x0104;
+    public const int RefactorCodeBlock = 0x0105;
+    public const int GenerateFunctionDocstring = 0x0106;
+    public const int GenerateFunctionUnitTest = 0x0107;
+    public const int DebugButton = 0x0600;
+}
 }

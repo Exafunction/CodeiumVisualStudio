@@ -531,7 +531,7 @@ public class LanguageServer
 
         _process.StartInfo.Arguments =
             $"--api_server_url {apiUrl} --manager_dir \"{managerDir}\" --database_dir \"{databaseDir}\"" +
-            " --enable_chat_web_server --enable_chat_client --detect_proxy=false";
+            $" --enable_chat_web_server --enable_chat_client --detect_proxy={_package.SettingsPage.EnableLanguageServerProxy}";
 
         if (_package.SettingsPage.EnterpriseMode)
             _process.StartInfo.Arguments +=

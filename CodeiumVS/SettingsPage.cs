@@ -10,6 +10,7 @@ public class SettingsPage : DialogPage
     private string portalUrl = "";
     private string apiUrl = "";
     private bool enableCommentCompletion = true;
+    private bool enableLanguageServerProxy = false;
 
     [Category("Codeium")]
     [DisplayName("Enterprise Mode")]
@@ -61,6 +62,20 @@ public class SettingsPage : DialogPage
         }
         set {
             enableCommentCompletion = value;
+        }
+    }
+
+    [Category("Codeium")]
+    [DisplayName("Enable language server proxy")]
+    [Description(
+        "If you're experiencing network issues with the language server, we recommend enabling this option and using a VPN to resolve the issue. Requires restart.")]
+    public bool EnableLanguageServerProxy
+    {
+        get {
+            return enableLanguageServerProxy;
+        }
+        set {
+            enableLanguageServerProxy = value;
         }
     }
 }

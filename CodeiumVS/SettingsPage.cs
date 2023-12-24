@@ -9,6 +9,7 @@ public class SettingsPage : DialogPage
     private bool enterpriseMode;
     private string portalUrl = "";
     private string apiUrl = "";
+    private string extensionBaseUrl = "https://github.com/Exafunction/codeium/releases/download";
     private bool enableCommentCompletion = true;
     private bool enableLanguageServerProxy = false;
 
@@ -36,6 +37,21 @@ public class SettingsPage : DialogPage
         }
         set {
             portalUrl = value;
+        }
+    }
+
+    [Category("Codeium")]
+    [DisplayName("Extension Base Url")]
+    [Description("URL of the Codeium Extension Base.")]
+    public string ExtensionBaseUrl
+    {
+        get
+        {
+            return extensionBaseUrl;
+        }
+        set
+        {
+            extensionBaseUrl = value;
         }
     }
 

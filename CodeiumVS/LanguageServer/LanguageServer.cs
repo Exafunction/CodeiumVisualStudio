@@ -3,6 +3,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -200,7 +201,8 @@ public class LanguageServer
     /// <returns></returns>
     private async Task GetLanguageServerInfoAsync()
     {
-        string extensionBaseUrl = "https://github.com/Exafunction/codeium/releases/download";
+        string extensionBaseUrl = (_package.SettingsPage.ExtensionBaseUrl.Equals("") ? "https://github.com/Exafunction/codeium/releases/download"
+                                                                 : _package.SettingsPage.ExtensionBaseUrl);
 
         if (_package.SettingsPage.EnterpriseMode)
         {
@@ -393,7 +395,7 @@ public class LanguageServer
         }
 
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-        await _package.LogAsync($"Downloading language server v{_languageServerVersion}");
+        await _package.LogAsync($"Downloading language server v{_languageServerVersion} from {_languageServerURL}");
 
         // show the downloading progress dialog before starting the thread to make it feels more
         // responsive

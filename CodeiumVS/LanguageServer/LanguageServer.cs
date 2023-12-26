@@ -202,7 +202,7 @@ public class LanguageServer
     private async Task GetLanguageServerInfoAsync()
     {
         string extensionBaseUrl = (_package.SettingsPage.ExtensionBaseUrl.Equals("") ? "https://github.com/Exafunction/codeium/releases/download"
-                                                                 : _package.SettingsPage.ExtensionBaseUrl);
+                                                                 : _package.SettingsPage.ExtensionBaseUrl.Trim().TrimEnd('/'));
 
         if (_package.SettingsPage.EnterpriseMode)
         {

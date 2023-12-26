@@ -9,6 +9,7 @@ public class SettingsPage : DialogPage
     private bool enterpriseMode;
     private string portalUrl = "";
     private string apiUrl = "";
+    private string extensionBaseUrl = "https://github.com/Exafunction/codeium/releases/download";
     private bool enableCommentCompletion = true;
     private bool enableLanguageServerProxy = false;
 
@@ -36,6 +37,22 @@ public class SettingsPage : DialogPage
         }
         set {
             portalUrl = value;
+        }
+    }
+
+    [Category("Codeium")]
+    [DisplayName("Language Server Download URL")]
+    [Description(
+        "If you're experiencing network issues with GitHub and can't download the language server, please change this to a GitHub Mirror URL instead. For example: https://gh.api.99988866.xyz/https://github.com/Exafunction/codeium/releases/download")]
+    public string ExtensionBaseUrl
+    {
+        get
+        {
+            return extensionBaseUrl;
+        }
+        set
+        {
+            extensionBaseUrl = value;
         }
     }
 

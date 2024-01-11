@@ -25,7 +25,7 @@ namespace CodeiumVS;
 public class LanguageServer
 {
     private string _languageServerURL;
-    private string _languageServerVersion = "1.6.13";
+    private string _languageServerVersion = "1.6.22";
 
     private int _port = 0;
     private Process _process;
@@ -201,8 +201,10 @@ public class LanguageServer
     /// <returns></returns>
     private async Task GetLanguageServerInfoAsync()
     {
-        string extensionBaseUrl = (_package.SettingsPage.ExtensionBaseUrl.Equals("") ? "https://github.com/Exafunction/codeium/releases/download"
-                                                                 : _package.SettingsPage.ExtensionBaseUrl.Trim().TrimEnd('/'));
+        string extensionBaseUrl =
+            (_package.SettingsPage.ExtensionBaseUrl.Equals("")
+                 ? "https://github.com/Exafunction/codeium/releases/download"
+                 : _package.SettingsPage.ExtensionBaseUrl.Trim().TrimEnd('/'));
 
         if (_package.SettingsPage.EnterpriseMode)
         {
@@ -395,7 +397,8 @@ public class LanguageServer
         }
 
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-        await _package.LogAsync($"Downloading language server v{_languageServerVersion} from {_languageServerURL}");
+        await _package.LogAsync(
+            $"Downloading language server v{_languageServerVersion} from {_languageServerURL}");
 
         // show the downloading progress dialog before starting the thread to make it feels more
         // responsive

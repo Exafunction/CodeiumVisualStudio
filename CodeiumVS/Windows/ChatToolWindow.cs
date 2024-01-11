@@ -235,25 +235,28 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 
             style.textContent = `
             body {{
-
                 /* window background */
-	            --vscode-editor-background:                #{GetColor(CommonControlsColors.ComboBoxBackgroundBrushKey):x8};
-	            --vscode-editor-foreground:                #{textColor:x8};
-	            --vscode-sideBar-background:               #{GetColor(EnvironmentColors.ToolWindowBackgroundBrushKey):x8};
-	            --vscode-foreground:                       #{textColor:x8};
+	            --codeium-editor-background:               #{GetColor(CommonControlsColors.ComboBoxBackgroundBrushKey):x8};
+	            --codeium-editor-color:                    #{textColor:x8};
+	            --codeium-chat-background:                 #{GetColor(EnvironmentColors.ToolWindowBackgroundBrushKey):x8};
+	            --codeium-text-color:                      #{textColor:x8};
 
                  /* user message block */
-	            --vscode-list-activeSelectionBackground:   #{GetColor(EnvironmentColors.VizSurfaceSteelBlueMediumBrushKey):x8};
-	            --vscode-list-hoverBackground:             #{GetColor(CommonControlsColors.ComboBoxBackgroundHoverBrushKey):x8};
-                --vscode-list-activeSelectionForeground:   #{textColor:x8};
+                --codeium-message-block-user-background:   #{GetColor(EnvironmentColors.VizSurfaceSteelBlueMediumBrushKey):x8};
+                --codeium-message-block-user-color:        #{textColor:x8};
 
                  /* bot message block */
-	            --vscode-list-inactiveSelectionBackground: #{GetColor(CommonControlsColors.ComboBoxBackgroundDisabledBrushKey):x8};
+	            --codeium-message-block-bot-background:    #{GetColor(CommonControlsColors.ComboBoxBackgroundDisabledBrushKey):x8};
+                --codeium-message-block-bot-color:         #{textColor:x8};
 
                  /* textbox input */
-	            --vscode-input-background:                 #{GetColor(CommonControlsColors.TextBoxBackgroundBrushKey):x8};
-	            --vscode-input-foreground:                 #{GetColor(CommonControlsColors.TextBoxTextBrushKey):x8};
-	            --vscode-input-placeholderForeground:      #{GetColor(CommonControlsColors.TextBoxTextDisabledBrushKey):x8};
+	            --codeium-input-background:                #{GetColor(CommonControlsColors.TextBoxBackgroundBrushKey):x8};
+	            --codeium-input-color:                     #{GetColor(CommonControlsColors.TextBoxTextBrushKey):x8};
+	            --codeium-input-placeholder:               #{GetColor(CommonControlsColors.TextBoxTextDisabledBrushKey):x8};
+
+                /* hyperlink */
+	            --codeium-link-color:                      #{GetColor(EnvironmentColors.DiagReportLinkTextBrushKey):x8};
+	            --codeium-link-hover-color:                #{GetColor(EnvironmentColors.DiagReportLinkTextHoverColorKey):x8};
 
                 /* border */
 	            --vscode-contrastBorder:                   #{GetColor(CommonDocumentColors.ListItemBorderFocusedBrushKey):x8};
@@ -285,11 +288,6 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 	            --vscode-dropdown-background:              #{GetColor(EnvironmentColors.DropDownBackgroundBrushKey):x8};
 	            --vscode-dropdown-border:                  #{GetColor(EnvironmentColors.DropDownBorderBrushKey):x8};
 	            --vscode-dropdown-foreground:              #{GetColor(EnvironmentColors.DropDownTextBrushKey):x8};
-
-                /* hyperlink */
-	            --vscode-textLink-foreground:              #{GetColor(EnvironmentColors.DiagReportLinkTextBrushKey):x8};
-	            --vscode-textLink-activeForeground:        #{GetColor(EnvironmentColors.DiagReportLinkTextHoverColorKey):x8};
-
                 /* progressbar */
 	            --vscode-progressBar-background:           #{GetColor(ProgressBarColors.IndicatorFillBrushKey):x8};
 

@@ -2662,6 +2662,7 @@ public enum Language
     LANGUAGE_NIM = 88,
     LANGUAGE_PROLOG = 89,
     LANGUAGE_MARKDOWN_INLINE = 90,
+    LANGUAGE_APEX = 91,
 }
 
 [global::ProtoBuf.ProtoContract()]

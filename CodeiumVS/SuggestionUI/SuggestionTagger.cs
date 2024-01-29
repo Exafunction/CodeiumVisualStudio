@@ -280,9 +280,13 @@ namespace CodeiumVS
             if (line.Length <= suggestionIndex)
                 return;
 
-            TextBlock textBlock = new TextBlock();
             string remainder = line.Substring(start, end - start);
-            GetTagger().UpdateAdornment(CreateTextBox(remainder, greyBrush));
+
+            ITextSnapshotLine snapshotLine = view.TextSnapshot.GetLineFromLineNumber(currentTextLineN);
+            var lineFormat = view.TextViewLines.GetCharacterBounds(snapshotLine.Start);
+
+            var textBlock = CreateTextBox(remainder, greyBrush);
+            GetTagger().UpdateAdornment(textBlock);
         }
 
         //Updates the grey text
@@ -368,22 +372,34 @@ namespace CodeiumVS
                 FormatText(block);
             }
 
-            GetTagger().FormatText(GetTextFormat());
-            if (stackPanel.Children.Count > 0)
-            {
-                this.adornmentLayer.RemoveAllAdornments();
+            ITextSnapshotLine snapshotLine = view.TextSnapshot.GetLineFromLineNumber(currentTextLineN);
 
-                ITextSnapshotLine snapshotLine = view.TextSnapshot.GetLineFromLineNumber(currentTextLineN);
+            try
+            {
                 var start = view.TextViewLines.GetCharacterBounds(snapshotLine.Start);
 
-                var span = snapshotLine.Extent;
+                InlineGreyTextTagger inlineTagger = GetTagger();
+                inlineTagger.FormatText(GetTextFormat());
 
-                // Place the image in the top left hand corner of the line
-                Canvas.SetLeft(stackPanel, start.Left);
-                Canvas.SetTop(element: stackPanel, start.TextTop);
+                if (stackPanel.Children.Count > 0)
+                {
+                    this.adornmentLayer.RemoveAllAdornments();
 
-                // Add the image to the adornment layer and make it relative to the viewport
-                this.adornmentLayer.AddAdornment(AdornmentPositioningBehavior.TextRelative, span, null, stackPanel, null);
+                    var span = snapshotLine.Extent;
+
+                    // Place the image in the top left hand corner of the line
+                    Canvas.SetLeft(stackPanel, start.Left);
+                    Canvas.SetTop(element: stackPanel, start.TextTop);
+                    var diff = start.Top - start.TextTop;
+                    Debug.Print("Top = " + (start.Top.ToString()) + " TextTop = " + (start.TextTop.ToString()) + " bottom " + (start.TextBottom.ToString()));
+                    // Add the image to the adornment layer and make it relative to the viewport
+                    this.adornmentLayer.AddAdornment(AdornmentPositioningBehavior.TextRelative, span, null, stackPanel, null);
+                }
+
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                Debug.Print("Error argument out of range");
             }
         }
 
@@ -447,6 +463,11 @@ namespace CodeiumVS
         //Adds the grey text to the file replacing current line in the process
         public bool CompleteText()
         {
+            if(!showSuggestion || suggestion == null)
+            {
+                return false;
+            }
+
             int textLineN = GetCurrentTextLine();
 
             if (textLineN < 0 || textLineN != currentTextLineN)
@@ -472,6 +493,8 @@ namespace CodeiumVS
         //replaces text in the editor
         void ReplaceText(string text, int lineN)
         {
+            var oldLineN = lineN + suggestion.Item2.Length - 1;
+
             ClearSuggestion();
             SnapshotSpan span = this.snapshot.GetLineFromLineNumber(lineN).Extent;
             ITextEdit edit = view.TextBuffer.CreateEdit();
@@ -481,8 +504,7 @@ namespace CodeiumVS
 
             if (spanLength == 0 && text.Length > 0)
             {
-                view.Caret.MoveToPreviousCaretPosition();
-                view.Caret.MoveToNextCaretPosition();
+                view.Caret.MoveTo(newSnapshot.GetLineFromLineNumber(oldLineN).End);
             }
         }
 

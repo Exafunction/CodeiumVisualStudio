@@ -33,13 +33,13 @@ namespace CodeiumVS
             this.stackPanel = new StackPanel();
         }
 
+
         /// <param name="span">The span of text that this adornment will elide.</param>
         /// <returns>Adornment corresponding to given data. May be null.</returns>
         public void UpdateAdornment(UIElement text)
         {
             ClearAdornment();
             stackPanel.Children.Add(text);
-            stackPanel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
             stackPanel.UpdateLayout();
         }
 
@@ -55,6 +55,7 @@ namespace CodeiumVS
             {
                 return;
             }
+
             foreach (TextBlock block in stackPanel.Children)
             {
                 block.FontFamily = props.Typeface.FontFamily;
@@ -86,7 +87,11 @@ namespace CodeiumVS
 
             ITextSnapshot requestedSnapshot = spans[0].Snapshot;
             double width = view.FormattedLineSource.ColumnWidth * ((stackPanel.Children[0] as TextBlock).Inlines.First() as Run).Text.Length;
-            stackPanel.Measure(new Size(width, double.PositiveInfinity));
+            double height = view.LineHeight;
+
+            stackPanel.Measure(new Size(width, height));
+            stackPanel.MaxHeight = height;
+            stackPanel.MinHeight = height;
             stackPanel.MinWidth = width;
             stackPanel.MaxWidth = width;
             var caretLine = view.Caret.ContainingTextViewLine;

@@ -72,8 +72,14 @@ namespace CodeiumVS
             var caretPosition = caretPoint.Value.Position;
             await package.LogAsync($"RequestProposalsAsync - Language: {_language.Name}; Caret: {caretPosition}; ASCII: {_document.Encoding.IsSingleByte}");
 
-            string text = _view.TextBuffer.CurrentSnapshot.GetText();
+            string text = _view.TextSnapshot.GetText();
             int cursorPosition = _document.Encoding.IsSingleByte ? caretPosition : Utf16OffsetToUtf8Offset(text, caretPosition);
+
+            if (cursorPosition > text.Length)
+            {
+                Debug.Print("Error Caret past text position");
+                return;
+            }
 
             IList<Packets.CompletionItem>? list = await package.LanguageServer.GetCompletionsAsync(
                 _document.FilePath,
@@ -192,14 +198,6 @@ namespace CodeiumVS
 
         public static int Utf16OffsetToUtf8Offset(string str, int utf16Offset)
         {
-            if (utf16Offset >= str.Length)
-            {
-                if (string.IsNullOrEmpty(str))
-                {
-                    return utf16Offset;
-                }
-                return Encoding.UTF8.GetByteCount(str.ToCharArray(), 0, str.Length - 1) + (utf16Offset - str.Length);
-            }
             return Encoding.UTF8.GetByteCount(str.ToCharArray(), 0, utf16Offset);
         }
 
@@ -245,6 +243,15 @@ namespace CodeiumVS
         {
             _language = Mapper.GetLanguage(_document.TextBuffer.ContentType,
                                            Path.GetExtension(_document.FilePath)?.Trim('.'));
+        }
+
+        void ClearSuggestion()
+        {
+            var tagger = GetTagger();
+            if (tagger != null)
+            {
+                tagger.ClearSuggestion();
+            }
         }
 
         //Used to detect when the user interacts with the intellisense popup
@@ -313,14 +320,11 @@ namespace CodeiumVS
             }
             else if (nCmdID == (uint)VSConstants.VSStd2KCmdID.RETURN || nCmdID == (uint)VSConstants.VSStd2KCmdID.CANCEL)
             {
-                var tagger = GetTagger();
-                if (tagger != null)
-                {
-                    tagger.ClearSuggestion();
-                }
+                ClearSuggestion();
             }
 
             CheckSuggestionUpdate(nCmdID);
+
             //make a copy of this so we can look at it after forwarding some commands
             uint commandID = nCmdID;
             char typedChar = char.MinValue;
@@ -335,6 +339,10 @@ namespace CodeiumVS
             int retVal = m_nextCommandHandler.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
             bool handled = false;
 
+            if (hasCompletionUpdated)
+            {
+                ClearSuggestion();
+            }
             //gets lsp completions on added character or deletions
             if (!typedChar.Equals(char.MinValue) || commandID == (uint)VSConstants.VSStd2KCmdID.RETURN)
             {
@@ -343,11 +351,7 @@ namespace CodeiumVS
             }
             else if (commandID == (uint)VSConstants.VSStd2KCmdID.BACKSPACE || commandID == (uint)VSConstants.VSStd2KCmdID.DELETE)
             {
-                var tagger = GetTagger();
-                if (tagger != null)
-                {
-                    tagger.ClearSuggestion();
-                }
+                ClearSuggestion();
 
                 _ = Task.Run(() => GetCompletion());
                 handled = true;

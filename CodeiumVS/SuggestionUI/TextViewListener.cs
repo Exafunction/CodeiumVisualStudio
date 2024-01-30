@@ -3,10 +3,12 @@ using CodeiumVS.Languages;
 using CodeiumVS.Packets;
 using EnvDTE;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.ApplicationInsights.Channel;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Language.Proposals;
 using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Formatting;
@@ -227,6 +229,7 @@ namespace CodeiumVS
             _textViewAdapter = textViewAdapter;
             //add the command to the command chain
             textViewAdapter.AddCommandFilter(this, out m_nextCommandHandler);
+            ShowIntellicodeMsg();
         }
 
         private void OnContentTypeChanged(object sender, ContentTypeChangedEventArgs e)
@@ -289,8 +292,33 @@ namespace CodeiumVS
             }
         }
 
+        public bool IsIntellicodeEnabled()
+        {
+            var vsSettingsManager = m_provider.ServiceProvider.GetService(typeof(SVsSettingsManager)) as IVsSettingsManager;
+
+            vsSettingsManager.GetCollectionScopes(collectionPath: "ApplicationPrivateSettings", out var applicationPrivateSettings);
+            vsSettingsManager.GetReadOnlySettingsStore(applicationPrivateSettings, out IVsSettingsStore readStore);
+            var res2 = readStore.GetString("ApplicationPrivateSettings\\Microsoft\\VisualStudio\\IntelliCode", "WholeLineCompletions", out var str);
+            return str != "1*System.Int64*2";
+        }
+
+        void ShowIntellicodeMsg()
+        {
+            if(IsIntellicodeEnabled()) {
+                VsShellUtilities.ShowMessageBox(
+                    this.package,
+                    "Please disable IntelliCode to use Codeium",
+                    "Disable IntelliCode",
+                    OLEMSGICON.OLEMSGICON_INFO,
+                    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            }
+        }
+
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
+
+
             //let the other handlers handle automation functions
             if (VsShellUtilities.IsInAutomationFunction(m_provider.ServiceProvider))
             {

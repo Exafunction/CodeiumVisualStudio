@@ -13,6 +13,7 @@ using System.Windows.Media.TextFormatting;
 using Microsoft.VisualStudio.Utilities;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Text.Formatting;
+using System.Linq;
 
 namespace CodeiumVS
 {
@@ -347,7 +348,7 @@ namespace CodeiumVS
 
                 // Place the image in the top left hand corner of the line
                 Canvas.SetLeft(stackPanel, start.Left);
-                Canvas.SetTop(stackPanel, start.Top);
+                Canvas.SetTop(stackPanel, start.TextTop);
                 var span = snapshotLine.Extent;
                 // Add the image to the adornment layer and make it relative to the viewport
                 this.adornmentLayer.AddAdornment(AdornmentPositioningBehavior.TextRelative, span, null, stackPanel, null);
@@ -494,17 +495,25 @@ namespace CodeiumVS
         void ReplaceText(string text, int lineN)
         {
             var oldLineN = lineN + suggestion.Item2.Length - 1;
-
+            bool insertion = isTextInsertion && suggestion.Item2.Length == 1;
+            var oldUserIndex = userIndex;
+            int offset = text.Length - suggestion.Item1.Length;
             ClearSuggestion();
             SnapshotSpan span = this.snapshot.GetLineFromLineNumber(lineN).Extent;
             ITextEdit edit = view.TextBuffer.CreateEdit();
             var spanLength = span.Length;
             edit.Replace(span, text);
             var newSnapshot = edit.Apply();
-
+            
             if (spanLength == 0 && text.Length > 0)
             {
                 view.Caret.MoveTo(newSnapshot.GetLineFromLineNumber(oldLineN).End);
+            }
+
+            if (insertion)
+            {
+                view.Caret.MoveTo(newSnapshot.GetLineFromLineNumber(oldLineN).Start.Add(oldUserIndex + offset));
+
             }
         }
 

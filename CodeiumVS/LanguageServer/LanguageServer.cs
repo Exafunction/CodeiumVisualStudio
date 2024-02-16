@@ -529,11 +529,16 @@ public class LanguageServer
             $"--api_server_url {apiUrl} --manager_dir \"{managerDir}\" --database_dir \"{databaseDir}\"" +
             $" --enable_chat_web_server --enable_chat_client --detect_proxy={_package.SettingsPage.EnableLanguageServerProxy}";
 
+        if (_package.SettingsPage.EnableIndexing)
+            _process.StartInfo.Arguments +=
+                $" --enable_local_search --enable_index_service --search_max_workspace_file_count {_package.SettingsPage.IndexingMaxWorkspaceSize}";
+
         if (_package.SettingsPage.EnterpriseMode)
             _process.StartInfo.Arguments +=
                 $" --enterprise_mode --portal_url {_package.SettingsPage.PortalUrl}";
 
         _process.ErrorDataReceived += LSP_OnPipeDataReceived;
+        _process.OutputDataReceived += LSP_OnPipeDataReceived;
         _process.Exited += LSP_OnExited;
 
         await _package.LogAsync("Starting language server");

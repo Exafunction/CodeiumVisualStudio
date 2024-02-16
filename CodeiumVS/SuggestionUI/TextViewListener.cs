@@ -307,7 +307,7 @@ namespace CodeiumVS
             if(IsIntellicodeEnabled()) {
                 VsShellUtilities.ShowMessageBox(
                     this.package,
-                    "Please disable IntelliCode to use Codeium",
+                    "Please disable IntelliCode to use Codeium. You can access Intellicode settings via Tools --> Options --> Intellicode.",
                     "Disable IntelliCode",
                     OLEMSGICON.OLEMSGICON_INFO,
                     OLEMSGBUTTON.OLEMSGBUTTON_OK,

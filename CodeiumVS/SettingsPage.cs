@@ -12,6 +12,8 @@ public class SettingsPage : DialogPage
     private string extensionBaseUrl = "https://github.com/Exafunction/codeium/releases/download";
     private bool enableCommentCompletion = true;
     private bool enableLanguageServerProxy = false;
+    private bool enableIndexing = true;
+    private int indexingMaxFileCount = 5000;
 
     [Category("Codeium")]
     [DisplayName("Enterprise Mode")]
@@ -91,6 +93,32 @@ public class SettingsPage : DialogPage
         }
         set {
             enableLanguageServerProxy = value;
+        }
+    }
+
+    [Category("Codeium")]
+    [DisplayName("Enable Codeium Indexing")]
+    [Description("Allows Codeium to index your current repository and provide better chat and autocomplete responses based on relevant parts of your codebase. Requires restart.")]
+    public bool EnableIndexing
+    {
+        get {
+            return enableIndexing;
+        }
+        set {
+            enableIndexing = value;
+        }
+    }
+
+    [Category("Codeium")]
+    [DisplayName("Indexing Max Workspace Size (File Count)")]
+    [Description("If indexing is enabled, we will only attempt to index workspaces that have up to this many files. This file count ignores .gitignore and binary files.")]
+    public int IndexingMaxWorkspaceSize
+    {
+        get {
+            return indexingMaxFileCount;
+        }
+        set {
+            indexingMaxFileCount = value;
         }
     }
 }

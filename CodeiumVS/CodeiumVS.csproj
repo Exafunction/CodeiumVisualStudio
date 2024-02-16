@@ -6,6 +6,24 @@
     <LangVersion>latest</LangVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|arm64'">
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|arm64'">
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -37,6 +55,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -45,6 +64,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="InlineDiff\InlineDiffAdornment.cs" />
@@ -52,6 +72,7 @@
       <DependentUpon>InlineDiffControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="InlineDiff\InlineDiffView.cs" />
+    <Compile Include="SuggestionUI\StringCompare.cs" />
     <Compile Include="LanguageServer\LanguageServerController.cs" />
     <Compile Include="LanguageServer\LanguageServer.cs" />
     <Compile Include="LanguageServer\Packets.cs" />
@@ -61,13 +82,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Proposal\CodeiumProposalManager.cs" />
-    <Compile Include="Proposal\CodeiumProposalManagerProvider.cs" />
-    <Compile Include="Proposal\CodeiumProposalSource.cs" />
-    <Compile Include="Proposal\CodeiumProposalSourceProvider.cs" />
-    <Compile Include="Proposal\Mapper.cs" />
     <Compile Include="QuickInfo\IntellisenseController.cs" />
     <Compile Include="QuickInfo\QuickInfoSource.cs" />
+    <Compile Include="SuggestionUI\InlineGreyTextTagger.cs" />
+    <Compile Include="SuggestionUI\Mapper.cs" />
+    <Compile Include="SuggestionUI\SuggestionTag.cs" />
+    <Compile Include="SuggestionUI\SuggestionTagger.cs" />
+    <Compile Include="SuggestionUI\TextViewListener.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\FileUtilities.cs" />
     <Compile Include="Utilities\IntellisenseUtilities.cs" />
@@ -177,6 +198,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

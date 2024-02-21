@@ -78,7 +78,7 @@ internal class KnownLanguages
         new LangInfo("XML", "xml", Packets.Language.LANGUAGE_XML),
         new LangInfo("XSL", "xsl", Packets.Language.LANGUAGE_XSL),
         new LangInfo("YAML", "yaml", Packets.Language.LANGUAGE_YAML),
-    // clang-format on
+        // clang-format on
     ];
 }
 internal class LanguageEqualityComparer : IEqualityComparer<LangInfo>

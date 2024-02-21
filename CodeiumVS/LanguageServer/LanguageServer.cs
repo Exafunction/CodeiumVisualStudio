@@ -25,7 +25,7 @@ namespace CodeiumVS;
 public class LanguageServer
 {
     private string _languageServerURL;
-    private string _languageServerVersion = "1.6.22";
+    private string _languageServerVersion = "1.6.38";
 
     private int _port = 0;
     private Process _process;

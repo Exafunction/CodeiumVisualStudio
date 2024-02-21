@@ -98,7 +98,8 @@ public class SettingsPage : DialogPage
 
     [Category("Codeium")]
     [DisplayName("Enable Codeium Indexing")]
-    [Description("Allows Codeium to index your current repository and provide better chat and autocomplete responses based on relevant parts of your codebase. Requires restart.")]
+    [Description(
+        "Allows Codeium to index your current repository and provide better chat and autocomplete responses based on relevant parts of your codebase. Requires restart.")]
     public bool EnableIndexing
     {
         get {
@@ -111,7 +112,8 @@ public class SettingsPage : DialogPage
 
     [Category("Codeium")]
     [DisplayName("Indexing Max Workspace Size (File Count)")]
-    [Description("If indexing is enabled, we will only attempt to index workspaces that have up to this many files. This file count ignores .gitignore and binary files.")]
+    [Description(
+        "If indexing is enabled, we will only attempt to index workspaces that have up to this many files. This file count ignores .gitignore and binary files.")]
     public int IndexingMaxWorkspaceSize
     {
         get {

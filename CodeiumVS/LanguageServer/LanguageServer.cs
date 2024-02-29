@@ -25,7 +25,7 @@ namespace CodeiumVS;
 public class LanguageServer
 {
     private string _languageServerURL;
-    private string _languageServerVersion = "1.6.38";
+    private string _languageServerVersion = "1.8.0";
 
     private int _port = 0;
     private Process _process;
@@ -48,7 +48,7 @@ public class LanguageServer
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-        string ideVersion = "17.0", locale = "en-US";
+        string ideVersion = "1.8.0";
 
         try
         {

@@ -248,10 +248,6 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
         if (line.Length <= suggestionIndex) return;
 
         string remainder = line.Substring(start, end - start);
-
-        ITextSnapshotLine snapshotLine = view.TextSnapshot.GetLineFromLineNumber(currentTextLineN);
-        var lineFormat = view.TextViewLines.GetCharacterBounds(snapshotLine.Start);
-
         var textBlock = CreateTextBox(remainder, greyBrush);
         GetTagger().UpdateAdornment(textBlock);
     }

@@ -71,7 +71,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
         await package.LogAsync(
             $"RequestProposalsAsync - Language: {_language.Name}; Caret: {caretPosition}; ASCII: {_document.Encoding.IsSingleByte}");
 
-        string text = _view.TextSnapshot.GetText();
+        string text = _document.TextBuffer.CurrentSnapshot.GetText();
         int cursorPosition = _document.Encoding.IsSingleByte
                                  ? caretPosition
                                  : Utf16OffsetToUtf8Offset(text, caretPosition);
@@ -159,6 +159,20 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
             completionText = completionText.Substring(offset);
             string completionID = completionItem.completion.completionId;
             var set = new Tuple<String, String>(completionText, completionID);
+
+            // Filter out completions that don't match the current intellisense prefix
+            ICompletionSession session = m_provider.CompletionBroker.GetSessions(_view).FirstOrDefault();
+            if (session != null && session.SelectedCompletionSet != null)
+            {
+                string intellisenseSuggestion = session.SelectedCompletionSet.SelectionStatus.Completion.InsertionText;
+                ITrackingSpan intellisenseSpan = session.SelectedCompletionSet.ApplicableTo;
+                SnapshotSpan span = intellisenseSpan.GetSpan(intellisenseSpan.TextBuffer.CurrentSnapshot);
+                string intellisenseInsertion = intellisenseSuggestion.Substring(span.Length);
+                if (!completionText.StartsWith(intellisenseInsertion))
+                {
+                    continue;
+                }
+            }
             list.Add(set);
         }
 
@@ -220,7 +234,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
         _textViewAdapter = textViewAdapter;
         // add the command to the command chain
         textViewAdapter.AddCommandFilter(this, out m_nextCommandHandler);
-        ShowIntellicodeMsg();
+        // ShowIntellicodeMsg();
     }
 
     private void OnContentTypeChanged(object sender, ContentTypeChangedEventArgs e)
@@ -315,6 +329,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
         }
 
         // check for a commit character
+        bool regenerateSuggestion = false;
         if (!hasCompletionUpdated && nCmdID == (uint)VSConstants.VSStd2KCmdID.TAB)
         {
 
@@ -322,11 +337,21 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
 
             if (tagger != null)
             {
-                if (tagger.IsSuggestionActive() && tagger.CompleteText())
+                if (tagger.IsSuggestionActive())
                 {
-                    ClearCompletionSessions();
-                    OnSuggestionAccepted(currentCompletionID);
-                    return VSConstants.S_OK;
+                    // If there is an active Intellisense session, let that one get accepted first.
+                    ICompletionSession session = m_provider.CompletionBroker.GetSessions(_view).FirstOrDefault();
+                    if (session != null && session.SelectedCompletionSet != null)
+                    {
+                            tagger.ClearSuggestion();
+                            regenerateSuggestion = true;
+                    }
+                    if (tagger.CompleteText())
+                    {
+                            ClearCompletionSessions();
+                            OnSuggestionAccepted(currentCompletionID);
+                            return VSConstants.S_OK;
+                    }
                 }
                 else { tagger.ClearSuggestion(); }
             }
@@ -357,7 +382,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
 
         if (hasCompletionUpdated) { ClearSuggestion(); }
         // gets lsp completions on added character or deletions
-        if (!typedChar.Equals(char.MinValue) || commandID == (uint)VSConstants.VSStd2KCmdID.RETURN)
+        if (!typedChar.Equals(char.MinValue) || commandID == (uint)VSConstants.VSStd2KCmdID.RETURN || regenerateSuggestion)
         {
             _ = Task.Run(() => GetCompletion());
             handled = true;

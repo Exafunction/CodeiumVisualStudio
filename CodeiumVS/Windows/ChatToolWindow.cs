@@ -152,6 +152,7 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
                     { "app_name", "Visual Studio" },
                     { "web_server_url", serverUrl },
                     { "has_dev_extension", "false" },
+                    { "has_index_service", "true" },
                     { "open_file_pointer_enabled", "true" },
                     { "diff_view_enabled", "true" },
                     { "insert_at_cursor_enabled", "true" },

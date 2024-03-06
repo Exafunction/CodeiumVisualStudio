@@ -246,10 +246,16 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
     void AddInsertionTextBlock(int start, int end, string line)
     {
         if (line.Length <= suggestionIndex) return;
-
-        string remainder = line.Substring(start, end - start);
-        var textBlock = CreateTextBox(remainder, greyBrush);
-        GetTagger().UpdateAdornment(textBlock);
+        try
+        {
+            string remainder = line.Substring(start, end - start);
+            var textBlock = CreateTextBox(remainder, greyBrush);
+            GetTagger().UpdateAdornment(textBlock);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            return;
+        }
     }
 
     // Updates the grey text

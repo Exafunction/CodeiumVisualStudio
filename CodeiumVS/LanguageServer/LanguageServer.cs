@@ -1,4 +1,5 @@
 ﻿using CodeiumVS.Packets;
+using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -28,7 +29,7 @@ public class LanguageServer
     private string _languageServerVersion = "1.8.0";
 
     private int _port = 0;
-    private Process _process;
+    private System.Diagnostics.Process _process;
 
     private readonly Metadata _metadata;
     private readonly HttpClient _httpClient;
@@ -379,7 +380,7 @@ public class LanguageServer
 
         // wait until the download is completed
         while (webClient.IsBusy)
-            Thread.Sleep(100);
+            System.Threading.Thread.Sleep(100);
 
         webClient.Dispose();
     }
@@ -416,7 +417,7 @@ public class LanguageServer
             false,
             true);
 
-        Thread trd =
+        System.Threading.Thread trd =
             new(() => ThreadDownloadLanguageServer(progressDialog)) { IsBackground = true };
 
         trd.Start();
@@ -654,6 +655,11 @@ public class LanguageServer
         if (File.Exists(apiKeyFilePath)) { _metadata.api_key = File.ReadAllText(apiKeyFilePath); }
 
         await _package.UpdateSignedInStateAsync();
+
+        await WaitReadyAsync();
+        EnvDTE.DTE dte = (DTE)ServiceProvider.GlobalProvider.GetService(typeof(DTE));
+        string solutionDir = System.IO.Path.GetDirectoryName(dte.Solution.FullName);
+        await AddTrackedWorkspaceAsync(solutionDir);
     }
 
     private void LSP_OnExited(object sender, EventArgs e)
@@ -769,6 +775,12 @@ public class LanguageServer
     public async Task<GetProcessesResponse?> GetProcessesAsync()
     {
         return await RequestCommandAsync<GetProcessesResponse>("GetProcesses", new {});
+    }
+
+    public async Task<AddTrackedWorkspaceResponse?> AddTrackedWorkspaceAsync(string workspacePath)
+    {
+        AddTrackedWorkspaceRequest data = new() { workspace = workspacePath };
+        return await RequestCommandAsync<AddTrackedWorkspaceResponse>("AddTrackedWorkspace", data);
     }
 
     public Metadata GetMetadata()

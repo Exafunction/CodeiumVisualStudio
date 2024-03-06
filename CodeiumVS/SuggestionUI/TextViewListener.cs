@@ -106,8 +106,17 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
             Debug.Print("completions " + list.Count.ToString());
 
             string prefix = line.Substring(0, Math.Min(characterN, line.Length));
-            List<Tuple<String, String>> suggestions =
-                ParseCompletion(list, text, line, prefix, characterN);
+
+            List<Tuple<String, String>> suggestions;
+            try
+            {
+                suggestions = ParseCompletion(list, text, line, prefix, characterN);
+            }
+            catch (NullReferenceException ex)
+            {
+                await package.LogAsync("Exception: " + ex.ToString());
+                return;
+            }
 
             SuggestionTagger tagger = GetTagger();
             if (suggestions != null && suggestions.Count > 0 && tagger != null)
@@ -164,7 +173,9 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
             ICompletionSession session = m_provider.CompletionBroker.GetSessions(_view).FirstOrDefault();
             if (session != null && session.SelectedCompletionSet != null)
             {
-                string intellisenseSuggestion = session.SelectedCompletionSet.SelectionStatus.Completion.InsertionText;
+                var completion = session.SelectedCompletionSet.SelectionStatus.Completion;
+                if (completion == null) { continue; }
+                string intellisenseSuggestion = completion.InsertionText;
                 ITrackingSpan intellisenseSpan = session.SelectedCompletionSet.ApplicableTo;
                 SnapshotSpan span = intellisenseSpan.GetSpan(intellisenseSpan.TextBuffer.CurrentSnapshot);
                 string intellisenseInsertion = intellisenseSuggestion.Substring(span.Length);

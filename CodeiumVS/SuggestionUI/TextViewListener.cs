@@ -68,8 +68,6 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
         if (!caretPoint.HasValue) { return; }
 
         var caretPosition = caretPoint.Value.Position;
-        await package.LogAsync(
-            $"RequestProposalsAsync - Language: {_language.Name}; Caret: {caretPosition}; ASCII: {_document.Encoding.IsSingleByte}");
 
         string text = _document.TextBuffer.CurrentSnapshot.GetText();
         int cursorPosition = _document.Encoding.IsSingleByte
@@ -112,7 +110,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
             {
                 suggestions = ParseCompletion(list, text, line, prefix, characterN);
             }
-            catch (NullReferenceException ex)
+            catch (Exception ex)
             {
                 await package.LogAsync("Exception: " + ex.ToString());
                 return;

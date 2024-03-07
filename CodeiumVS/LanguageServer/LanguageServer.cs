@@ -30,6 +30,7 @@ public class LanguageServer
 
     private int _port = 0;
     private System.Diagnostics.Process _process;
+    private bool _intializedWorkspace = false;
 
     private readonly Metadata _metadata;
     private readonly HttpClient _httpClient;
@@ -655,11 +656,6 @@ public class LanguageServer
         if (File.Exists(apiKeyFilePath)) { _metadata.api_key = File.ReadAllText(apiKeyFilePath); }
 
         await _package.UpdateSignedInStateAsync();
-
-        await WaitReadyAsync();
-        EnvDTE.DTE dte = (DTE)ServiceProvider.GlobalProvider.GetService(typeof(DTE));
-        string solutionDir = System.IO.Path.GetDirectoryName(dte.Solution.FullName);
-        await AddTrackedWorkspaceAsync(solutionDir);
     }
 
     private void LSP_OnExited(object sender, EventArgs e)
@@ -730,6 +726,18 @@ public class LanguageServer
         return default;
     }
 
+    private async Task IntializeTrackedWorkspaceAsync()
+    {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        EnvDTE.DTE dte = (DTE)ServiceProvider.GlobalProvider.GetService(typeof(DTE));
+        string solutionDir = System.IO.Path.GetDirectoryName(dte.Solution.FullName);
+        AddTrackedWorkspaceResponse response = await AddTrackedWorkspaceAsync(solutionDir);
+        if (response != null)
+        {
+            _intializedWorkspace = true;
+        }
+    }
+
     private async Task<T?> RequestCommandAsync<T>(string command, object data,
                                                   CancellationToken cancellationToken = default)
     {
@@ -743,6 +751,10 @@ public class LanguageServer
                         int cursorPosition, string lineEnding, int tabSize, bool insertSpaces,
                         CancellationToken token)
     {
+        if (!_intializedWorkspace)
+        {
+            await IntializeTrackedWorkspaceAsync();
+        }
         GetCompletionsRequest data =
             new() { metadata = GetMetadata(),
                     document = new() { text = text,
@@ -774,6 +786,10 @@ public class LanguageServer
 
     public async Task<GetProcessesResponse?> GetProcessesAsync()
     {
+        if (!_intializedWorkspace)
+        {
+            await IntializeTrackedWorkspaceAsync();
+        }
         return await RequestCommandAsync<GetProcessesResponse>("GetProcesses", new {});
     }
 

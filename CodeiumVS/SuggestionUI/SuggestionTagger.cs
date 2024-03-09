@@ -273,7 +273,7 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
 
                 if (isTextInsertion && suggestionIndex < userIndex)
                 {
-                    if (suggestionIndex > 0 && char.IsWhiteSpace(line[suggestionIndex - 1]) &&
+                    if (suggestionIndex > 0 && suggestionIndex < line.Length && char.IsWhiteSpace(line[suggestionIndex - 1]) &&
                         userText.Length > insertionPoint + 1 &&
                         !char.IsWhiteSpace(userText[userText.Length - insertionPoint - 1]))
                     {
@@ -323,7 +323,7 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
             this.adornmentLayer.AddAdornment(
                 AdornmentPositioningBehavior.TextRelative, span, null, stackPanel, null);
         }
-        catch (ArgumentOutOfRangeException e)
+        catch (Exception e)
         {
             Debug.Write(e);
         }
@@ -446,6 +446,10 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
     // replaces text in the editor
     void ReplaceText(string text, int lineN)
     {
+        if (view.Options.GetOptionValue(DefaultOptions.NewLineCharacterOptionId) == "\r\n")
+        {
+            text = text.Replace("\n", "\r\n");
+        }
         var oldLineN = lineN + suggestion.Item2.Length - 1;
         bool insertion = isTextInsertion && suggestion.Item2.Length == 1;
         var oldUserIndex = userIndex;

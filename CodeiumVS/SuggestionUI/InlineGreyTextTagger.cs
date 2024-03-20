@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,17 +62,23 @@ internal class InlineGreyTextTagger : ITagger<IntraTextAdornmentTag>
 
     public void MarkDirty()
     {
-        var changeStart = view.TextViewLines.FirstVisibleLine.Start;
-        var changeEnd = view.TextViewLines.LastVisibleLine.Start;
+        try
+        {
+            var changeStart = view.TextViewLines.FirstVisibleLine.Start;
+            var changeEnd = view.TextViewLines.LastVisibleLine.Start;
 
-        var startLine = view.TextSnapshot.GetLineFromPosition(changeStart);
-        var endLine = view.TextSnapshot.GetLineFromPosition(changeEnd);
+            var startLine = view.TextSnapshot.GetLineFromPosition(changeStart);
+            var endLine = view.TextSnapshot.GetLineFromPosition(changeEnd);
 
-        var span = new SnapshotSpan(startLine.Start, endLine.EndIncludingLineBreak)
-                       .TranslateTo(targetSnapshot: view.TextBuffer.CurrentSnapshot,
-                                    SpanTrackingMode.EdgePositive);
+            var span = new SnapshotSpan(startLine.Start, endLine.EndIncludingLineBreak)
+                            .TranslateTo(targetSnapshot: view.TextBuffer.CurrentSnapshot,
+                                        SpanTrackingMode.EdgePositive);
 
-        TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(span.Start, span.End)));
+            TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(span.Start, span.End)));
+        } catch (Exception e)
+        {
+            Debug.Write(e);
+        }
     }
 
     // Produces tags on the snapshot that the tag consumer asked for.

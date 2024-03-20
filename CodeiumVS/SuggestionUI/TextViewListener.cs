@@ -150,6 +150,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
                 endOffset = Utf8OffsetToUtf16Offset(text, endOffset);
                 insertionStart = Utf8OffsetToUtf16Offset(text, insertionStart);
             }
+            if (endOffset > text.Length) { endOffset = text.Length; }
             string end = text.Substring(endOffset);
             String completionText = completionItems[i].completion.text;
             if (!String.IsNullOrEmpty(end))
@@ -161,7 +162,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
                 completionText = completionText + end.Substring(0, endNewline);
             }
             int offset = StringCompare.CheckSuggestion(completionText, prefix);
-            if (offset < 0) { continue; }
+            if (offset < 0 || offset > completionText.Length) { continue; }
 
             completionText = completionText.Substring(offset);
             string completionID = completionItem.completion.completionId;
@@ -176,6 +177,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
                 string intellisenseSuggestion = completion.InsertionText;
                 ITrackingSpan intellisenseSpan = session.SelectedCompletionSet.ApplicableTo;
                 SnapshotSpan span = intellisenseSpan.GetSpan(intellisenseSpan.TextBuffer.CurrentSnapshot);
+                if (span.Length > intellisenseSuggestion.Length) { continue; }
                 string intellisenseInsertion = intellisenseSuggestion.Substring(span.Length);
                 if (!completionText.StartsWith(intellisenseInsertion))
                 {

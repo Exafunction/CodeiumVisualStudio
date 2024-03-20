@@ -1,4 +1,5 @@
 ﻿using CodeiumVS.Packets;
+using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -25,10 +26,11 @@ namespace CodeiumVS;
 public class LanguageServer
 {
     private string _languageServerURL;
-    private string _languageServerVersion = "1.8.0";
+    private string _languageServerVersion = "1.8.14";
 
     private int _port = 0;
-    private Process _process;
+    private System.Diagnostics.Process _process;
+    private bool _intializedWorkspace = false;
 
     private readonly Metadata _metadata;
     private readonly HttpClient _httpClient;
@@ -379,7 +381,7 @@ public class LanguageServer
 
         // wait until the download is completed
         while (webClient.IsBusy)
-            Thread.Sleep(100);
+            System.Threading.Thread.Sleep(100);
 
         webClient.Dispose();
     }
@@ -416,7 +418,7 @@ public class LanguageServer
             false,
             true);
 
-        Thread trd =
+        System.Threading.Thread trd =
             new(() => ThreadDownloadLanguageServer(progressDialog)) { IsBackground = true };
 
         trd.Start();
@@ -724,6 +726,18 @@ public class LanguageServer
         return default;
     }
 
+    private async Task IntializeTrackedWorkspaceAsync()
+    {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        EnvDTE.DTE dte = (DTE)ServiceProvider.GlobalProvider.GetService(typeof(DTE));
+        string solutionDir = System.IO.Path.GetDirectoryName(dte.Solution.FullName);
+        AddTrackedWorkspaceResponse response = await AddTrackedWorkspaceAsync(solutionDir);
+        if (response != null)
+        {
+            _intializedWorkspace = true;
+        }
+    }
+
     private async Task<T?> RequestCommandAsync<T>(string command, object data,
                                                   CancellationToken cancellationToken = default)
     {
@@ -737,6 +751,10 @@ public class LanguageServer
                         int cursorPosition, string lineEnding, int tabSize, bool insertSpaces,
                         CancellationToken token)
     {
+        if (!_intializedWorkspace)
+        {
+            await IntializeTrackedWorkspaceAsync();
+        }
         GetCompletionsRequest data =
             new() { metadata = GetMetadata(),
                     document = new() { text = text,
@@ -768,7 +786,17 @@ public class LanguageServer
 
     public async Task<GetProcessesResponse?> GetProcessesAsync()
     {
+        if (!_intializedWorkspace)
+        {
+            await IntializeTrackedWorkspaceAsync();
+        }
         return await RequestCommandAsync<GetProcessesResponse>("GetProcesses", new {});
+    }
+
+    public async Task<AddTrackedWorkspaceResponse?> AddTrackedWorkspaceAsync(string workspacePath)
+    {
+        AddTrackedWorkspaceRequest data = new() { workspace = workspacePath };
+        return await RequestCommandAsync<AddTrackedWorkspaceResponse>("AddTrackedWorkspace", data);
     }
 
     public Metadata GetMetadata()

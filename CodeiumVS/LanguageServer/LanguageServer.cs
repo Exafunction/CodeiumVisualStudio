@@ -26,7 +26,7 @@ namespace CodeiumVS;
 public class LanguageServer
 {
     private string _languageServerURL;
-    private string _languageServerVersion = "1.8.14";
+    private string _languageServerVersion = "1.8.16";
 
     private int _port = 0;
     private System.Diagnostics.Process _process;

@@ -732,14 +732,21 @@ public class LanguageServer
         DTE dte = (DTE)ServiceProvider.GlobalProvider.GetService(typeof(DTE));
         foreach (EnvDTE.Project project in dte.Solution.Projects)
         {
-            string projectDir = Path.GetDirectoryName(project.FullName);
-            if (!string.IsNullOrEmpty(projectDir))
+            try
             {
-                AddTrackedWorkspaceResponse response = await AddTrackedWorkspaceAsync(projectDir);
-                if (response != null)
+                string projectDir = Path.GetDirectoryName(project.FullName);
+                if (!string.IsNullOrEmpty(projectDir))
                 {
-                    _initializedWorkspace = true;
+                    AddTrackedWorkspaceResponse response = await AddTrackedWorkspaceAsync(projectDir);
+                    if (response != null)
+                    {
+                        _initializedWorkspace = true;
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                continue;
             }
         }
     }

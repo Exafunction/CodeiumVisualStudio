@@ -395,7 +395,17 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
         // gets lsp completions on added character or deletions
         if (!typedChar.Equals(char.MinValue) || commandID == (uint)VSConstants.VSStd2KCmdID.RETURN || regenerateSuggestion)
         {
-            _ = Task.Run(() => GetCompletion());
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    GetCompletion();
+                }
+                catch (Exception e)
+                {
+                    Debug.Write(e);
+                }
+            });
             handled = true;
         }
         else if (commandID == (uint)VSConstants.VSStd2KCmdID.BACKSPACE ||
@@ -403,7 +413,17 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
         {
             ClearSuggestion();
 
-            _ = Task.Run(() => GetCompletion());
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    GetCompletion();
+                }
+                catch (Exception e)
+                {
+                    Debug.Write(e);
+                }
+            });
             handled = true;
         }
 

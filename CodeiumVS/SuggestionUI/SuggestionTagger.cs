@@ -499,24 +499,28 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
     // triggers refresh of the screen
     void MarkDirty()
     {
-        GetTagger().MarkDirty();
-        ITextSnapshot newSnapshot = buffer.CurrentSnapshot;
-        this.snapshot = newSnapshot;
+        try
+        {
+            GetTagger().MarkDirty();
+            ITextSnapshot newSnapshot = buffer.CurrentSnapshot;
+            this.snapshot = newSnapshot;
 
-        if (view.TextViewLines == null) return;
+            if (view.TextViewLines == null) return;
+            if (!view.TextViewLines.IsValid) return;
 
-        var changeStart = view.TextViewLines.FirstVisibleLine.Start;
-        var changeEnd = view.TextViewLines.LastVisibleLine.Start;
+            var changeStart = view.TextViewLines.FirstVisibleLine.Start;
+            var changeEnd = view.TextViewLines.LastVisibleLine.Start;
 
-        var startLine = view.TextSnapshot.GetLineFromPosition(changeStart);
-        var endLine = view.TextSnapshot.GetLineFromPosition(changeEnd);
+            var startLine = view.TextSnapshot.GetLineFromPosition(changeStart);
+            var endLine = view.TextSnapshot.GetLineFromPosition(changeEnd);
 
-        var span = new SnapshotSpan(startLine.Start, endLine.EndIncludingLineBreak)
-                       .TranslateTo(targetSnapshot: newSnapshot, SpanTrackingMode.EdgePositive);
+            var span = new SnapshotSpan(startLine.Start, endLine.EndIncludingLineBreak)
+                .TranslateTo(targetSnapshot: newSnapshot, SpanTrackingMode.EdgePositive);
 
-        // lines we are marking dirty
-        // currently all of them for simplicity
-        if (this.TagsChanged != null) { this.TagsChanged(this, new SnapshotSpanEventArgs(span)); }
+            // lines we are marking dirty
+            // currently all of them for simplicity
+            if (this.TagsChanged != null) { TagsChanged(this, new SnapshotSpanEventArgs(span)); }
+        } catch (Exception e) { Debug.Write(e); }
     }
 }
 

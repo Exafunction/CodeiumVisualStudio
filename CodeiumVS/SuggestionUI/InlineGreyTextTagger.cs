@@ -64,6 +64,7 @@ internal class InlineGreyTextTagger : ITagger<IntraTextAdornmentTag>
     {
         try
         {
+            if (!view.TextViewLines.IsValid) { return; }
             var changeStart = view.TextViewLines.FirstVisibleLine.Start;
             var changeEnd = view.TextViewLines.LastVisibleLine.Start;
 

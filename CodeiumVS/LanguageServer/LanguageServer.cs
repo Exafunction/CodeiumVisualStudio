@@ -26,11 +26,11 @@ namespace CodeiumVS;
 public class LanguageServer
 {
     private string _languageServerURL;
-    private string _languageServerVersion = "1.8.14";
+    private string _languageServerVersion = "1.8.16";
 
     private int _port = 0;
     private System.Diagnostics.Process _process;
-    private bool _intializedWorkspace = false;
+    private bool _initializedWorkspace = false;
 
     private readonly Metadata _metadata;
     private readonly HttpClient _httpClient;
@@ -726,15 +726,28 @@ public class LanguageServer
         return default;
     }
 
-    private async Task IntializeTrackedWorkspaceAsync()
+    private async Task InitializeTrackedWorkspaceAsync()
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-        EnvDTE.DTE dte = (DTE)ServiceProvider.GlobalProvider.GetService(typeof(DTE));
-        string solutionDir = System.IO.Path.GetDirectoryName(dte.Solution.FullName);
-        AddTrackedWorkspaceResponse response = await AddTrackedWorkspaceAsync(solutionDir);
-        if (response != null)
+        DTE dte = (DTE)ServiceProvider.GlobalProvider.GetService(typeof(DTE));
+        foreach (EnvDTE.Project project in dte.Solution.Projects)
         {
-            _intializedWorkspace = true;
+            try
+            {
+                string projectDir = Path.GetDirectoryName(project.FullName);
+                if (!string.IsNullOrEmpty(projectDir))
+                {
+                    AddTrackedWorkspaceResponse response = await AddTrackedWorkspaceAsync(projectDir);
+                    if (response != null)
+                    {
+                        _initializedWorkspace = true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                continue;
+            }
         }
     }
 
@@ -751,9 +764,9 @@ public class LanguageServer
                         int cursorPosition, string lineEnding, int tabSize, bool insertSpaces,
                         CancellationToken token)
     {
-        if (!_intializedWorkspace)
+        if (!_initializedWorkspace)
         {
-            await IntializeTrackedWorkspaceAsync();
+            await InitializeTrackedWorkspaceAsync();
         }
         GetCompletionsRequest data =
             new() { metadata = GetMetadata(),
@@ -786,9 +799,9 @@ public class LanguageServer
 
     public async Task<GetProcessesResponse?> GetProcessesAsync()
     {
-        if (!_intializedWorkspace)
+        if (!_initializedWorkspace)
         {
-            await IntializeTrackedWorkspaceAsync();
+            await InitializeTrackedWorkspaceAsync();
         }
         return await RequestCommandAsync<GetProcessesResponse>("GetProcesses", new {});
     }

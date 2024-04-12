@@ -26,7 +26,7 @@ namespace CodeiumVS;
 public class LanguageServer
 {
     private string _languageServerURL;
-    private string _languageServerVersion = "1.8.16";
+    private string _languageServerVersion = "1.8.23";
 
     private int _port = 0;
     private System.Diagnostics.Process _process;
@@ -328,7 +328,7 @@ public class LanguageServer
         progressDialog.EndWaitDialog();
         (progressDialog as IDisposable)?.Dispose();
 
-        if (e.Error == null) await StartAsync();
+        if (e.Error == null) await StartAsync(true);
     }
 
     /// <summary>
@@ -394,7 +394,7 @@ public class LanguageServer
 
         if (File.Exists(binaryPath))
         {
-            await StartAsync();
+            await StartAsync(true);
             return;
         }
 
@@ -665,7 +665,7 @@ public class LanguageServer
         _port = 0;
         _process = null;
         Controller.Disconnect();
-        ThreadHelper.JoinableTaskFactory.RunAsync(async delegate { await StartAsync(); })
+        ThreadHelper.JoinableTaskFactory.RunAsync(async delegate { await StartAsync(true); })
             .FireAndForget(true);
     }
 

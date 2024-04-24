@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.Utilities;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Text.Formatting;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace CodeiumVS
 {
@@ -65,7 +66,7 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
         else { return null; }
     }
 
-    public void SetSuggestion(String newSuggestion, int caretPoint)
+    public bool SetSuggestion(String newSuggestion, int caretPoint)
     {
         newSuggestion = newSuggestion.TrimEnd();
         newSuggestion = newSuggestion.Replace("\r", "");
@@ -73,7 +74,7 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
 
         int lineN = GetCurrentTextLine();
 
-        if (lineN < 0) return;
+        if (lineN < 0) return false;
 
         String untrim = buffer.CurrentSnapshot.GetLineFromLineNumber(lineN).GetText();
 
@@ -95,7 +96,7 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
             userEndingText = line.Substring(caretPoint).Trim();
             var userIndex = newSuggestion.IndexOf(userEndingText);
 
-            if (userIndex < 0) { return; }
+            if (userIndex < 0) { return false; }
             userIndex += currentText.Length;
 
             this.userIndex = userIndex;
@@ -104,19 +105,11 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
         }
         else { isTextInsertion = false; }
         var suggestionLines = combineSuggestion.Split('\n');
-        /*            if(suggestionLines.Length > 1 && isTextInsertion){
-                        return;
-                    }
-        */
         suggestion = new Tuple<String, String[]>(combineSuggestion, suggestionLines);
-        Update();
+        return Update();
     }
 
-    private void CaretUpdate(object sender, CaretPositionChangedEventArgs e)
-    {
-        if (showSuggestion && GetCurrentTextLine() != currentTextLineN) { ClearSuggestion(); }
-    }
-
+    public bool OnSameLine() { return GetCurrentTextLine() == currentTextLineN; }
     private void LostFocus(object sender, EventArgs e) { ClearSuggestion(); }
 
     public SuggestionTagger(IWpfTextView view, ITextBuffer buffer)
@@ -135,7 +128,6 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
         this.transparentBrush.Opacity = 0;
         this.greyBrush = new SolidColorBrush(Colors.Gray);
         view.LostAggregateFocus += LostFocus;
-        view.Caret.PositionChanged += CaretUpdate;
     }
 
     public bool IsSuggestionActive() { return showSuggestion; }
@@ -245,7 +237,7 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
 
     void AddInsertionTextBlock(int start, int end, string line)
     {
-        if (line.Length <= suggestionIndex) return;
+        if (line.Length <= suggestionIndex || end < start) return;
         try
         {
             string remainder = line.Substring(start, end - start);
@@ -385,14 +377,14 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
     }
 
     // update multiline data
-    public void Update()
+    public bool Update()
     {
 
-        if (suggestion == null) { return; }
+        if (suggestion == null) { return false; }
 
         int textLineN = GetCurrentTextLine();
 
-        if (textLineN < 0) { return; }
+        if (textLineN < 0) { return false; }
 
         ITextSnapshot newSnapshot = buffer.CurrentSnapshot;
         this.snapshot = newSnapshot;
@@ -413,18 +405,17 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
             this.currentTextLineN = textLineN;
             this.suggestionIndex = suggestionIndex;
             ShowSuggestion(untrimLine, 0);
+            return true;
         }
         else { ClearSuggestion(); }
+
+        return false;
     }
 
     // Adds the grey text to the file replacing current line in the process
     public bool CompleteText()
     {
         if (!showSuggestion || suggestion == null) { return false; }
-
-        int textLineN = GetCurrentTextLine();
-
-        if (textLineN < 0 || textLineN != currentTextLineN) { return false; }
 
         String untrimLine = this.snapshot.GetLineFromLineNumber(currentTextLineN).GetText();
         String line = untrimLine.Trim();

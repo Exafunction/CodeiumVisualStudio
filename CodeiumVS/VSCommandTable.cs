@@ -34,6 +34,8 @@ internal sealed partial class PackageIds
     public const int RefactorCodeBlock = 0x0105;
     public const int GenerateFunctionDocstring = 0x0106;
     public const int GenerateFunctionUnitTest = 0x0107;
+    public const int ShowNextSuggestion = 0x0108;
+    public const int CompleteSuggestion = 0x0109;
     public const int DebugButton = 0x0600;
 }
 }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using CodeiumVS.Packets;
 using CodeiumVS.Utilities;
+using System.Windows.Forms;
 
 namespace CodeiumVS.Commands;
 
@@ -43,12 +44,83 @@ internal sealed class CommandSignOut : BaseCommand<CommandSignOut>
     }
 }
 
-[Command(PackageIds.EnterAuthToken)]
-internal sealed class CommandEnterAuthToken : BaseCommand<CommandEnterAuthToken>
+[Command(PackageIds.CompleteSuggestion)]
+internal sealed class CommandCompleteSuggestion : BaseCommandCompletionHandler<CommandCompleteSuggestion>
 {
-    protected override void Execute(object sender, EventArgs e)
+    protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
     {
-        new EnterTokenDialogWindow().ShowDialog();
+        try
+        {
+            if(completionHandler == null) return;
+            completionHandler.CompleteSuggestion();
+        }
+        catch (Exception ex)
+        {
+            await CodeiumVSPackage.Instance.LogAsync(
+                $"CommandShowNextSuggestion: Failed to complete suggestion; Exception: {ex}");
+        }
+    }
+}
+
+[Command(PackageIds.ShowNextSuggestion)]
+internal sealed class CommandShowNextSuggestion : BaseCommandCompletionHandler<CommandShowNextSuggestion>
+{
+    protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
+    {
+        try
+        {
+            if (completionHandler == null) return;
+
+            completionHandler.ShowNextSuggestion();
+        }
+        catch (Exception ex)
+        {
+            await CodeiumVSPackage.Instance.LogAsync(
+                $"CommandShowNextSuggestion: Failed to show next suggestion; Exception: {ex}");
+        }
+    }
+}
+internal class BaseCommandCompletionHandler<T> : BaseCommand<T>
+    where T : class, new()
+{
+    internal static long lastQuery = 0;
+    protected static DocumentView? docView;
+    protected static CodeiumCompletionHandler? completionHandler;
+    protected override void BeforeQueryStatus(EventArgs e)
+    {
+        // Derived menu commands will call this repeatedly upon openning
+        // so we only want to do it once, i can't find a better way to do it
+        long timeStamp = Stopwatch.GetTimestamp();
+        if (lastQuery != 0 && timeStamp - lastQuery < 500) return;
+        lastQuery = timeStamp;
+
+        ThreadHelper.JoinableTaskFactory.Run(async delegate
+        {
+            // any interactions with the `IVsTextView` should be done on the main thread
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            try
+            {
+                docView = await VS.Documents.GetActiveDocumentViewAsync();
+                if (docView?.TextView == null) return false;
+
+                var key = typeof(CodeiumCompletionHandler);
+                var props = docView.TextBuffer.Properties;
+                if (props.ContainsProperty(key))
+                {
+                    completionHandler = props.GetProperty<CodeiumCompletionHandler>(key);
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await CodeiumVSPackage.Instance.LogAsync(
+                    $"BaseCommandDocView: Failed to get the active document view; Exception: {ex}");
+                return false;
+            }
+        });
     }
 }
 
@@ -161,16 +233,16 @@ internal class BaseCommandContextMenu<T> : BaseCommand<T>
         }
 
         return new() {
-            raw_source = text,
-            clean_function = text,
-            node_name = func.Name,
-            @params = func.Params,
-            definition_line = start_line,
-            start_line = start_line,
-            end_line = end_line,
-            start_col = start_col,
-            end_col = end_col,
-            language = languageInfo.Type,
+            RawSource = text,
+            CleanFunction = text,
+            NodeName = func.Name,
+            Params = func.Params,
+            DefinitionLine = start_line,
+            StartLine = start_line,
+            EndLine = end_line,
+            StartCol = start_col,
+            EndCol = end_col,
+            Language = languageInfo.Type,
         };
     }
 

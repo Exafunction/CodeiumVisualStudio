@@ -1495,74 +1495,53 @@ public partial class IntentFunctionExplain : global::ProtoBuf.IExtensible
 public partial class FunctionInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension
-        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
-        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-    [global::ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1, Name = @"raw_source")]
     [global::System.ComponentModel.DefaultValue("")]
-    public string raw_source { get; set; } = "";
+    public string RawSource { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(2)]
+    [global::ProtoBuf.ProtoMember(2, Name = @"clean_function")]
     [global::System.ComponentModel.DefaultValue("")]
-    public string clean_function {
-        get; set;
-    } = "";
+    public string CleanFunction { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(3)]
+    [global::ProtoBuf.ProtoMember(3, Name = @"docstring")]
     [global::System.ComponentModel.DefaultValue("")]
-    public string docstring {
-        get; set;
-    } = "";
+    public string Docstring { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(4)]
+    [global::ProtoBuf.ProtoMember(4, Name = @"node_name")]
     [global::System.ComponentModel.DefaultValue("")]
-    public string node_name {
-        get; set;
-    } = "";
+    public string NodeName { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(5)]
+    [global::ProtoBuf.ProtoMember(5, Name = @"params")]
     [global::System.ComponentModel.DefaultValue("")]
-    public string @params {
-        get; set;
-    } = "";
+    public string Params { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(6)]
-    public int definition_line {
-        get; set;
-    }
+    [global::ProtoBuf.ProtoMember(6, Name = @"definition_line")]
+    public int DefinitionLine { get; set; }
 
-    [global::ProtoBuf.ProtoMember(7)]
-    public int start_line {
-        get; set;
-    }
+    [global::ProtoBuf.ProtoMember(7, Name = @"start_line")]
+    public int StartLine { get; set; }
 
-    [global::ProtoBuf.ProtoMember(8)]
-    public int end_line {
-        get; set;
-    }
+    [global::ProtoBuf.ProtoMember(8, Name = @"end_line")]
+    public int EndLine { get; set; }
 
-    [global::ProtoBuf.ProtoMember(9)]
-    public int start_col {
-        get; set;
-    }
+    [global::ProtoBuf.ProtoMember(9, Name = @"start_col")]
+    public int StartCol { get; set; }
 
-    [global::ProtoBuf.ProtoMember(10)]
-    public int end_col {
-        get; set;
-    }
+    [global::ProtoBuf.ProtoMember(10, Name = @"end_col")]
+    public int EndCol { get; set; }
 
-    [global::ProtoBuf.ProtoMember(11)]
+    [global::ProtoBuf.ProtoMember(11, Name = @"leading_whitespace")]
     [global::System.ComponentModel.DefaultValue("")]
-    public string leading_whitespace {
-        get; set;
-    } = "";
+    public string LeadingWhitespace { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(12)]
-    public Language language {
-        get; set;
-    }
+    [global::ProtoBuf.ProtoMember(12, Name = @"language")]
+    public Language Language { get; set; }
+
 }
+
 
 [global::ProtoBuf.ProtoContract()]
 public partial class IntentFunctionDocstring : global::ProtoBuf.IExtensible
@@ -1826,81 +1805,55 @@ public partial class IntentClassExplain : global::ProtoBuf.IExtensible
 public partial class ClassInfo : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
-    global::ProtoBuf.IExtension
-        global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
-        global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-    [global::ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1, Name = @"raw_source")]
     [global::System.ComponentModel.DefaultValue("")]
-    public string raw_source { get; set; } = "";
+    public string RawSource { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(2)]
-    public int start_line {
-        get; set;
-    }
+    [global::ProtoBuf.ProtoMember(2, Name = @"start_line")]
+    public int StartLine { get; set; }
 
-    [global::ProtoBuf.ProtoMember(3)]
-    public int end_line {
-        get; set;
-    }
+    [global::ProtoBuf.ProtoMember(3, Name = @"end_line")]
+    public int EndLine { get; set; }
 
-    [global::ProtoBuf.ProtoMember(4)]
-    public int start_col {
-        get; set;
-    }
+    [global::ProtoBuf.ProtoMember(4, Name = @"start_col")]
+    public int StartCol { get; set; }
 
-    [global::ProtoBuf.ProtoMember(5)]
-    public int end_col {
-        get; set;
-    }
+    [global::ProtoBuf.ProtoMember(5, Name = @"end_col")]
+    public int EndCol { get; set; }
 
-    [global::ProtoBuf.ProtoMember(6)]
+    [global::ProtoBuf.ProtoMember(6, Name = @"leading_whitespace")]
     [global::System.ComponentModel.DefaultValue("")]
-    public string leading_whitespace {
-        get; set;
-    } = "";
+    public string LeadingWhitespace { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(7)]
-    public global::System.Collections.Generic.List<string> fields_and_constructors {
-        get;
-    } = new global::System.Collections.Generic.List<string>();
+    [global::ProtoBuf.ProtoMember(7, Name = @"fields_and_constructors")]
+    public global::System.Collections.Generic.List<string> FieldsAndConstructors { get; } = new global::System.Collections.Generic.List<string>();
 
-    [global::ProtoBuf.ProtoMember(8)]
+    [global::ProtoBuf.ProtoMember(8, Name = @"docstring")]
     [global::System.ComponentModel.DefaultValue("")]
-    public string docstring {
-        get; set;
-    } = "";
+    public string Docstring { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(9)]
+    [global::ProtoBuf.ProtoMember(9, Name = @"node_name")]
     [global::System.ComponentModel.DefaultValue("")]
-    public string node_name {
-        get; set;
-    } = "";
+    public string NodeName { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(10)]
-    public global::System.Collections.Generic.List<FunctionInfo> methods {
-        get;
-    } = new global::System.Collections.Generic.List<FunctionInfo>();
+    [global::ProtoBuf.ProtoMember(10, Name = @"methods")]
+    public global::System.Collections.Generic.List<FunctionInfo> Methods { get; } = new global::System.Collections.Generic.List<FunctionInfo>();
 
-    [global::ProtoBuf.ProtoMember(11)]
-    public global::System.Collections.Generic.List<string> node_lineage {
-        get;
-    } = new global::System.Collections.Generic.List<string>();
+    [global::ProtoBuf.ProtoMember(11, Name = @"node_lineage")]
+    public global::System.Collections.Generic.List<string> NodeLineages { get; } = new global::System.Collections.Generic.List<string>();
 
-    [global::ProtoBuf.ProtoMember(12)]
-    public bool is_exported {
-        get; set;
-    }
+    [global::ProtoBuf.ProtoMember(12, Name = @"is_exported")]
+    public bool IsExported { get; set; }
 
-    [global::ProtoBuf.ProtoMember(13)]
-    public Language language {
-        get; set;
-    }
+    [global::ProtoBuf.ProtoMember(13, Name = @"language")]
+    public Language Language { get; set; }
 
-    [global::ProtoBuf.ProtoMember(14)]
-    public int definition_line {
-        get; set;
-    }
+    [global::ProtoBuf.ProtoMember(14, Name = @"definition_line")]
+    public int DefinitionLine { get; set; }
+
 }
 
 [global::ProtoBuf.ProtoContract()]
@@ -2588,6 +2541,55 @@ public partial class AddTrackedWorkspaceResponse : global::ProtoBuf.IExtensible
     global::ProtoBuf.IExtension
         global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+}
+
+[global::ProtoBuf.ProtoContract()]
+public partial class GetFunctionsRequest : global::ProtoBuf.IExtensible
+{
+    private global::ProtoBuf.IExtension __pbn__extensionData;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+    [global::ProtoBuf.ProtoMember(1, Name = @"document")]
+    public Document document { get; set; }
+
+}
+
+[global::ProtoBuf.ProtoContract()]
+public partial class GetFunctionsResponse : global::ProtoBuf.IExtensible
+{
+    private global::ProtoBuf.IExtension __pbn__extensionData;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+    [global::ProtoBuf.ProtoMember(1, Name = @"function_captures")]
+    public global::System.Collections.Generic.List<FunctionInfo> FunctionCaptures { get; } = new global::System.Collections.Generic.List<FunctionInfo>();
+
+}
+
+
+[global::ProtoBuf.ProtoContract()]
+public partial class GetClassInfosRequest : global::ProtoBuf.IExtensible
+{
+    private global::ProtoBuf.IExtension __pbn__extensionData;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+    [global::ProtoBuf.ProtoMember(1, Name = @"document")]
+    public Document document { get; set; }
+
+}
+
+[global::ProtoBuf.ProtoContract()]
+public partial class GetClassInfosResponse : global::ProtoBuf.IExtensible
+{
+    private global::ProtoBuf.IExtension __pbn__extensionData;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+        => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+    [global::ProtoBuf.ProtoMember(1, Name = @"class_captures")]
+    public global::System.Collections.Generic.List<ClassInfo> ClassCaptures { get; } = new global::System.Collections.Generic.List<ClassInfo>();
+
 }
 
 [global::ProtoBuf.ProtoContract()]

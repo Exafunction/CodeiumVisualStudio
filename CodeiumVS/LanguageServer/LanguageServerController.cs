@@ -200,7 +200,7 @@ public class LanguageServerController
             new() { explain_function = new() {
                 function_info = functionInfo,
                 file_path = filePath,
-                language = functionInfo.language,
+                language = functionInfo.Language,
             } };
 
         if (request.Send(ws))
@@ -216,7 +216,7 @@ public class LanguageServerController
             new() { function_unit_tests = new() {
                 function_info = functionInfo,
                 file_path = filePath,
-                language = functionInfo.language,
+                language = functionInfo.Language,
                 instructions = instructions,
             } };
 
@@ -232,7 +232,7 @@ public class LanguageServerController
             new() { function_docstring = new() {
                 function_info = functionInfo,
                 file_path = filePath,
-                language = functionInfo.language,
+                language = functionInfo.Language,
             } };
 
         if (request.Send(ws))
@@ -262,7 +262,7 @@ public class LanguageServerController
         request.get_chat_message_request.chat_messages[0].intent =
             new() { function_refactor = new() { function_info = functionInfo,
                                                 file_path = filePath,
-                                                language = functionInfo.language,
+                                                language = functionInfo.Language,
                                                 refactor_description = prompt } };
 
         if (request.Send(ws))

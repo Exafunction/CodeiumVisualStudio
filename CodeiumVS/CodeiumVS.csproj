@@ -67,6 +67,8 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CodeLens\CodeLensTag.cs" />
+    <Compile Include="CodeLens\CodeLensTagger.cs" />
     <Compile Include="InlineDiff\InlineDiffAdornment.cs" />
     <Compile Include="InlineDiff\InlineDiffControl.xaml.cs">
       <DependentUpon>InlineDiffControl.xaml</DependentUpon>

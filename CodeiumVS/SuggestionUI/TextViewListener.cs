@@ -261,9 +261,12 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
             projectionBuffer != null ? projectionBuffer.SourceBuffers[0] : topBuffer;
         provider.documentFactory.TryGetTextDocument(textBuffer, out _document);
 
-        _document.FileActionOccurred += OnFileActionOccurred;
-        _document.TextBuffer.ContentTypeChanged += OnContentTypeChanged;
-        RefreshLanguage();
+        if (_document != null)
+        {
+            _document.FileActionOccurred += OnFileActionOccurred;
+            _document.TextBuffer.ContentTypeChanged += OnContentTypeChanged;
+            RefreshLanguage();
+        }
 
         _textViewAdapter = textViewAdapter;
         // add the command to the command chain
@@ -271,7 +274,6 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
         // ShowIntellicodeMsg();
         
         view.Caret.PositionChanged += CaretUpdate;
-        GetCommandsAsync("CodeiumAcceptCompletion");
 
         _ = Task.Run(() =>
         {
@@ -290,6 +292,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
     private void CaretUpdate(object sender, CaretPositionChangedEventArgs e)
     {
         var tagger = GetTagger();
+        if(tagger == null) { return; }
         if (CompleteSuggestionCommand != null && CompleteSuggestionCommand.Bindings is object[] bindings && bindings.Length > 0)
         {
             tagger.ClearSuggestion();
@@ -451,21 +454,29 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
             return m_nextCommandHandler.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
         }
 
+        
         // check for a commit character
         bool regenerateSuggestion = false;
-        if (!hasCompletionUpdated && nCmdID == (uint)VSConstants.VSStd2KCmdID.TAB
-            && (CompleteSuggestionCommand == null || (CompleteSuggestionCommand.Bindings is object[] bindings && bindings.Length <= 0)))
+        if (!hasCompletionUpdated && nCmdID == (uint)VSConstants.VSStd2KCmdID.TAB)
         {
-            var tagger = GetTagger();
+            if (CompleteSuggestionCommand != null)
+            {
+                var bindings = CompleteSuggestionCommand.Bindings as object[];
+                if (bindings == null || bindings.Length <= 0)
+                {
+                    var tagger = GetTagger();
 
-            ICompletionSession session = m_provider.CompletionBroker.GetSessions(_view).FirstOrDefault();
-            if (session != null && session.SelectedCompletionSet != null)
-            {
-                tagger.ClearSuggestion();
-                regenerateSuggestion = true;
-            }else if (CompleteSuggestion())
-            {
-                return VSConstants.S_OK;
+                    ICompletionSession session = m_provider.CompletionBroker.GetSessions(_view).FirstOrDefault();
+                    if (session != null && session.SelectedCompletionSet != null)
+                    {
+                        tagger.ClearSuggestion();
+                        regenerateSuggestion = true;
+                    }
+                    else if (CompleteSuggestion())
+                    {
+                        return VSConstants.S_OK;
+                    }
+                }
             }
         }
         else if (nCmdID == (uint)VSConstants.VSStd2KCmdID.RETURN ||
@@ -544,8 +555,11 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
 
     public void Dispose()
     {
-        _document.FileActionOccurred -= OnFileActionOccurred;
-        _document.TextBuffer.ContentTypeChanged -= OnContentTypeChanged;
+        if (_document != null)
+        {
+            _document.FileActionOccurred -= OnFileActionOccurred;
+            _document.TextBuffer.ContentTypeChanged -= OnContentTypeChanged;
+        }
         UpdateRequestTokenSource(null);
     }
 }

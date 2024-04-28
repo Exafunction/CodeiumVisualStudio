@@ -818,6 +818,7 @@ public class LanguageServer
                        api_key = _metadata.api_key,
                        ide_name = _metadata.ide_name,
                        ide_version = _metadata.ide_version,
+                     
                        extension_name = _metadata.extension_name,
                        extension_version = _metadata.extension_version,
                        session_id = _metadata.session_id,
@@ -827,7 +828,7 @@ public class LanguageServer
 
     public async Task<IList<FunctionInfo>?>
         GetFunctionsAsync(string absolutePath, string text, Languages.LangInfo language,
-            int cursorPosition, string lineEnding, CancellationToken token)
+            int cursorPosition, CancellationToken token)
     {
         if (!_initializedWorkspace)
         {

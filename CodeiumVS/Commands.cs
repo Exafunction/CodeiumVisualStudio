@@ -9,6 +9,11 @@ using System.Windows;
 using CodeiumVS.Packets;
 using CodeiumVS.Utilities;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Windows.Shapes;
+using static System.Windows.Forms.LinkLabel;
+using System.Threading;
+using Microsoft.VisualStudio.Language.CodeLens;
 
 namespace CodeiumVS.Commands;
 
@@ -343,6 +348,269 @@ internal class CommandRefactorCodeBlock : BaseCommandContextMenu<CommandRefactor
     }
 }
 
+internal class BaseCommandCodeLens<T> : BaseCommand<T>
+    where T : class, new()
+{
+    internal static long lastQuery = 0;
+
+    protected static DocumentView? docView;
+    protected static string text; // the selected text
+    protected static Languages.LangInfo languageInfo;
+    protected FunctionInfo functionInfo;
+    protected ClassInfo classInfo;
+    protected override void BeforeQueryStatus(EventArgs e)
+    {
+        // Derived menu commands will call this repeatedly upon openning
+        // so we only want to do it once, i can't find a better way to do it
+        long timeStamp = Stopwatch.GetTimestamp();
+        if (lastQuery != 0 && timeStamp - lastQuery < 500) return;
+        lastQuery = timeStamp;
+
+        ThreadHelper.JoinableTaskFactory.Run(async delegate {
+
+            // any interactions with the `IVsTextView` should be done on the main thread
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            try
+            {
+                docView = await VS.Documents.GetActiveDocumentViewAsync();
+                text = docView.TextBuffer.CurrentSnapshot.GetText();
+                if (docView?.TextView == null) return false;
+            }
+            catch (Exception ex)
+            {
+                await CodeiumVSPackage.Instance.LogAsync(
+                    $"BaseCommandContextMenu: Failed to get the active document view; Exception: {ex}");
+                return false;
+            }
+
+            languageInfo = Languages.Mapper.GetLanguage(docView);
+            ITextSelection selection = docView.TextView.Selection;
+
+            return true;
+        });
+    }
+
+    protected async Task<bool> ResolveCodeBlock(int startLine)
+    {
+        CancellationTokenSource cts = new CancellationTokenSource();
+        IList<Packets.FunctionInfo>? functions =
+            await CodeiumVSPackage.Instance.LanguageServer.GetFunctionsAsync(
+                docView.FilePath,
+                text,
+                languageInfo,
+                0,
+                cts.Token);
+
+        IList<Packets.ClassInfo>? classes = await CodeiumVSPackage.Instance.LanguageServer.GetClassInfosAsync(
+            docView.FilePath,
+            text,
+            languageInfo,
+            0,
+            docView.TextView.Options.GetOptionValue(DefaultOptions.NewLineCharacterOptionId),
+            cts.Token);
+
+        FunctionInfo minFunction = null;
+        int minDistance = int.MaxValue;
+        foreach (var f in functions)
+        {
+            var distance = Math.Abs(f.DefinitionLine - startLine);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                functionInfo = f;
+            }
+        }
+
+        foreach (var c in classes)
+        {
+            var distance = Math.Abs(c.StartLine - startLine);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                functionInfo = null;
+                classInfo = c;
+            }
+        }
+        return true;
+    }
+
+    protected CodeBlockInfo ClassToCodeBlock(ClassInfo c)
+    {
+        CodeBlockInfo codeBlockInfo = null;
+        try
+        {
+            var snapshotLineStart = docView.TextBuffer.CurrentSnapshot.GetLineFromLineNumber(c.StartLine);
+            var snapShotLineEnd = docView.TextBuffer.CurrentSnapshot.GetLineFromLineNumber(c.EndLine);
+
+            var start_position = snapshotLineStart.Start;
+            var end_position = snapShotLineEnd.End;
+
+            var start_line = snapshotLineStart.LineNumber + 1;
+            var end_line = snapShotLineEnd.LineNumber + 1;
+            var start_col = start_position - snapshotLineStart.Start.Position + 1;
+            var end_col = end_position - snapShotLineEnd.Start.Position + 1;
+
+            text = docView.TextBuffer.CurrentSnapshot.GetText(start_position,
+                end_position - start_position);
+
+            codeBlockInfo = new()
+            {
+                raw_source = text,
+                start_line = start_line,
+                end_line = end_line,
+                start_col = start_col,
+                end_col = end_col,
+            };
+        }
+        catch (Exception ex)
+        {
+            Task.Run(async () =>
+            {
+                return CodeiumVSPackage.Instance.LogAsync(ex.ToString());
+            });
+        }
+        return codeBlockInfo;
+    }
+
+}
+
+
+[Command(PackageIds.RefactorSelectionCodeBlock)]
+internal class CommandRefactorSelectionCodeBlock : BaseCommandCodeLens<CommandRefactorSelectionCodeBlock>
+{
+    protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
+    {
+
+        try
+        {
+            LanguageServerController controller =
+                (Package as CodeiumVSPackage).LanguageServer.Controller;
+
+            CodeLensDescriptorContext ctx = null;
+            ITextSnapshotLine snapshotLine;
+            int startPos;
+            if (e.InValue != null)
+            {
+                await CodeiumVSPackage.Instance.LogAsync(e.InValue.ToString());
+                ctx = e.InValue as CodeLensDescriptorContext;
+                startPos = ctx.ApplicableSpan.Value.Start;
+                snapshotLine = docView.TextBuffer.CurrentSnapshot.GetLineFromPosition(startPos);
+                int startLine = snapshotLine.LineNumber;
+                TextBounds selectionLine = docView.TextView.TextViewLines.GetCharacterBounds(snapshotLine.Start);
+                Point selectionScreenPos = docView.TextView.VisualElement.PointToScreen(
+                    new Point(selectionLine.Left - docView.TextView.ViewportLeft,
+                        selectionLine.Top - docView.TextView.ViewportTop));
+
+                var start = docView.TextView.TextViewLines.GetCharacterBounds(snapshotLine.Start);
+
+                // highlight the selected codeblock
+                TextHighlighter? highlighter = TextHighlighter.GetInstance(docView.TextView);
+                highlighter?.AddHighlight(snapshotLine.Extent);
+                var dialog = RefactorCodeDialogWindow.GetOrCreate();
+                string? prompt =
+                    await dialog.ShowAndGetPromptAsync(languageInfo, selectionScreenPos.X, selectionScreenPos.Y);
+
+                highlighter?.ClearAll();
+
+                await ResolveCodeBlock(startLine);
+                // user did not select any of the prompt
+                if (prompt == null) return;
+                if (functionInfo != null)
+                {
+                    controller.RefactorFunctionAsync(
+                        prompt, docView.FilePath, functionInfo);
+                }
+                else
+                {
+                    if (classInfo == null) return;
+                    CodeBlockInfo codeBlockInfo = ClassToCodeBlock(classInfo);
+
+                    await controller.RefactorCodeBlockAsync(
+                        prompt, docView.FilePath, languageInfo.Type, codeBlockInfo);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await CodeiumVSPackage.Instance.LogAsync(ex.ToString());
+        }
+    }
+}
+
+[Command(PackageIds.ExplainSelectionCodeBlock)]
+internal class ExplainSelectionCodeBlock : BaseCommandCodeLens<ExplainSelectionCodeBlock>
+{
+    protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
+    {
+
+        try
+        {
+            LanguageServerController controller =
+                (Package as CodeiumVSPackage).LanguageServer.Controller;
+
+            if (e.InValue != null)
+            {
+                await CodeiumVSPackage.Instance.LogAsync(e.InValue.ToString());
+                var ctx = e.InValue as CodeLensDescriptorContext;
+                int startPos = ctx.ApplicableSpan.Value.Start;
+                ITextSnapshotLine line = docView.TextBuffer.CurrentSnapshot.GetLineFromPosition(startPos);
+                int startLine = line.LineNumber;
+
+                await ResolveCodeBlock(startLine);
+                if (functionInfo != null)
+                {
+                    controller.ExplainFunctionAsync(docView.FilePath, functionInfo);
+                }
+                else
+                {
+                    if (classInfo == null) return;
+                    CodeBlockInfo codeBlockInfo = ClassToCodeBlock(classInfo);
+                    controller.ExplainCodeBlockAsync(
+                        docView.FilePath, languageInfo.Type, codeBlockInfo);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await CodeiumVSPackage.Instance.LogAsync(ex.ToString());
+        }
+    }
+}
+
+
+[Command(PackageIds.GenerateSelectionFunctionDocstring)]
+internal class GenerateSelectionFunctionDocstring : BaseCommandCodeLens<GenerateSelectionFunctionDocstring>
+{
+    protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
+    {
+
+        try
+        {
+            LanguageServerController controller =
+                (Package as CodeiumVSPackage).LanguageServer.Controller;
+
+            if (e.InValue != null)
+            {
+                await CodeiumVSPackage.Instance.LogAsync(e.InValue.ToString());
+                var ctx = e.InValue as CodeLensDescriptorContext;
+                int startPos = ctx.ApplicableSpan.Value.Start;
+                ITextSnapshotLine line = docView.TextBuffer.CurrentSnapshot.GetLineFromPosition(startPos);
+                int startLine = line.LineNumber;
+
+                await ResolveCodeBlock(startLine);
+                if (functionInfo != null)
+                {
+                    controller.GenerateFunctionDocstringAsync(docView.FilePath, functionInfo);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await CodeiumVSPackage.Instance.LogAsync(ex.ToString());
+        }
+    }
+}
 [Command(PackageIds.GenerateFunctionUnitTest)]
 internal class CommandGenerateFunctionUnitTest
     : BaseCommandContextMenu<CommandGenerateFunctionUnitTest>

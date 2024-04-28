@@ -117,7 +117,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                 suggestionIndex = 0;
                 currentCompletionID = suggestions[0].Item2;
-                tagger.SetSuggestion(suggestions[0].Item1, characterN);
+                var valid = tagger.SetSuggestion(suggestions[0].Item1, characterN);
             }
 
             await package.LogAsync("Generated " + list.Count + $" proposals");
@@ -225,6 +225,11 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
             .FireAndForget(true);
     }
 
+    public LangInfo GetLanguage()
+    { 
+        return _language;
+    }
+
     private void UpdateRequestTokenSource(CancellationTokenSource newSource)
     {
         if (currentCancellTokenSource != null)
@@ -263,6 +268,9 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
 
         if (_document != null)
         {
+            CodeiumVSPackage.Instance.LogAsync("CodeiumCompletionHandler filepath = " + _document.FilePath);
+
+            provider.documentDictionary.Add(_document.FilePath.ToLower(), _document);
             _document.FileActionOccurred += OnFileActionOccurred;
             _document.TextBuffer.ContentTypeChanged += OnContentTypeChanged;
             RefreshLanguage();
@@ -291,21 +299,36 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
 
     private void CaretUpdate(object sender, CaretPositionChangedEventArgs e)
     {
-        var tagger = GetTagger();
-        if(tagger == null) { return; }
-        if (CompleteSuggestionCommand != null && CompleteSuggestionCommand.Bindings is object[] bindings && bindings.Length > 0)
+        try
         {
-            tagger.ClearSuggestion();
-            return; 
-        }
+            var tagger = GetTagger();
+            if (tagger == null)
+            {
+                return;
+            }
 
-        var key = GetAsyncKeyState(0x09);
-        if ((0x8000 & key) > 0)
+            if (CompleteSuggestionCommand != null && CompleteSuggestionCommand.Bindings is object[] bindings &&
+                bindings.Length > 0)
+            {
+                tagger.ClearSuggestion();
+                return;
+            }
+
+            var key = GetAsyncKeyState(0x09);
+            if ((0x8000 & key) > 0)
+            {
+                CompleteSuggestion(false);
+            }
+            else if (!tagger.OnSameLine())
+            {
+                tagger.ClearSuggestion();
+            }
+        }
+        catch (Exception ex)
         {
-            CompleteSuggestion(false);
-        }else if (!tagger.OnSameLine())
-        {
-            tagger.ClearSuggestion();
+            ThreadHelper.JoinableTaskFactory
+                .RunAsync(async delegate { await CodeiumVSPackage.Instance.LogAsync(ex.ToString()); })
+                .FireAndForget(true);
         }
     }
 
@@ -327,36 +350,47 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
 
     public async void ShowNextSuggestion()
     {
-        if (suggestions != null && suggestions.Count > 1)
+        try
         {
-
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            var oldSuggestion = suggestionIndex;
-            suggestionIndex = (suggestionIndex + 1) % suggestions.Count;
-            currentCompletionID = suggestions[suggestionIndex].Item2;
-
-            SuggestionTagger tagger = GetTagger();
-            
-            int lineN, characterN;
-            int res = _textViewAdapter.GetCaretPos(out lineN, out characterN);
-
-            if (res != VSConstants.S_OK)
+            if (suggestions != null && suggestions.Count > 1)
             {
-                suggestionIndex = oldSuggestion;
-                currentCompletionID = suggestions[suggestionIndex].Item2;
-                return;
-            }
 
-            bool validSuggestion = tagger.SetSuggestion(suggestions[suggestionIndex].Item1, characterN);
-            if (!validSuggestion)
-            {
-                suggestionIndex = oldSuggestion;
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                var oldSuggestion = suggestionIndex;
+                suggestionIndex = (suggestionIndex + 1) % suggestions.Count;
                 currentCompletionID = suggestions[suggestionIndex].Item2;
 
-                tagger.SetSuggestion(suggestions[suggestionIndex].Item1, characterN);
+                SuggestionTagger tagger = GetTagger();
+
+                int lineN, characterN;
+                int res = _textViewAdapter.GetCaretPos(out lineN, out characterN);
+
+                if (res != VSConstants.S_OK)
+                {
+                    suggestionIndex = oldSuggestion;
+                    currentCompletionID = suggestions[suggestionIndex].Item2;
+                    return;
+                }
+
+                bool validSuggestion = tagger.SetSuggestion(suggestions[suggestionIndex].Item1, characterN);
+                if (!validSuggestion)
+                {
+                    suggestionIndex = oldSuggestion;
+                    currentCompletionID = suggestions[suggestionIndex].Item2;
+
+                    tagger.SetSuggestion(suggestions[suggestionIndex].Item1, characterN);
+                }
             }
         }
+        catch (Exception ex)
+        {
+            ThreadHelper.JoinableTaskFactory
+                .RunAsync(async delegate { await CodeiumVSPackage.Instance.LogAsync(ex.ToString()); })
+                .FireAndForget(true);
+
+        }
+
     }
 
     public bool CompleteSuggestion(bool checkLine = true)
@@ -487,7 +521,6 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
 
         CheckSuggestionUpdate(nCmdID);
 
-        
         // make a copy of this so we can look at it after forwarding some commands
         uint commandID = nCmdID;
         char typedChar = char.MinValue;
@@ -590,16 +623,20 @@ internal class TextViewListener : IVsTextViewCreationListener
     [Import]
     internal ITextDocumentFactoryService documentFactory = null;
 
-        public void VsTextViewCreated(IVsTextView textViewAdapter)
-        {
-            ITextView textView = AdapterService.GetWpfTextView(textViewAdapter);
-            if (textView == null) return;
+    internal static TextViewListener? Instance { get; private set; }
 
-            Func<CodeiumCompletionHandler> createCommandHandler = delegate()
-            {
-                return new CodeiumCompletionHandler(textViewAdapter, textView, this);
-            };
-            textView.TextBuffer.Properties.GetOrCreateSingletonProperty<CodeiumCompletionHandler>(typeof(CodeiumCompletionHandler), createCommandHandler);
-        }
+    public Dictionary<string, ITextDocument> documentDictionary = new Dictionary<string, ITextDocument>();
+    public void VsTextViewCreated(IVsTextView textViewAdapter)
+    {
+        Instance = this;
+        ITextView textView = AdapterService.GetWpfTextView(textViewAdapter);
+        if (textView == null) return;
+
+        Func<CodeiumCompletionHandler> createCommandHandler = delegate()
+        {
+            return new CodeiumCompletionHandler(textViewAdapter, textView, this);
+        };
+        textView.TextBuffer.Properties.GetOrCreateSingletonProperty<CodeiumCompletionHandler>(typeof(CodeiumCompletionHandler), createCommandHandler);
     }
+}
 }

@@ -157,6 +157,38 @@
           <LocCanonicalName>Codeium.CompleteSuggestion</LocCanonicalName>
         </Strings>
       </Button>
+
+      <Button guid="CodeiumVS" id="ExplainSelectionCodeBlock" priority="0x0000" type="Button">
+        <Parent guid="CodeiumVS" id="ContextGroupCodeium" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <Strings>
+          <ButtonText>Codeium: Explain Code Block</ButtonText>
+          <LocCanonicalName>Codeium.ExplainSelectionCodeBlock</LocCanonicalName>
+        </Strings>
+      </Button>
+
+      <!-- Refactor code block / function button -->
+      <Button guid="CodeiumVS" id="RefactorSelectionCodeBlock" priority="0x0001" type="Button">
+        <Parent guid="CodeiumVS" id="ContextGroupCodeium" />
+        <Icon guid="ImageCatalogGuid" id="Refactoring" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <Strings>
+          <ButtonText>Codeium: Refactor Code Block</ButtonText>
+          <LocCanonicalName>Codeium.RefactorSelectionCodeBlock</LocCanonicalName>
+        </Strings>
+      </Button>
+
+      <!-- Generate Function Docstring -->
+      <Button guid="CodeiumVS" id="GenerateSelectionFunctionDocstring" priority="0x0002" type="Button">
+        <Parent guid="CodeiumVS" id="ContextGroupCodeium" />
+        <Icon guid="ImageCatalogGuid" id="AddComment" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <Strings>
+          <ButtonText>Codeium: Generate Docstring for Function</ButtonText>
+          <LocCanonicalName>Codeium.GenerateSelectionFunctionDocstring</LocCanonicalName>
+        </Strings>
+      </Button>
+
       <!-- Debug button --><!--
 			<Button guid="CodeiumVS" id="DebugButton" priority="0x0004" type="Button">
 				<Parent guid="CodeiumVS" id="ContextGroupCodeium" />
@@ -191,6 +223,10 @@
 			<IDSymbol name="GenerateFunctionUnitTest"   value="0x0107" />
       <IDSymbol name="ShowNextSuggestion"  value="0x0108" />
       <IDSymbol name="CompleteSuggestion"   value="0x0109" />
+      <IDSymbol name="ExplainSelectionCodeBlock"           value="0x0111" />
+      <IDSymbol name="RefactorSelectionCodeBlock"          value="0x0110" />
+      <IDSymbol name="GenerateSelectionFunctionDocstring"  value="0x0112" />
+
 
       <IDSymbol name="DebugButton"                value="0x0600" />
 		</GuidSymbol>

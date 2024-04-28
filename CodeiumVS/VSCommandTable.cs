@@ -36,6 +36,10 @@ internal sealed partial class PackageIds
     public const int GenerateFunctionUnitTest = 0x0107;
     public const int ShowNextSuggestion = 0x0108;
     public const int CompleteSuggestion = 0x0109;
+    public const int RefactorSelectionCodeBlock = 0x0110;
+    public const int ExplainSelectionCodeBlock = 0x0111;
+    public const int GenerateSelectionFunctionDocstring = 0x0112;
     public const int DebugButton = 0x0600;
+
 }
 }

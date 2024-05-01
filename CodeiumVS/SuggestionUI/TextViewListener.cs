@@ -53,74 +53,81 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
 
     public async void GetCompletion()
     {
-
-        if (!package.IsSignedIn()) { return; }
-
-        UpdateRequestTokenSource(new CancellationTokenSource());
-
-        SnapshotPoint? caretPoint = _view.Caret.Position.Point.GetPoint(
-            textBuffer => (!textBuffer.ContentType.IsOfType("projection")),
-            PositionAffinity.Successor);
-        if (!caretPoint.HasValue) { return; }
-
-        var caretPosition = caretPoint.Value.Position;
-
-        string text = _document.TextBuffer.CurrentSnapshot.GetText();
-        int cursorPosition = _document.Encoding.IsSingleByte
-                                 ? caretPosition
-                                 : Utf16OffsetToUtf8Offset(text, caretPosition);
-
-        if (cursorPosition > text.Length)
+        try
         {
-            Debug.Print("Error Caret past text position");
-            return;
-        }
-
-        IList<Packets.CompletionItem>? list = await package.LanguageServer.GetCompletionsAsync(
-            _document.FilePath,
-            text,
-            _language,
-            cursorPosition,
-            _view.Options.GetOptionValue(DefaultOptions.NewLineCharacterOptionId),
-            _view.Options.GetOptionValue(DefaultOptions.TabSizeOptionId),
-            _view.Options.GetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId),
-            currentCancellTokenSource.Token);
-
-        int lineN;
-        int characterN;
-
-        int res = _textViewAdapter.GetCaretPos(out lineN, out characterN);
-        String line = _view.TextBuffer.CurrentSnapshot.GetLineFromLineNumber(lineN).GetText();
-        Debug.Print("completions " + list.Count.ToString());
-
-        if (res != VSConstants.S_OK) { return; }
-
-        if (list != null && list.Count > 0)
-        {
-            Debug.Print("completions " + list.Count.ToString());
-
-            string prefix = line.Substring(0, Math.Min(characterN, line.Length));
-
-            try
+            if (_document == null || !package.IsSignedIn())
             {
-                suggestions = ParseCompletion(list, text, line, prefix, characterN);
-            }
-            catch (Exception ex)
-            {
-                await package.LogAsync("Exception: " + ex.ToString());
                 return;
             }
 
-            SuggestionTagger tagger = GetTagger();
-            if (suggestions != null && suggestions.Count > 0 && tagger != null)
+            UpdateRequestTokenSource(new CancellationTokenSource());
+
+            SnapshotPoint? caretPoint = _view.Caret.Position.Point.GetPoint(
+                textBuffer => (!textBuffer.ContentType.IsOfType("projection")),
+                PositionAffinity.Successor);
+            if (!caretPoint.HasValue)
             {
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                suggestionIndex = 0;
-                currentCompletionID = suggestions[0].Item2;
-                var valid = tagger.SetSuggestion(suggestions[0].Item1, characterN);
+                return;
             }
 
-            await package.LogAsync("Generated " + list.Count + $" proposals");
+            var caretPosition = caretPoint.Value.Position;
+
+            string text = _document.TextBuffer.CurrentSnapshot.GetText();
+            int cursorPosition = _document.Encoding.IsSingleByte
+                ? caretPosition
+                : Utf16OffsetToUtf8Offset(text, caretPosition);
+
+            if (cursorPosition > text.Length)
+            {
+                Debug.Print("Error Caret past text position");
+                return;
+            }
+
+            IList<Packets.CompletionItem>? list = await package.LanguageServer.GetCompletionsAsync(
+                _document.FilePath,
+                text,
+                _language,
+                cursorPosition,
+                _view.Options.GetOptionValue(DefaultOptions.NewLineCharacterOptionId),
+                _view.Options.GetOptionValue(DefaultOptions.TabSizeOptionId),
+                _view.Options.GetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId),
+                currentCancellTokenSource.Token);
+
+            int lineN;
+            int characterN;
+
+            int res = _textViewAdapter.GetCaretPos(out lineN, out characterN);
+            String line = _view.TextBuffer.CurrentSnapshot.GetLineFromLineNumber(lineN).GetText();
+            Debug.Print("completions " + list.Count.ToString());
+
+            if (res != VSConstants.S_OK)
+            {
+                return;
+            }
+
+            if (list != null && list.Count > 0)
+            {
+                Debug.Print("completions " + list.Count.ToString());
+
+                string prefix = line.Substring(0, Math.Min(characterN, line.Length));
+                suggestions = ParseCompletion(list, text, line, prefix, characterN);
+
+                SuggestionTagger tagger = GetTagger();
+                if (suggestions != null && suggestions.Count > 0 && tagger != null)
+                {
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                    suggestionIndex = 0;
+                    currentCompletionID = suggestions[0].Item2;
+                    var valid = tagger.SetSuggestion(suggestions[0].Item1, characterN);
+                }
+
+                await package.LogAsync("Generated " + list.Count + $" proposals");
+            }
+
+        }
+        catch (Exception ex)
+        {
+            await package.LogAsync("Exception: " + ex.ToString());
         }
     }
 
@@ -189,27 +196,35 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
 
     public static async Task<Command> GetCommandsAsync(String name)
     {
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-        List<Command> items = new();
-        DTE2 dte = await VS.GetServiceAsync<DTE, DTE2>();
-
-        foreach (Command command in dte.Commands)
+        try
         {
-            if (string.IsNullOrEmpty(command.Name))
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            List<Command> items = new();
+            DTE2 dte = await VS.GetServiceAsync<DTE, DTE2>();
+
+            foreach (Command command in dte.Commands)
             {
-                continue;
+                if (string.IsNullOrEmpty(command.Name))
+                {
+                    continue;
+                }
+
+                if (command.Name.Contains(name) && command.Bindings is object[] bindings)
+                {
+                    items.Add(command);
+                }
             }
 
-            if (command.Name.Contains(name) && command.Bindings is object[] bindings)
+            if (items.Count > 0)
             {
-                items.Add(command);
+                return items[0];
             }
         }
-
-        if (items.Count > 0)
+        catch (Exception ex)
         {
-            return items[0];
+            CodeiumVSPackage.Instance.LogAsync(ex.ToString());
         }
+
         return null;
     }
 
@@ -252,49 +267,56 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
     }
 
     internal CodeiumCompletionHandler(IVsTextView textViewAdapter, ITextView view,
-                                      TextViewListener provider)
+        TextViewListener provider)
     {
-        CodeiumVSPackage.EnsurePackageLoaded();
-        package = CodeiumVSPackage.Instance;
-        _view = view;
-        m_provider = provider;
-        var topBuffer = view.BufferGraph.TopBuffer;
-
-        var projectionBuffer = topBuffer as IProjectionBufferBase;
-
-        ITextBuffer textBuffer =
-            projectionBuffer != null ? projectionBuffer.SourceBuffers[0] : topBuffer;
-        provider.documentFactory.TryGetTextDocument(textBuffer, out _document);
-
-        if (_document != null)
+        try
         {
-            CodeiumVSPackage.Instance.LogAsync("CodeiumCompletionHandler filepath = " + _document.FilePath);
+            CodeiumVSPackage.EnsurePackageLoaded();
+            package = CodeiumVSPackage.Instance;
+            _view = view;
+            m_provider = provider;
+            var topBuffer = view.BufferGraph.TopBuffer;
 
-            provider.documentDictionary.Add(_document.FilePath.ToLower(), _document);
-            _document.FileActionOccurred += OnFileActionOccurred;
-            _document.TextBuffer.ContentTypeChanged += OnContentTypeChanged;
-            RefreshLanguage();
+            var projectionBuffer = topBuffer as IProjectionBufferBase;
+
+            ITextBuffer textBuffer =
+                projectionBuffer != null ? projectionBuffer.SourceBuffers[0] : topBuffer;
+            provider.documentFactory.TryGetTextDocument(textBuffer, out _document);
+
+            if (_document != null)
+            {
+                CodeiumVSPackage.Instance.LogAsync("CodeiumCompletionHandler filepath = " + _document.FilePath);
+
+                provider.documentDictionary.Add(_document.FilePath.ToLower(), _document);
+                _document.FileActionOccurred += OnFileActionOccurred;
+                _document.TextBuffer.ContentTypeChanged += OnContentTypeChanged;
+                RefreshLanguage();
+            }
+
+            _textViewAdapter = textViewAdapter;
+            // add the command to the command chain
+            textViewAdapter.AddCommandFilter(this, out m_nextCommandHandler);
+            // ShowIntellicodeMsg();
+
+            view.Caret.PositionChanged += CaretUpdate;
+
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    CompleteSuggestionCommand = GetCommandsAsync("CodeiumAcceptCompletion").Result;
+                }
+                catch (Exception e)
+                {
+                    Debug.Write(e);
+                }
+            });
+
         }
-
-        _textViewAdapter = textViewAdapter;
-        // add the command to the command chain
-        textViewAdapter.AddCommandFilter(this, out m_nextCommandHandler);
-        // ShowIntellicodeMsg();
-        
-        view.Caret.PositionChanged += CaretUpdate;
-
-        _ = Task.Run(() =>
+        catch (Exception ex)
         {
-            try
-            {
-                CompleteSuggestionCommand = GetCommandsAsync("CodeiumAcceptCompletion").Result;
-            }
-            catch (Exception e)
-            {
-                Debug.Write(e);
-            }
-        });
-
+            CodeiumVSPackage.Instance.LogAsync(ex.ToString());
+        }
     }
 
     private void CaretUpdate(object sender, CaretPositionChangedEventArgs e)
@@ -344,8 +366,18 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
 
     private void RefreshLanguage()
     {
-        _language = Mapper.GetLanguage(_document.TextBuffer.ContentType,
-                                       Path.GetExtension(_document.FilePath)?.Trim('.'));
+        try
+        {
+            if (_document != null)
+            {
+                _language = Mapper.GetLanguage(_document.TextBuffer.ContentType,
+                    Path.GetExtension(_document.FilePath)?.Trim('.'));
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
 
     public async void ShowNextSuggestion()
@@ -388,7 +420,6 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
             ThreadHelper.JoinableTaskFactory
                 .RunAsync(async delegate { await CodeiumVSPackage.Instance.LogAsync(ex.ToString()); })
                 .FireAndForget(true);
-
         }
 
     }

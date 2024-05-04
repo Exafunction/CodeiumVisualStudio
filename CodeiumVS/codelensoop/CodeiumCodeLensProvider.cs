@@ -210,7 +210,7 @@ namespace CodeiumVS
                             l.Add(new CodeLensDetailPaneCommand()
                             {
                                 CommandId = goDocCommand,
-                                CommandDisplayName = "GoDoc",
+                                CommandDisplayName = "Generate Docstring",
                                 CommandArgs = new object[] { context }
                             });
                         }

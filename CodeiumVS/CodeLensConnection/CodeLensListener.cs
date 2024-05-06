@@ -29,6 +29,7 @@ namespace CodeiumVS
 
         public int GetVisualStudioPid() => Process.GetCurrentProcess().Id;
 
+        public bool IsCodeiumCodeLensActive() => CodeiumVSPackage.Instance != null && CodeiumVSPackage.Instance.SettingsPage.EnableCodeLens;
         FunctionInfo GetClosestFunction(IList<Packets.FunctionInfo>? functions, int line)
         {
             

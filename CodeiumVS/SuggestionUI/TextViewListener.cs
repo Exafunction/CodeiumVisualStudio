@@ -287,7 +287,11 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
             {
                 CodeiumVSPackage.Instance.LogAsync("CodeiumCompletionHandler filepath = " + _document.FilePath);
 
-                provider.documentDictionary.Add(_document.FilePath.ToLower(), _document);
+                if (!provider.documentDictionary.ContainsKey(_document.FilePath.ToLower()))
+                {
+                    provider.documentDictionary.Add(_document.FilePath.ToLower(), _document);
+                }
+
                 _document.FileActionOccurred += OnFileActionOccurred;
                 _document.TextBuffer.ContentTypeChanged += OnContentTypeChanged;
                 RefreshLanguage();

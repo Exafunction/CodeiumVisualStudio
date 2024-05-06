@@ -37,6 +37,7 @@ namespace CodeiumVS
     public interface ICodeLensListener
     {
         int GetVisualStudioPid();
+        bool IsCodeiumCodeLensActive();
         Task<FunctionInfo> LoadInstructions(Guid dataPointId, Guid projGuid, string filePath, int textStart, int textLen, CancellationToken ct);
 
     }

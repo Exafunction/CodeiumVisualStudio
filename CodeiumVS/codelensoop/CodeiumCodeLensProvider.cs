@@ -35,10 +35,25 @@ namespace CodeiumVS
             this.callbackService = callbackService;
         }
 
-        public Task<bool> CanCreateDataPointAsync(CodeLensDescriptor descriptor, CodeLensDescriptorContext context,
+        public async Task<bool> CanCreateDataPointAsync(CodeLensDescriptor descriptor, CodeLensDescriptorContext context,
             CancellationToken token)
         {
-            return Task.FromResult<bool>(true);
+
+            try
+            {
+                var callback = callbackService.Value;
+                var name = nameof(ICodeLensListener.IsCodeiumCodeLensActive);
+
+                var res = await callback
+                    .InvokeAsync<bool>(this, name).Caf();
+
+                return res;
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         public async Task<IAsyncCodeLensDataPoint> CreateDataPointAsync(CodeLensDescriptor descriptor,

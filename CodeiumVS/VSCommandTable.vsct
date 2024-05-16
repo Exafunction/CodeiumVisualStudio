@@ -136,7 +136,60 @@
 				</Strings>
 			</Button>
 
-			<!-- Debug button --><!--
+      <!-- ShowNextSuggestion -->
+      <Button guid="CodeiumVS" id="ShowNextSuggestion" priority="0x0003" type="Button">
+        <Icon guid="ImageCatalogGuid" id="AddTest" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>        <Strings>
+          <ButtonText>Codeium: Show Next Suggestion</ButtonText>
+          <LocCanonicalName>Codeium.ShowNextSuggestion</LocCanonicalName>
+        </Strings>
+      </Button>
+
+      <!-- CompleteSuggestion -->
+      <Button guid="CodeiumVS" id="CompleteSuggestion" priority="0x0003" type="Button">
+        <Icon guid="ImageCatalogGuid" id="AddTest" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>        <Strings>
+          <ButtonText>Codeium: Accept Completion</ButtonText>
+          <LocCanonicalName>Codeium.CompleteSuggestion</LocCanonicalName>
+        </Strings>
+      </Button>
+
+      <Button guid="CodeiumVS" id="ExplainSelectionCodeBlock" priority="0x0000" type="Button">
+        <Parent guid="CodeiumVS" id="ContextGroupCodeium" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <Strings>
+          <ButtonText>Codeium: Explain Code Block</ButtonText>
+          <LocCanonicalName>Codeium.ExplainSelectionCodeBlock</LocCanonicalName>
+        </Strings>
+      </Button>
+
+      <!-- Refactor code block / function button -->
+      <Button guid="CodeiumVS" id="RefactorSelectionCodeBlock" priority="0x0001" type="Button">
+        <Parent guid="CodeiumVS" id="ContextGroupCodeium" />
+        <Icon guid="ImageCatalogGuid" id="Refactoring" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <Strings>
+          <ButtonText>Codeium: Refactor Code Block</ButtonText>
+          <LocCanonicalName>Codeium.RefactorSelectionCodeBlock</LocCanonicalName>
+        </Strings>
+      </Button>
+
+      <!-- Generate Function Docstring -->
+      <Button guid="CodeiumVS" id="GenerateSelectionFunctionDocstring" priority="0x0002" type="Button">
+        <Parent guid="CodeiumVS" id="ContextGroupCodeium" />
+        <Icon guid="ImageCatalogGuid" id="AddComment" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <Strings>
+          <ButtonText>Codeium: Generate Docstring for Function</ButtonText>
+          <LocCanonicalName>Codeium.GenerateSelectionFunctionDocstring</LocCanonicalName>
+        </Strings>
+      </Button>
+
+      <!-- Debug button --><!--
 			<Button guid="CodeiumVS" id="DebugButton" priority="0x0004" type="Button">
 				<Parent guid="CodeiumVS" id="ContextGroupCodeium" />
 				<Icon guid="ImageCatalogGuid" id="DebugSelection" />
@@ -168,8 +221,14 @@
 			<IDSymbol name="RefactorCodeBlock"          value="0x0105" />
 			<IDSymbol name="GenerateFunctionDocstring"  value="0x0106" />
 			<IDSymbol name="GenerateFunctionUnitTest"   value="0x0107" />
+      <IDSymbol name="ShowNextSuggestion"  value="0x0108" />
+      <IDSymbol name="CompleteSuggestion"   value="0x0109" />
+      <IDSymbol name="ExplainSelectionCodeBlock"           value="0x0111" />
+      <IDSymbol name="RefactorSelectionCodeBlock"          value="0x0110" />
+      <IDSymbol name="GenerateSelectionFunctionDocstring"  value="0x0112" />
 
-			<IDSymbol name="DebugButton"                value="0x0600" />
+
+      <IDSymbol name="DebugButton"                value="0x0600" />
 		</GuidSymbol>
 
 		<GuidSymbol name="ChatToolWindow" value="{1a46fd64-28d5-434c-8eb3-17a02d419b53}"/>
@@ -182,6 +241,9 @@
 		<KeyBinding guid="CodeiumVS" id="OpenChatWindow"    editor="CMDSETID_StandardCommandSet97" mod1="Alt" mod2="Alt" key1="C" key2="C" />
 		<KeyBinding guid="CodeiumVS" id="ExplainCodeBlock"  editor="GUID_TextEditorFactory"        mod1="Alt" mod2="Alt" key1="C" key2="E" />
 		<KeyBinding guid="CodeiumVS" id="RefactorCodeBlock" editor="GUID_TextEditorFactory"        mod1="Alt" mod2="Alt" key1="C" key2="R" />
-	</KeyBindings>
+    <KeyBinding guid="CodeiumVS" id="ShowNextSuggestion"  editor="GUID_TextEditorFactory"      mod1="Alt" key1="VK_OEM_4" />
+    <KeyBinding guid="CodeiumVS" id="CompleteSuggestion" editor="GUID_TextEditorFactory"       key1="VK_TAB"/>
+
+  </KeyBindings>
 
 </CommandTable>

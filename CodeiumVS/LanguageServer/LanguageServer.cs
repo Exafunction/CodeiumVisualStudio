@@ -26,7 +26,7 @@ namespace CodeiumVS;
 public class LanguageServer
 {
     private string _languageServerURL;
-    private string _languageServerVersion = "1.8.23";
+    private string _languageServerVersion = "1.8.25";
 
     private int _port = 0;
     private System.Diagnostics.Process _process;
@@ -818,10 +818,67 @@ public class LanguageServer
                        api_key = _metadata.api_key,
                        ide_name = _metadata.ide_name,
                        ide_version = _metadata.ide_version,
+                     
                        extension_name = _metadata.extension_name,
                        extension_version = _metadata.extension_version,
                        session_id = _metadata.session_id,
                        locale = _metadata.locale,
                        disable_telemetry = _metadata.disable_telemetry };
+    }
+
+    public async Task<IList<FunctionInfo>?>
+        GetFunctionsAsync(string absolutePath, string text, Languages.LangInfo language,
+            int cursorPosition, CancellationToken token)
+    {
+        if (!_initializedWorkspace)
+        {
+            await InitializeTrackedWorkspaceAsync();
+        }
+        GetFunctionsRequest data =
+            new()
+            {
+                document = new()
+                {
+                    text = text.Replace("\r", ""),
+                    editor_language = language.Name,
+                    language = language.Type,
+                    cursor_offset = (ulong)cursorPosition,
+                    line_ending = "\n",
+                    absolute_path = absolutePath,
+                    relative_path = Path.GetFileName(absolutePath)
+                },
+            };
+
+        GetFunctionsResponse? result =
+            await RequestCommandAsync<GetFunctionsResponse>("GetFunctions", data, token);
+        return result != null ? result.FunctionCaptures : [];
+    }
+
+    public async Task<IList<ClassInfo>?>
+        GetClassInfosAsync(string absolutePath, string text, Languages.LangInfo language,
+            int cursorPosition, string lineEnding, CancellationToken token)
+    {
+        if (!_initializedWorkspace)
+        {
+            await InitializeTrackedWorkspaceAsync();
+        }
+        GetClassInfosRequest data =
+            new()
+            {
+                document = new()
+                {
+                    text = text.Replace("\r", ""),
+                    editor_language = language.Name,
+                    language = language.Type,
+                    cursor_offset = (ulong)cursorPosition,
+                    line_ending = "\n",
+                    absolute_path = absolutePath,
+                    relative_path = Path.GetFileName(absolutePath)
+                },
+            };
+
+        GetClassInfosResponse? result =
+            await RequestCommandAsync<GetClassInfosResponse>("GetClassInfos", data, token);
+        return result != null ? result.ClassCaptures : [];
     }
 }

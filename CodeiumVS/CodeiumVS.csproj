@@ -67,6 +67,12 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CodeLensConnection\CodeLensConnectionHandler.cs" />
+    <Compile Include="CodeLensConnection\CodeLensListener.cs" />
+    <Compile Include="CodeLensOOP\CodeiumCodeLensProvider.cs" />
+    <Compile Include="CodeLensOOP\CodeLensLogger.cs" />
+    <Compile Include="CodeLensOOP\SharedCodeLens.cs" />
+    <Compile Include="CodeLensOOP\VisualStudioConnectionHandler.cs" />
     <Compile Include="InlineDiff\InlineDiffAdornment.cs" />
     <Compile Include="InlineDiff\InlineDiffControl.xaml.cs">
       <DependentUpon>InlineDiffControl.xaml</DependentUpon>

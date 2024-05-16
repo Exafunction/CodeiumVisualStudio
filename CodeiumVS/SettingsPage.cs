@@ -13,6 +13,7 @@ public class SettingsPage : DialogPage
     private bool enableCommentCompletion = true;
     private bool enableLanguageServerProxy = false;
     private bool enableIndexing = true;
+    private bool enableCodeLens = true;
     private int indexingMaxFileCount = 5000;
 
     [Category("Codeium")]
@@ -79,6 +80,21 @@ public class SettingsPage : DialogPage
         }
         set {
             enableCommentCompletion = value;
+        }
+    }
+
+    [Category("Codeium")]
+    [DisplayName("Enable Code Lens")]
+    [Description("AI-powered inline action buttons in your editor. (Reload Required)")]
+    public bool EnableCodeLens
+    {
+        get
+        {
+            return enableCodeLens;
+        }
+        set
+        {
+            enableCodeLens = value;
         }
     }
 

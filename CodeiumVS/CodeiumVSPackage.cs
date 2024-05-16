@@ -81,6 +81,18 @@ public sealed class CodeiumVSPackage : ToolkitPackage
                 "Codeium might not work correctly. Please check the output window for more details.");
         }
 
+        try
+        {
+            await base.InitializeAsync(cancellationToken, progress);
+            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            _ = CodeLensConnectionHandler.AcceptCodeLensConnections();
+        }
+        catch (Exception ex)
+        {
+            await LogAsync("Codeium Error" + ex);
+            throw;
+        }
+
         await LanguageServer.InitializeAsync();
         await LogAsync("Codeium Extension for Visual Studio");
     }

@@ -26,7 +26,7 @@ namespace CodeiumVS;
 public class LanguageServer
 {
     private string _languageServerURL;
-    private string _languageServerVersion = "1.8.40";
+    private string _languageServerVersion = "1.8.80";
 
     private int _port = 0;
     private System.Diagnostics.Process _process;
@@ -799,10 +799,6 @@ public class LanguageServer
 
     public async Task<GetProcessesResponse?> GetProcessesAsync()
     {
-        if (!_initializedWorkspace)
-        {
-            await InitializeTrackedWorkspaceAsync();
-        }
         return await RequestCommandAsync<GetProcessesResponse>("GetProcesses", new {});
     }
 

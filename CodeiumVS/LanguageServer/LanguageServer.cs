@@ -26,7 +26,7 @@ namespace CodeiumVS;
 public class LanguageServer
 {
     private string _languageServerURL;
-    private string _languageServerVersion = "1.8.80";
+    private string _languageServerVersion = "1.8.81";
 
     private int _port = 0;
     private System.Diagnostics.Process _process;
@@ -214,11 +214,13 @@ public class LanguageServer
             try
             {
                 string portalUrl = _package.SettingsPage.PortalUrl.TrimEnd('/');
-                string result =
-                    await new HttpClient().GetStringAsync(portalUrl + "/api/extension_base_url");
-                extensionBaseUrl = result.Trim().TrimEnd('/');
-                _languageServerVersion =
-                    await new HttpClient().GetStringAsync(portalUrl + "/api/version");
+                extensionBaseUrl = portalUrl;
+                string version = await new HttpClient().GetStringAsync(portalUrl + "/api/version");
+                if (version.Equals("test", StringComparison.OrdinalIgnoreCase) ||
+                    Regex.IsMatch(version, @"^\d+\.\d+\.\d+$"))
+                {
+                    _languageServerVersion = version;
+                }
             }
             catch (Exception)
             {

@@ -732,11 +732,13 @@ public class LanguageServer
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         DTE dte = (DTE)ServiceProvider.GlobalProvider.GetService(typeof(DTE));
+        await _package.LogAsync($"Number of projects: {dte.Solution.Projects.Count}");
         foreach (EnvDTE.Project project in dte.Solution.Projects)
         {
             try
             {
                 string projectDir = Path.GetDirectoryName(project.FullName);
+                await _package.LogAsync($"Project Dir: {projectDir}");
                 if (!string.IsNullOrEmpty(projectDir))
                 {
                     AddTrackedWorkspaceResponse response = await AddTrackedWorkspaceAsync(projectDir);
@@ -746,8 +748,9 @@ public class LanguageServer
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                await _package.LogAsync("Error: Failed to initialize tracked workspace: " + ex.Message);
                 continue;
             }
         }

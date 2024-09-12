@@ -21,7 +21,7 @@ public class ChatToolWindow : ToolWindowPane
     public ChatToolWindow() : base(null)
     {
         Instance = this;
-        Caption = "Codeiummm Chat";
+        Caption = "Codeium Chat";
         Content = new ChatToolWindowControl();
     }
 

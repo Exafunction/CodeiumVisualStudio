@@ -780,8 +780,8 @@ public class LanguageServer
                                        language = language.Type,
                                        cursor_offset = (ulong)cursorPosition,
                                        line_ending = lineEnding,
-                                       absolute_path = absolutePath,
-                                       relative_path = Path.GetFileName(absolutePath) },
+                                       absolute_uri = absolutePath,
+                                       workspace_uri = Path.GetFileName(absolutePath) },
                     editor_options = new() {
                         tab_size = (ulong)tabSize,
                         insert_spaces = insertSpaces,
@@ -845,8 +845,8 @@ public class LanguageServer
                     language = language.Type,
                     cursor_offset = (ulong)cursorPosition,
                     line_ending = "\n",
-                    absolute_path = absolutePath,
-                    relative_path = Path.GetFileName(absolutePath)
+                    absolute_uri = absolutePath,
+                    workspace_uri = Path.GetFileName(absolutePath)
                 },
             };
 
@@ -873,8 +873,8 @@ public class LanguageServer
                     language = language.Type,
                     cursor_offset = (ulong)cursorPosition,
                     line_ending = "\n",
-                    absolute_path = absolutePath,
-                    relative_path = Path.GetFileName(absolutePath)
+                    absolute_uri = absolutePath,
+                    workspace_uri = Path.GetFileName(absolutePath)
                 },
             };
 

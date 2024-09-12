@@ -179,10 +179,15 @@ public partial class Document : global::ProtoBuf.IExtensible
         global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-    [global::ProtoBuf.ProtoMember(12)]
+    [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     // changing this to the updated proto name breaks it, keeping it absolute_path for now
     public string absolute_path { get; set; } = "";
+
+    [global::ProtoBuf.ProtoMember(12)]
+    [global::System.ComponentModel.DefaultValue("")]
+    // changing this to the updated proto name breaks it, keeping it absolute_path for now
+    public string absolute_uri { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(13)]
     [global::System.ComponentModel.DefaultValue("")]

@@ -181,7 +181,7 @@ public partial class Document : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(12)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string absolute_uri { get; set; } = "";
+    public string absolute_path { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(13)]
     [global::System.ComponentModel.DefaultValue("")]

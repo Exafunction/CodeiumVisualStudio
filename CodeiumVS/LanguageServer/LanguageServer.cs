@@ -66,7 +66,8 @@ public class LanguageServer
         await PrepareAsync();
 
         _metadata.request_id = 0;
-        _metadata.ide_name = "visual_studio";
+        // TODO: Change name
+        _metadata.ide_name = "vscode";
         _metadata.ide_version = ideVersion;
         _metadata.extension_name = Vsix.Name;
         _metadata.extension_version = _languageServerVersion;
@@ -781,6 +782,7 @@ public class LanguageServer
                                        cursor_offset = (ulong)cursorPosition,
                                        line_ending = lineEnding,
                                        absolute_path = absolutePath,
+                                       absolute_path_migrate_me_to_uri = absolutePath,
                                        relative_path = Path.GetFileName(absolutePath) },
                     editor_options = new() {
                         tab_size = (ulong)tabSize,

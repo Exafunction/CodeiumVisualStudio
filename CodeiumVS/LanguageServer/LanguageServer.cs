@@ -66,6 +66,7 @@ public class LanguageServer
         await PrepareAsync();
 
         _metadata.request_id = 0;
+        // TODO: Change name
         _metadata.ide_name = "vscode";
         _metadata.ide_version = ideVersion;
         _metadata.extension_name = Vsix.Name;

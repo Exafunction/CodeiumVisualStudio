@@ -40,9 +40,10 @@ public class LanguageServerController
 
             if (request.ShouldSerializeopen_file_pointer())
             {
+
                 var data = request.open_file_pointer;
                 OpenSelection(
-                    data.file_path, data.start_line, data.start_col, data.end_line, data.end_col);
+                     data.file_path_migrate_me_to_uri.IsNullOrEmpty() ? data.file_path : data.file_path_migrate_me_to_uri, data.start_line, data.start_col, data.end_line, data.end_col);
             }
             else if (request.ShouldSerializeinsert_at_cursor())
             {
@@ -64,7 +65,7 @@ public class LanguageServerController
                     }
                 }
 
-                ApplyDiff(data.file_path, data.diff.start_line, data.diff.end_line, replacement);
+                ApplyDiff(data.file_path_migrate_me_to_uri.IsNullOrEmpty() ? data.file_path : data.file_path_migrate_me_to_uri, data.diff.start_line, data.diff.end_line, replacement);
             }
         }
 
@@ -185,6 +186,7 @@ public class LanguageServerController
             new() { explain_code_block = new() {
                 code_block_info = codeBlockInfo,
                 file_path = filePath,
+                file_path_migrate_me_to_uri = filePath,
                 language = language,
             } };
 
@@ -200,6 +202,7 @@ public class LanguageServerController
             new() { explain_function = new() {
                 function_info = functionInfo,
                 file_path = filePath,
+                file_path_migrate_me_to_uri = filePath,
                 language = functionInfo.Language,
             } };
 
@@ -216,6 +219,7 @@ public class LanguageServerController
             new() { function_unit_tests = new() {
                 function_info = functionInfo,
                 file_path = filePath,
+                file_path_migrate_me_to_uri = filePath,
                 language = functionInfo.Language,
                 instructions = instructions,
             } };
@@ -232,6 +236,7 @@ public class LanguageServerController
             new() { function_docstring = new() {
                 function_info = functionInfo,
                 file_path = filePath,
+                file_path_migrate_me_to_uri = filePath,
                 language = functionInfo.Language,
             } };
 
@@ -247,6 +252,7 @@ public class LanguageServerController
         request.get_chat_message_request.chat_messages[0].intent =
             new() { code_block_refactor = new() { code_block_info = codeBlockInfo,
                                                   file_path = filePath,
+                                                  file_path_migrate_me_to_uri = filePath,
                                                   language = language,
                                                   refactor_description = prompt } };
 
@@ -262,6 +268,7 @@ public class LanguageServerController
         request.get_chat_message_request.chat_messages[0].intent =
             new() { function_refactor = new() { function_info = functionInfo,
                                                 file_path = filePath,
+                                                file_path_migrate_me_to_uri = filePath,
                                                 language = functionInfo.Language,
                                                 refactor_description = prompt } };
 
@@ -299,6 +306,7 @@ public class LanguageServerController
                 surroundingLineStart.Start, surroundingLineEnd.End - surroundingLineStart.Start),
             language = Languages.Mapper.GetLanguage(span.Snapshot.TextBuffer.ContentType).Type,
             file_path = span.Snapshot.TextBuffer.GetFileName(),
+            file_path_migrate_me_to_uri = span.Snapshot.TextBuffer.GetFileName(),
             line_number = problemLineStart.LineNumber + 1,
         } };
 

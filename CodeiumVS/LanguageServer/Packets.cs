@@ -2368,12 +2368,12 @@ public partial class OpenFilePointer : global::ProtoBuf.IExtensible
         global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-    [global::ProtoBuf.ProtoMember(1)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
+    //[global::ProtoBuf.ProtoMember(1)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string file_path_migrate_me_to_uri
+    //{
+    //    get; set;
+    //} = "";
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]

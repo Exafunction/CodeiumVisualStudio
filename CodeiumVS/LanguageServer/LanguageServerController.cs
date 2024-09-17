@@ -43,7 +43,7 @@ public class LanguageServerController
 
                 var data = request.open_file_pointer;
                 OpenSelection(
-                     data.file_path_migrate_me_to_uri.IsNullOrEmpty() ? data.file_path : data.file_path_migrate_me_to_uri, data.start_line, data.start_col, data.end_line, data.end_col);
+                     data.file_uri.IsNullOrEmpty() ? data.file_path : data.file_uri, data.start_line, data.start_col, data.end_line, data.end_col);
             }
             else if (request.ShouldSerializeinsert_at_cursor())
             {

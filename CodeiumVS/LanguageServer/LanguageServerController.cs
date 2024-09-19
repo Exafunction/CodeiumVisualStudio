@@ -246,12 +246,10 @@ public class LanguageServerController
     public async Task RefactorCodeBlockAsync(string prompt, string filePath, Language language,
                                              CodeBlockInfo codeBlockInfo)
     {
-        CodeiumVSPackage.Instance.Log("Calling refactor code block.");
         var request = WebChatServer.NewRequest();
         request.get_chat_message_request.chat_messages[0].intent =
             new() { code_block_refactor = new() { code_block_info = codeBlockInfo,
                                                   file_path = filePath,
-                                                  //file_path_migrate_me_to_uri = filePath,
                                                   language = language,
                                                   refactor_description = prompt } };
 
@@ -263,19 +261,15 @@ public class LanguageServerController
     public async Task RefactorFunctionAsync(string prompt, string filePath,
                                             FunctionInfo functionInfo)
     {
-        CodeiumVSPackage.Instance.Log("Calling refactor function.");
         var request = WebChatServer.NewRequest();
         request.get_chat_message_request.chat_messages[0].intent =
             new() { function_refactor = new() { function_info = functionInfo,
                                                 file_path = filePath,
-                                                //file_path_migrate_me_to_uri = filePath,
                                                 language = functionInfo.Language,
                                                 refactor_description = prompt } };
-        CodeiumVSPackage.Instance.Log("Calling refactor function1.");
         if (request.Send(ws))
             await Package.ShowToolWindowAsync(
                 typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
-        CodeiumVSPackage.Instance.Log("Calling refactor function2.");
     }
 
     public async Task ExplainProblemAsync(string problemMessage, SnapshotSpan span)

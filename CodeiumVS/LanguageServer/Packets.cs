@@ -426,9 +426,9 @@ public partial class CodeContextItem : global::ProtoBuf.IExtensible
     [global::System.ComponentModel.DefaultValue("")]
     public string absolute_path { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(1)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string absolute_path_migrate_me_to_uri { get; set; } = "";
+    //[global::ProtoBuf.ProtoMember(1)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string absolute_path_migrate_me_to_uri { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(16)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1728,12 +1728,12 @@ public partial class IntentFunctionRefactor : global::ProtoBuf.IExtensible
         get; set;
     }
 
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
+    //[global::ProtoBuf.ProtoMember(3)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string file_path_migrate_me_to_uri
+    //{
+    //    get; set;
+    //} = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]

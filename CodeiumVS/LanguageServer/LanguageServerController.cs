@@ -40,10 +40,9 @@ public class LanguageServerController
 
             if (request.ShouldSerializeopen_file_pointer())
             {
-                //data.file_uri.IsNullOrEmpty() ? data.file_path : data.file_uri
                 var data = request.open_file_pointer;
                 OpenSelection(
-                    data.file_path , data.start_line, data.start_col, data.end_line, data.end_col);
+                    data.file_uri.IsNullOrEmpty() ? data.file_path : data.file_uri, data.start_line, data.start_col, data.end_line, data.end_col);
             }
             else if (request.ShouldSerializeinsert_at_cursor())
             {
@@ -64,8 +63,7 @@ public class LanguageServerController
                         replacement += line.text + "\n";
                     }
                 }
-                // data.uri.IsNullOrEmpty() ? data.file_path : data.uri
-                ApplyDiff(data.file_path, data.diff.start_line, data.diff.end_line, replacement);
+                ApplyDiff(data.uri.IsNullOrEmpty() ? data.file_path : data.uri, data.diff.start_line, data.diff.end_line, replacement);
             }
         }
 

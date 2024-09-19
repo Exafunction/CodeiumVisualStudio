@@ -334,10 +334,9 @@ internal class CommandRefactorCodeBlock : BaseCommandContextMenu<CommandRefactor
             FunctionInfo? functionInfo = await GetFunctionInfoAsync();
 
             if (functionInfo != null)
-                {
-                    await controller.RefactorFunctionAsync(
-                        prompt, docView.Document.FilePath, functionInfo);
-            }
+                await controller.RefactorFunctionAsync(
+                    prompt, docView.Document.FilePath, functionInfo);
+            
         }
         else
         {

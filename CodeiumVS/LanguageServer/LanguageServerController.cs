@@ -65,7 +65,7 @@ public class LanguageServerController
                     }
                 }
 
-                ApplyDiff(data.file_path_migrate_me_to_uri.IsNullOrEmpty() ? data.file_path : data.file_path_migrate_me_to_uri, data.diff.start_line, data.diff.end_line, replacement);
+                ApplyDiff(data.uri.IsNullOrEmpty() ? data.file_path : data.uri, data.diff.start_line, data.diff.end_line, replacement);
             }
         }
 
@@ -186,7 +186,7 @@ public class LanguageServerController
             new() { explain_code_block = new() {
                 code_block_info = codeBlockInfo,
                 file_path = filePath,
-                file_path_migrate_me_to_uri = filePath,
+                uri = filePath,
                 language = language,
             } };
 
@@ -202,7 +202,7 @@ public class LanguageServerController
             new() { explain_function = new() {
                 function_info = functionInfo,
                 file_path = filePath,
-                file_path_migrate_me_to_uri = filePath,
+                uri = filePath,
                 language = functionInfo.Language,
             } };
 
@@ -219,7 +219,7 @@ public class LanguageServerController
             new() { function_unit_tests = new() {
                 function_info = functionInfo,
                 file_path = filePath,
-                file_path_migrate_me_to_uri = filePath,
+                uri = filePath,
                 language = functionInfo.Language,
                 instructions = instructions,
             } };
@@ -236,7 +236,7 @@ public class LanguageServerController
             new() { function_docstring = new() {
                 function_info = functionInfo,
                 file_path = filePath,
-                file_path_migrate_me_to_uri = filePath,
+                uri = filePath,
                 language = functionInfo.Language,
             } };
 
@@ -248,11 +248,12 @@ public class LanguageServerController
     public async Task RefactorCodeBlockAsync(string prompt, string filePath, Language language,
                                              CodeBlockInfo codeBlockInfo)
     {
+        CodeiumVSPackage.Instance.Log("Calling refactor code block.");
         var request = WebChatServer.NewRequest();
         request.get_chat_message_request.chat_messages[0].intent =
             new() { code_block_refactor = new() { code_block_info = codeBlockInfo,
                                                   file_path = filePath,
-                                                  file_path_migrate_me_to_uri = filePath,
+                                                  //file_path_migrate_me_to_uri = filePath,
                                                   language = language,
                                                   refactor_description = prompt } };
 
@@ -264,6 +265,7 @@ public class LanguageServerController
     public async Task RefactorFunctionAsync(string prompt, string filePath,
                                             FunctionInfo functionInfo)
     {
+        CodeiumVSPackage.Instance.Log("Calling refactor function.");
         var request = WebChatServer.NewRequest();
         request.get_chat_message_request.chat_messages[0].intent =
             new() { function_refactor = new() { function_info = functionInfo,
@@ -271,10 +273,11 @@ public class LanguageServerController
                                                 file_path_migrate_me_to_uri = filePath,
                                                 language = functionInfo.Language,
                                                 refactor_description = prompt } };
-
+        CodeiumVSPackage.Instance.Log("Calling refactor function1.");
         if (request.Send(ws))
             await Package.ShowToolWindowAsync(
                 typeof(ChatToolWindow), 0, create: true, Package.DisposalToken);
+        CodeiumVSPackage.Instance.Log("Calling refactor function2.");
     }
 
     public async Task ExplainProblemAsync(string problemMessage, SnapshotSpan span)
@@ -306,7 +309,7 @@ public class LanguageServerController
                 surroundingLineStart.Start, surroundingLineEnd.End - surroundingLineStart.Start),
             language = Languages.Mapper.GetLanguage(span.Snapshot.TextBuffer.ContentType).Type,
             file_path = span.Snapshot.TextBuffer.GetFileName(),
-            file_path_migrate_me_to_uri = span.Snapshot.TextBuffer.GetFileName(),
+            uri = span.Snapshot.TextBuffer.GetFileName(),
             line_number = problemLineStart.LineNumber + 1,
         } };
 

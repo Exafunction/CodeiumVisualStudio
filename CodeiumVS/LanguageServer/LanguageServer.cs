@@ -782,7 +782,7 @@ public class LanguageServer
                                        cursor_offset = (ulong)cursorPosition,
                                        line_ending = lineEnding,
                                        absolute_path = absolutePath,
-                                        absolute_path_migrate_me_to_uri = absolutePath,
+                                        //absolute_path_migrate_me_to_uri = absolutePath,
                                        relative_path = Path.GetFileName(absolutePath) },
                     editor_options = new() {
                         tab_size = (ulong)tabSize,

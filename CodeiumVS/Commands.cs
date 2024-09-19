@@ -308,6 +308,7 @@ internal class CommandRefactorCodeBlock : BaseCommandContextMenu<CommandRefactor
 
     protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
     {
+        await CodeiumVSPackage.Instance.LogAsync("IN WINDOW DILAOG");
         // get the caret screen position and create the dialog at that position
         TextBounds caretLine = docView.TextView.TextViewLines.GetCharacterBounds(
             docView.TextView.Caret.Position.BufferPosition);
@@ -318,7 +319,7 @@ internal class CommandRefactorCodeBlock : BaseCommandContextMenu<CommandRefactor
         // highlight the selected codeblock
         TextHighlighter? highlighter = TextHighlighter.GetInstance(docView.TextView);
         highlighter?.AddHighlight(start_position, end_position - start_position);
-
+        await CodeiumVSPackage.Instance.LogAsync("IN WINDOW DILAOG1");
         var dialog = RefactorCodeDialogWindow.GetOrCreate();
         string? prompt =
             await dialog.ShowAndGetPromptAsync(languageInfo, caretScreenPos.X, caretScreenPos.Y);
@@ -330,18 +331,24 @@ internal class CommandRefactorCodeBlock : BaseCommandContextMenu<CommandRefactor
 
         LanguageServerController controller =
             (Package as CodeiumVSPackage).LanguageServer.Controller;
-
+        CodeiumVSPackage.Instance.Log("CALLING refactor");
         if (is_function)
         {
+            CodeiumVSPackage.Instance.Log("CALLING FUNC");
             FunctionInfo? functionInfo = await GetFunctionInfoAsync();
 
             if (functionInfo != null)
-                await controller.RefactorFunctionAsync(
-                    prompt, docView.Document.FilePath, functionInfo);
+                {
+                    CodeiumVSPackage.Instance.Log("CALLING FUNC");
+                    await controller.RefactorFunctionAsync(
+                        prompt, docView.Document.FilePath, functionInfo);
+            }
         }
         else
         {
+            CodeiumVSPackage.Instance.Log("CALLING NOIN FUNC");
             CodeBlockInfo codeBlockInfo = GetCodeBlockInfo();
+            CodeiumVSPackage.Instance.Log("CALLING NOIN FUNC2");
             await controller.RefactorCodeBlockAsync(
                 prompt, docView.Document.FilePath, languageInfo.Type, codeBlockInfo);
         }

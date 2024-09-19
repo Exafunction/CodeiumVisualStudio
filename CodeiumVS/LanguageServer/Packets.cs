@@ -183,20 +183,20 @@ public partial class Document : global::ProtoBuf.IExtensible
     [global::System.ComponentModel.DefaultValue("")]
     public string absolute_path { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(1)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string absolute_path_migrate_me_to_uri { get; set; } = "";
+    //[global::ProtoBuf.ProtoMember(1)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string absolute_path_migrate_me_to_uri { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(12)]
     [global::System.ComponentModel.DefaultValue("")]
     public string absolute_uri { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(2)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string relative_path_migrate_me_to_workspace_uri
-    {
-        get; set;
-    } = "";
+    //[global::ProtoBuf.ProtoMember(2)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string relative_path_migrate_me_to_workspace_uri
+    //{
+    //    get; set;
+    //} = "";
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -510,9 +510,9 @@ public partial class WorkspacePath : global::ProtoBuf.IExtensible
     [global::System.ComponentModel.DefaultValue("")]
     public string workspace { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(1)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string workspace_migrate_me_to_uri { get; set; } = "";
+    //[global::ProtoBuf.ProtoMember(1)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string workspace_migrate_me_to_uri { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1351,11 +1351,11 @@ public partial class GetChatMessageRequest : global::ProtoBuf.IExtensible
         get;
     } = new global::System.Collections.Generic.List<string>();
 
-    [global::ProtoBuf.ProtoMember(6)]
-    public global::System.Collections.Generic.List<string> open_document_paths_migrate_me_to_uris
-    {
-        get;
-    } = new global::System.Collections.Generic.List<string>();
+    //[global::ProtoBuf.ProtoMember(6)]
+    //public global::System.Collections.Generic.List<string> open_document_paths_migrate_me_to_uris
+    //{
+    //    get;
+    //} = new global::System.Collections.Generic.List<string>();
 
     [global::ProtoBuf.ProtoMember(12)]
     public global::System.Collections.Generic.List<string> open_document_uris {
@@ -1368,11 +1368,11 @@ public partial class GetChatMessageRequest : global::ProtoBuf.IExtensible
         get;
     } = new global::System.Collections.Generic.List<string>();
 
-    [global::ProtoBuf.ProtoMember(7)]
-    public global::System.Collections.Generic.List<string> workspace_paths_migrate_me_to_uris
-    {
-        get;
-    } = new global::System.Collections.Generic.List<string>();
+    //[global::ProtoBuf.ProtoMember(7)]
+    //public global::System.Collections.Generic.List<string> workspace_paths_migrate_me_to_uris
+    //{
+    //    get;
+    //} = new global::System.Collections.Generic.List<string>();
 
     [global::ProtoBuf.ProtoMember(13)]
     public global::System.Collections.Generic.List<string> workspace_uris {
@@ -1602,12 +1602,12 @@ public partial class IntentFunctionExplain : global::ProtoBuf.IExtensible
         get; set;
     }
 
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
+    //[global::ProtoBuf.ProtoMember(3)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string file_path_migrate_me_to_uri
+    //{
+    //    get; set;
+    //} = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1698,12 +1698,12 @@ public partial class IntentFunctionDocstring : global::ProtoBuf.IExtensible
         get; set;
     } = "";
 
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
+    //[global::ProtoBuf.ProtoMember(3)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string file_path_migrate_me_to_uri
+    //{
+    //    get; set;
+    //} = "";
 
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1771,12 +1771,12 @@ public partial class IntentCodeBlockExplain : global::ProtoBuf.IExtensible
         get; set;
     }
 
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
+    //[global::ProtoBuf.ProtoMember(3)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string file_path_migrate_me_to_uri
+    //{
+    //    get; set;
+    //} = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1841,12 +1841,12 @@ public partial class IntentCodeBlockRefactor : global::ProtoBuf.IExtensible
         get; set;
     }
 
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
+    //[global::ProtoBuf.ProtoMember(3)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string file_path_migrate_me_to_uri
+    //{
+    //    get; set;
+    //} = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1884,12 +1884,12 @@ public partial class IntentFunctionUnitTests : global::ProtoBuf.IExtensible
         get; set;
     }
 
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
+    //[global::ProtoBuf.ProtoMember(3)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string file_path_migrate_me_to_uri
+    //{
+    //    get; set;
+    //} = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1938,12 +1938,12 @@ public partial class IntentProblemExplain : global::ProtoBuf.IExtensible
         get; set;
     }
 
-    [global::ProtoBuf.ProtoMember(5)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
+    //[global::ProtoBuf.ProtoMember(5)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string file_path_migrate_me_to_uri
+    //{
+    //    get; set;
+    //} = "";
 
     [global::ProtoBuf.ProtoMember(5)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1981,12 +1981,12 @@ public partial class IntentGenerateCode : global::ProtoBuf.IExtensible
         get; set;
     }
 
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
+    //[global::ProtoBuf.ProtoMember(3)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string file_path_migrate_me_to_uri
+    //{
+    //    get; set;
+    //} = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -2023,12 +2023,12 @@ public partial class IntentClassExplain : global::ProtoBuf.IExtensible
         get; set;
     }
 
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
+    //[global::ProtoBuf.ProtoMember(3)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string file_path_migrate_me_to_uri
+    //{
+    //    get; set;
+    //} = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -2159,12 +2159,12 @@ public partial class ChatMessageActionEdit : global::ProtoBuf.IExtensible
         global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-    [global::ProtoBuf.ProtoMember(1)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
+    //[global::ProtoBuf.ProtoMember(1)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string file_path_migrate_me_to_uri
+    //{
+    //    get; set;
+    //} = "";
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -2447,12 +2447,12 @@ public partial class ApplyDiff : global::ProtoBuf.IExtensible
     [global::System.ComponentModel.DefaultValue("")]
     public string message_id { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(2)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
+    //[global::ProtoBuf.ProtoMember(2)]
+    //[global::System.ComponentModel.DefaultValue("")]
+    //public string file_path_migrate_me_to_uri
+    //{
+    //    get; set;
+    //} = "";
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]

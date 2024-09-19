@@ -40,10 +40,10 @@ public class LanguageServerController
 
             if (request.ShouldSerializeopen_file_pointer())
             {
-
+                //data.file_uri.IsNullOrEmpty() ? data.file_path : data.file_uri
                 var data = request.open_file_pointer;
                 OpenSelection(
-                     data.file_uri.IsNullOrEmpty() ? data.file_path : data.file_uri, data.start_line, data.start_col, data.end_line, data.end_col);
+                    data.file_path , data.start_line, data.start_col, data.end_line, data.end_col);
             }
             else if (request.ShouldSerializeinsert_at_cursor())
             {
@@ -64,8 +64,8 @@ public class LanguageServerController
                         replacement += line.text + "\n";
                     }
                 }
-
-                ApplyDiff(data.uri.IsNullOrEmpty() ? data.file_path : data.uri, data.diff.start_line, data.diff.end_line, replacement);
+                // data.uri.IsNullOrEmpty() ? data.file_path : data.uri
+                ApplyDiff(data.file_path, data.diff.start_line, data.diff.end_line, replacement);
             }
         }
 
@@ -270,7 +270,7 @@ public class LanguageServerController
         request.get_chat_message_request.chat_messages[0].intent =
             new() { function_refactor = new() { function_info = functionInfo,
                                                 file_path = filePath,
-                                                file_path_migrate_me_to_uri = filePath,
+                                                //file_path_migrate_me_to_uri = filePath,
                                                 language = functionInfo.Language,
                                                 refactor_description = prompt } };
         CodeiumVSPackage.Instance.Log("Calling refactor function1.");

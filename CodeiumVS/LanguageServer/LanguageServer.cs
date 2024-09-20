@@ -738,10 +738,12 @@ public class LanguageServer
         {
             try
             {
-                string projectDir = Path.GetDirectoryName(project.FullName);
-                await _package.LogAsync($"Project Dir: {projectDir}");
-                if (!string.IsNullOrEmpty(projectDir))
+                string projectFullName = project.FullName;
+                await _package.LogAsync($"Project Full Name: {projectFullName}");
+                if (!string.IsNullOrEmpty(projectFullName))
                 {
+                    string projectDir = Path.GetDirectoryName(projectFullName);
+                    await _package.LogAsync($"Project Dir: {projectDir}");
                     AddTrackedWorkspaceResponse response = await AddTrackedWorkspaceAsync(projectDir);
                     if (response != null)
                     {
@@ -782,7 +784,6 @@ public class LanguageServer
                                        cursor_offset = (ulong)cursorPosition,
                                        line_ending = lineEnding,
                                        absolute_path = absolutePath,
-                                       absolute_path_migrate_me_to_uri = absolutePath,
                                        relative_path = Path.GetFileName(absolutePath) },
                     editor_options = new() {
                         tab_size = (ulong)tabSize,

@@ -183,20 +183,9 @@ public partial class Document : global::ProtoBuf.IExtensible
     [global::System.ComponentModel.DefaultValue("")]
     public string absolute_path { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(1)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string absolute_path_migrate_me_to_uri { get; set; } = "";
-
     [global::ProtoBuf.ProtoMember(12)]
     [global::System.ComponentModel.DefaultValue("")]
     public string absolute_uri { get; set; } = "";
-
-    [global::ProtoBuf.ProtoMember(2)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string relative_path_migrate_me_to_workspace_uri
-    {
-        get; set;
-    } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -426,10 +415,6 @@ public partial class CodeContextItem : global::ProtoBuf.IExtensible
     [global::System.ComponentModel.DefaultValue("")]
     public string absolute_path { get; set; } = "";
 
-    [global::ProtoBuf.ProtoMember(1)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string absolute_path_migrate_me_to_uri { get; set; } = "";
-
     [global::ProtoBuf.ProtoMember(16)]
     [global::System.ComponentModel.DefaultValue("")]
     public string absolute_uri { get; set; } = "";
@@ -509,10 +494,6 @@ public partial class WorkspacePath : global::ProtoBuf.IExtensible
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string workspace { get; set; } = "";
-
-    [global::ProtoBuf.ProtoMember(1)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string workspace_migrate_me_to_uri { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1351,12 +1332,6 @@ public partial class GetChatMessageRequest : global::ProtoBuf.IExtensible
         get;
     } = new global::System.Collections.Generic.List<string>();
 
-    [global::ProtoBuf.ProtoMember(6)]
-    public global::System.Collections.Generic.List<string> open_document_paths_migrate_me_to_uris
-    {
-        get;
-    } = new global::System.Collections.Generic.List<string>();
-
     [global::ProtoBuf.ProtoMember(12)]
     public global::System.Collections.Generic.List<string> open_document_uris {
         get;
@@ -1364,12 +1339,6 @@ public partial class GetChatMessageRequest : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(7)]
     public global::System.Collections.Generic.List<string> workspace_paths
-    {
-        get;
-    } = new global::System.Collections.Generic.List<string>();
-
-    [global::ProtoBuf.ProtoMember(7)]
-    public global::System.Collections.Generic.List<string> workspace_paths_migrate_me_to_uris
     {
         get;
     } = new global::System.Collections.Generic.List<string>();
@@ -1604,13 +1573,6 @@ public partial class IntentFunctionExplain : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
-
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
     public string file_path
     {
         get; set;
@@ -1698,13 +1660,6 @@ public partial class IntentFunctionDocstring : global::ProtoBuf.IExtensible
         get; set;
     } = "";
 
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
-
     [global::ProtoBuf.ProtoMember(4)]
     [global::System.ComponentModel.DefaultValue("")]
     public string uri {
@@ -1727,13 +1682,6 @@ public partial class IntentFunctionRefactor : global::ProtoBuf.IExtensible
     public Language language {
         get; set;
     }
-
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1770,13 +1718,6 @@ public partial class IntentCodeBlockExplain : global::ProtoBuf.IExtensible
     public Language language {
         get; set;
     }
-
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1843,13 +1784,6 @@ public partial class IntentCodeBlockRefactor : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
-
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
     public string file_path
     {
         get; set;
@@ -1883,13 +1817,6 @@ public partial class IntentFunctionUnitTests : global::ProtoBuf.IExtensible
     public Language language {
         get; set;
     }
-
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -1940,13 +1867,6 @@ public partial class IntentProblemExplain : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(5)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
-
-    [global::ProtoBuf.ProtoMember(5)]
-    [global::System.ComponentModel.DefaultValue("")]
     public string file_path
     {
         get; set;
@@ -1983,13 +1903,6 @@ public partial class IntentGenerateCode : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
-
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
     public string file_path
     {
         get; set;
@@ -2022,13 +1935,6 @@ public partial class IntentClassExplain : global::ProtoBuf.IExtensible
     public Language language {
         get; set;
     }
-
-    [global::ProtoBuf.ProtoMember(3)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
 
     [global::ProtoBuf.ProtoMember(3)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -2158,13 +2064,6 @@ public partial class ChatMessageActionEdit : global::ProtoBuf.IExtensible
     global::ProtoBuf.IExtension
         global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing) =>
         global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-    [global::ProtoBuf.ProtoMember(1)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -2370,13 +2269,6 @@ public partial class OpenFilePointer : global::ProtoBuf.IExtensible
 
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
-
-    [global::ProtoBuf.ProtoMember(1)]
-    [global::System.ComponentModel.DefaultValue("")]
     public string file_path { get; set; } = "";
 
     [global::ProtoBuf.ProtoMember(6)]
@@ -2446,13 +2338,6 @@ public partial class ApplyDiff : global::ProtoBuf.IExtensible
     [global::ProtoBuf.ProtoMember(1)]
     [global::System.ComponentModel.DefaultValue("")]
     public string message_id { get; set; } = "";
-
-    [global::ProtoBuf.ProtoMember(2)]
-    [global::System.ComponentModel.DefaultValue("")]
-    public string file_path_migrate_me_to_uri
-    {
-        get; set;
-    } = "";
 
     [global::ProtoBuf.ProtoMember(2)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -2981,6 +2866,11 @@ public enum StopReason
     STOP_REASON_MIN_LOG_PROB = 4,
     STOP_REASON_MAX_NEWLINES = 5,
     STOP_REASON_EXIT_SCOPE = 6,
+    STOP_REASON_NONFINITE_LOGIT_OR_PROB = 7,
+    STOP_REASON_FIRST_NON_WHITESPACE_LINE = 8,
+    STOP_REASON_PARTIAL = 9,
+    STOP_REASON_FUNCTION_CALL = 10,
+    STOP_REASON_CONTENT_FILTER = 11,
 }
 
 [global::ProtoBuf.ProtoContract()]

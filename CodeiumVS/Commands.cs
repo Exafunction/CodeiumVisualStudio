@@ -318,7 +318,6 @@ internal class CommandRefactorCodeBlock : BaseCommandContextMenu<CommandRefactor
         // highlight the selected codeblock
         TextHighlighter? highlighter = TextHighlighter.GetInstance(docView.TextView);
         highlighter?.AddHighlight(start_position, end_position - start_position);
-
         var dialog = RefactorCodeDialogWindow.GetOrCreate();
         string? prompt =
             await dialog.ShowAndGetPromptAsync(languageInfo, caretScreenPos.X, caretScreenPos.Y);
@@ -330,7 +329,6 @@ internal class CommandRefactorCodeBlock : BaseCommandContextMenu<CommandRefactor
 
         LanguageServerController controller =
             (Package as CodeiumVSPackage).LanguageServer.Controller;
-
         if (is_function)
         {
             FunctionInfo? functionInfo = await GetFunctionInfoAsync();
@@ -338,6 +336,7 @@ internal class CommandRefactorCodeBlock : BaseCommandContextMenu<CommandRefactor
             if (functionInfo != null)
                 await controller.RefactorFunctionAsync(
                     prompt, docView.Document.FilePath, functionInfo);
+            
         }
         else
         {
@@ -507,6 +506,7 @@ internal class CommandRefactorSelectionCodeBlock : BaseCommandCodeLens<CommandRe
                 // highlight the selected codeblock
                 TextHighlighter? highlighter = TextHighlighter.GetInstance(docView.TextView);
                 highlighter?.AddHighlight(snapshotLine.Extent);
+
                 var dialog = RefactorCodeDialogWindow.GetOrCreate();
                 string? prompt =
                     await dialog.ShowAndGetPromptAsync(languageInfo, selectionScreenPos.X, selectionScreenPos.Y);

@@ -738,9 +738,11 @@ public class LanguageServer
         {
             try
             {
-                if (!string.IsNullOrEmpty(project.FullName))
+                string projectFullName = project.FullName;
+                await _package.LogAsync($"Project Full Name: {projectFullName}");
+                if (!string.IsNullOrEmpty(projectFullName))
                 {
-                    string projectDir = Path.GetDirectoryName(project.FullName);
+                    string projectDir = Path.GetDirectoryName(projectFullName);
                     await _package.LogAsync($"Project Dir: {projectDir}");
                     AddTrackedWorkspaceResponse response = await AddTrackedWorkspaceAsync(projectDir);
                     if (response != null)

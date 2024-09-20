@@ -506,6 +506,7 @@ internal class CommandRefactorSelectionCodeBlock : BaseCommandCodeLens<CommandRe
                 // highlight the selected codeblock
                 TextHighlighter? highlighter = TextHighlighter.GetInstance(docView.TextView);
                 highlighter?.AddHighlight(snapshotLine.Extent);
+
                 var dialog = RefactorCodeDialogWindow.GetOrCreate();
                 string? prompt =
                     await dialog.ShowAndGetPromptAsync(languageInfo, selectionScreenPos.X, selectionScreenPos.Y);

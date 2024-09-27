@@ -733,15 +733,19 @@ public class LanguageServer
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         DTE dte = (DTE)ServiceProvider.GlobalProvider.GetService(typeof(DTE));
-        await _package.LogAsync($"Number of projects: {dte.Solution.Projects.Count}");
-        foreach (EnvDTE.Project project in dte.Solution.Projects)
+        await _package.LogAsync($"Number of top-level projects: {dte.Solution.Projects.Count}");
+
+        List<string> processedProjects = new List<string>();
+
+        async Task ProcessProjectAsync(EnvDTE.Project project)
         {
             try
             {
                 string projectFullName = project.FullName;
                 await _package.LogAsync($"Project Full Name: {projectFullName}");
-                if (!string.IsNullOrEmpty(projectFullName))
+                if (!string.IsNullOrEmpty(projectFullName) && !processedProjects.Contains(projectFullName))
                 {
+                    processedProjects.Add(projectFullName);
                     string projectDir = Path.GetDirectoryName(projectFullName);
                     await _package.LogAsync($"Project Dir: {projectDir}");
                     AddTrackedWorkspaceResponse response = await AddTrackedWorkspaceAsync(projectDir);
@@ -750,12 +754,25 @@ public class LanguageServer
                         _initializedWorkspace = true;
                     }
                 }
+
+                // Process sub-projects (e.g., project references)
+                foreach (EnvDTE.ProjectItem item in project.ProjectItems)
+                {
+                    if (item.SubProject != null)
+                    {
+                        await ProcessProjectAsync(item.SubProject);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 await _package.LogAsync("Error: Failed to initialize tracked workspace: " + ex.Message);
-                continue;
             }
+        }
+
+        foreach (EnvDTE.Project project in dte.Solution.Projects)
+        {
+            await ProcessProjectAsync(project);
         }
     }
 

@@ -793,6 +793,8 @@ public class LanguageServer
         {
             await InitializeTrackedWorkspaceAsync();
         }
+        var uri = new System.Uri(absolutePath);
+        var absoluteUri = uri.AbsoluteUri;
         GetCompletionsRequest data =
             new() { metadata = GetMetadata(),
                     document = new() { text = text,
@@ -801,6 +803,7 @@ public class LanguageServer
                                        cursor_offset = (ulong)cursorPosition,
                                        line_ending = lineEnding,
                                        absolute_path = absolutePath,
+                                       absolute_uri = absoluteUri,
                                        relative_path = Path.GetFileName(absolutePath) },
                     editor_options = new() {
                         tab_size = (ulong)tabSize,
@@ -855,6 +858,8 @@ public class LanguageServer
         {
             await InitializeTrackedWorkspaceAsync();
         }
+        var uri = new System.Uri(absolutePath);
+        var absoluteUri = uri.AbsoluteUri;
         GetFunctionsRequest data =
             new()
             {
@@ -866,6 +871,7 @@ public class LanguageServer
                     cursor_offset = (ulong)cursorPosition,
                     line_ending = "\n",
                     absolute_path = absolutePath,
+                    absolute_uri = absoluteUri,
                     relative_path = Path.GetFileName(absolutePath)
                 },
             };
@@ -883,6 +889,8 @@ public class LanguageServer
         {
             await InitializeTrackedWorkspaceAsync();
         }
+        var uri = new System.Uri(absolutePath);
+        var absoluteUri = uri.AbsoluteUri;
         GetClassInfosRequest data =
             new()
             {
@@ -894,6 +902,7 @@ public class LanguageServer
                     cursor_offset = (ulong)cursorPosition,
                     line_ending = "\n",
                     absolute_path = absolutePath,
+                    absolute_uri = absoluteUri,
                     relative_path = Path.GetFileName(absolutePath)
                 },
             };

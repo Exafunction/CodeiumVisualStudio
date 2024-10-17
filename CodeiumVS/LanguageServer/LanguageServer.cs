@@ -66,8 +66,12 @@ public class LanguageServer
         await PrepareAsync();
 
         _metadata.request_id = 0;
-        // TODO: Change name
-        _metadata.ide_name = "vscode";
+        string ideName = "visual_studio";
+        if (_languageServerVersion == "1.16.0")
+        {
+            ideName = "vscode";
+        }
+        _metadata.ide_name = ideName;
         _metadata.ide_version = ideVersion;
         _metadata.extension_name = Vsix.Name;
         _metadata.extension_version = _languageServerVersion;

@@ -157,9 +157,10 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
             String completionText = completionItems[i].completion.text;
             if (!String.IsNullOrEmpty(end))
             {
-                int endNewline = end.IndexOf('\r');
-                endNewline = endNewline <= -1 ? end.IndexOf('\n') : endNewline;
-                endNewline = endNewline <= -1 ? end.Length : endNewline;
+                int endNewline = StringCompare.IndexOfNewLine(end);
+
+                if (endNewline <= -1)
+                    endNewline = end.Length;
 
                 completionText = completionText + end.Substring(0, endNewline);
             }

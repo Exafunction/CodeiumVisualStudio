@@ -75,7 +75,7 @@ public static class StringCompare
 
         int index = suggestion.IndexOf(line);
         int endPos = index + line.Length;
-        int firstLineBreak = suggestion.IndexOf('\n');
+        int firstLineBreak = IndexOfNewLine(suggestion);
 
         if (index > -1 && (firstLineBreak == -1 || endPos < firstLineBreak))
         {
@@ -88,5 +88,22 @@ public static class StringCompare
             return res.Item1 >= endPoint ? res.Item2 : -1;
         }
     }
-}
+        
+    private static readonly System.Text.RegularExpressions.Regex newLineMatcher = new System.Text.RegularExpressions.Regex(@"(?:\r\n|\n|\r)",
+        System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.Singleline);
+
+    /// <summary>
+    /// Returns the index of the first new line in the string, or -1 if not found
+    /// </summary>
+    /// <remarks>Checks for both \r\n and \n</remarks>
+    public static int IndexOfNewLine(string text)
+    {
+        System.Text.RegularExpressions.Match newLineMatch = newLineMatcher.Match(text);
+
+        if (newLineMatch.Success)
+            return newLineMatch.Index;
+
+        return -1;
+    }
+    }
 }

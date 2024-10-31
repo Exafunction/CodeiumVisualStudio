@@ -64,6 +64,10 @@ public class LanguageServer
 
         // must be called before setting the metadata to retrieve _languageServerVersion first
         await PrepareAsync();
+        if (!_initializedWorkspace)
+        {
+            await InitializeTrackedWorkspaceAsync();
+        }
 
         _metadata.request_id = 0;
         string ideName = "visual_studio";

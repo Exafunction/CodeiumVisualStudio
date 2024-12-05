@@ -3,12 +3,17 @@ name: Build Extension
 on:
   push:
     branches: [ "main" ]
+    tags:
+      - enterprise-release-v*
   pull_request:
     branches: [ "main" ]
 
 jobs:
   build:
     runs-on: windows-latest
+    if: |
+      (github.event_name == 'push' && github.ref_type == 'branch') ||
+      (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'enterprise-release-v')
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -27,3 +32,24 @@ jobs:
 
     - name: Build Solution
       run: msbuild CodeiumVS.sln /p:Configuration=Release /p:Platform="Any CPU" /p:TargetFrameworkVersion="v4.8" /restore
+
+    - id: auth
+      if: |    
+        (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'enterprise-release-v') && 
+        (github.actor == 'saranshsaini' || github.actor == 'fortenforge'))
+      uses: google-github-actions/auth@v2
+      timeout-minutes: 1
+      with:
+        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+    - name: Upload Codeium Visual Studio VSIX
+      if: |
+        (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'enterprise-release-v') && 
+        (github.actor == 'saranshsaini' || github.actor == 'fortenforge'))
+      uses: google-github-actions/upload-cloud-storage@v2
+      with:
+        path: CodeiumVS/bin/Release/Codeium.vsix
+        process_gcloudignore: false
+        destination: exafunction-dist/codeium_visual_studio/${{ github.ref_name }}
+        gzip: false

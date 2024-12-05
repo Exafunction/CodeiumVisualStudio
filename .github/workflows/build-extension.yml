@@ -13,7 +13,7 @@ jobs:
     runs-on: windows-latest
     if: |
       (github.event_name == 'push' && github.ref_type == 'branch') ||
-      (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'enterprise-release-v'))
+      (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/enterprise-release-v'))
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -35,7 +35,7 @@ jobs:
 
     - id: auth
       if: |    
-        (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'enterprise-release-v')) && 
+        (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/enterprise-release-v')) && 
         (github.actor == 'saranshsaini' || github.actor == 'fortenforge')
       uses: google-github-actions/auth@v2
       timeout-minutes: 1
@@ -45,7 +45,7 @@ jobs:
 
     - name: Upload Codeium Visual Studio VSIX
       if: |
-        (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'enterprise-release-v')) && 
+        (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/enterprise-release-v')) && 
         (github.actor == 'saranshsaini' || github.actor == 'fortenforge')
       uses: google-github-actions/upload-cloud-storage@v2
       with:

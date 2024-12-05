@@ -43,7 +43,7 @@ jobs:
         workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
         service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
-    - name: Upload chat client
+    - name: Upload Codeium Visual Studio VSIX
       if: |
         (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'enterprise-release-v') && 
         (github.actor == 'saranshsaini' || github.actor == 'fortenforge'))

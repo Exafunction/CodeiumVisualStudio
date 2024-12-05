@@ -13,8 +13,7 @@ jobs:
     runs-on: windows-latest
     if: |
       (github.event_name == 'push' && github.ref_type == 'branch') ||
-      (github.event_name == 'push' && github.ref_type == 'tag' && contains(github.ref, 'enterprise-release-v') && 
-       (github.actor == 'saranshsaini' || github.actor == 'fortenforge'))
+      (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'enterprise-release-v')
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -35,6 +34,9 @@ jobs:
       run: msbuild CodeiumVS.sln /p:Configuration=Release /p:Platform="Any CPU" /p:TargetFrameworkVersion="v4.8" /restore
 
     - id: auth
+      if: |    
+        (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'enterprise-release-v') && 
+        (github.actor == 'saranshsaini' || github.actor == 'fortenforge'))
       uses: google-github-actions/auth@v2
       timeout-minutes: 1
       with:
@@ -42,6 +44,9 @@ jobs:
         service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
     - name: Upload chat client
+      if: |
+        (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'enterprise-release-v') && 
+        (github.actor == 'saranshsaini' || github.actor == 'fortenforge'))
       uses: google-github-actions/upload-cloud-storage@v2
       with:
         path: CodeiumVS/bin/Release/Codeium.vsix

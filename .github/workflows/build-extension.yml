@@ -10,6 +10,9 @@ on:
 
 jobs:
   build:
+    permissions:
+     contents: 'read'
+     id-token: 'write'
     runs-on: windows-latest
     if: |
       (github.event_name == 'push' && github.ref_type == 'branch') ||

@@ -33,13 +33,30 @@ jobs:
     - name: Restore Packages
       run: nuget restore CodeiumVS.sln
 
+    - name: Set Release Condition
+      id: check_release
+      run: |
+        $isRelease = "${{ github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/enterprise-release-v') && (github.actor == 'saranshsaini' || github.actor == 'fortenforge') }}"
+        echo "IS_RELEASE=$isRelease" | Out-File -FilePath $env:GITHUB_ENV -Append
+        if ($isRelease -eq 'true') {
+          $tag = "${{ github.ref_name }}"
+          $version = $tag -replace 'enterprise-release-v',''
+          echo "VSIX_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+        }
+
+    - name: Update VSIX Version
+      if: env.IS_RELEASE == 'true'
+      run: |
+        $manifestPath = "CodeiumVS/source.extension.vsixmanifest"
+        $xml = [xml](Get-Content $manifestPath)
+        $xml.PackageManifest.Metadata.Identity.Version = "${{ env.VSIX_VERSION }}"
+        $xml.Save($manifestPath)
+
     - name: Build Solution
       run: msbuild CodeiumVS.sln /p:Configuration=Release /p:Platform="Any CPU" /p:TargetFrameworkVersion="v4.8" /restore
 
     - id: auth
-      if: |    
-        (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/enterprise-release-v')) && 
-        (github.actor == 'saranshsaini' || github.actor == 'fortenforge')
+      if: env.IS_RELEASE == 'true'
       uses: google-github-actions/auth@v2
       timeout-minutes: 1
       with:
@@ -47,9 +64,7 @@ jobs:
         service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
     - name: Upload Codeium Visual Studio VSIX
-      if: |
-        (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/enterprise-release-v')) && 
-        (github.actor == 'saranshsaini' || github.actor == 'fortenforge')
+      if: env.IS_RELEASE == 'true'
       uses: google-github-actions/upload-cloud-storage@v2
       with:
         path: CodeiumVS/bin/Release/Codeium.vsix

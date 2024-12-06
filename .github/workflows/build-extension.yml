@@ -30,6 +30,25 @@ jobs:
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.5
 
+    - name: Get Version from Tag
+      if: |
+        (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/enterprise-release-v')) && 
+        (github.actor == 'saranshsaini' || github.actor == 'fortenforge')
+      run: |
+        $tag = "${{ github.ref_name }}"
+        $version = $tag -replace 'enterprise-release-v',''
+        echo "VSIX_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+    - name: Update VSIX Version
+      if: |
+        (github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/enterprise-release-v')) && 
+        (github.actor == 'saranshsaini' || github.actor == 'fortenforge')
+      run: |
+        $manifestPath = "CodeiumVS/source.extension.vsixmanifest"
+        $xml = [xml](Get-Content $manifestPath)
+        $xml.PackageManifest.Metadata.Identity.Version = "${{ env.VSIX_VERSION }}"
+        $xml.Save($manifestPath)
+
     - name: Restore Packages
       run: nuget restore CodeiumVS.sln
 

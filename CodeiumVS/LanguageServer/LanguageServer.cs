@@ -740,22 +740,48 @@ public class LanguageServer
         await _package.LogAsync($"Number of top-level projects: {dte.Solution.Projects.Count}");
 
         List<string> processedProjects = new List<string>();
+        var trackedProjects = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        string projectListPath = _package.SettingsPage.IndexingFilesListPath;
+        try
+        {
+            if (projectListPath != "" && File.Exists(projectListPath))
+            {
+                string[] lines =  File.ReadAllLines(projectListPath);
+                foreach (string line in lines)
+                {
+                    string trimmedLine = line.Trim();
+                    if (!string.IsNullOrEmpty(trimmedLine))
+                    {
+                        trackedProjects.Add(trimmedLine);
+                    }
+                }
+                await _package.LogAsync($"Loaded {trackedProjects.Count} projects from {projectListPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _package.LogAsync($"Error reading project list: {ex.Message}");
+        }
 
         async Task ProcessProjectAsync(EnvDTE.Project project)
         {
             try
             {
                 string projectFullName = project.FullName;
-                await _package.LogAsync($"Project Full Name: {projectFullName}");
-                if (!string.IsNullOrEmpty(projectFullName) && !processedProjects.Contains(projectFullName))
+                string projectName = Path.GetFileNameWithoutExtension(projectFullName);
+
+                if (!string.IsNullOrEmpty(projectFullName) && 
+                    !processedProjects.Contains(projectFullName) && 
+                    (trackedProjects.Count == 0 || trackedProjects.Contains(projectName)))
                 {
                     processedProjects.Add(projectFullName);
                     string projectDir = Path.GetDirectoryName(projectFullName);
-                    await _package.LogAsync($"Project Dir: {projectDir}");
+                    await _package.LogAsync($"Processing Project {projectName} in Project Dir: {projectDir}");
                     AddTrackedWorkspaceResponse response = await AddTrackedWorkspaceAsync(projectDir);
                     if (response != null)
                     {
                         _initializedWorkspace = true;
+                        await _package.LogAsync("Initialized tracked workspace");
                     }
                 }
 

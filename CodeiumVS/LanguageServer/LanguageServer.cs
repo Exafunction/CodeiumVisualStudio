@@ -741,10 +741,10 @@ public class LanguageServer
 
         List<string> processedProjects = new List<string>();
         var trackedProjects = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        string projectListPath = _package.SettingsPage.IndexingFilesListPath;
+        string projectListPath = _package.SettingsPage.IndexingFilesListPath.Trim();
         try
         {
-            if (projectListPath != "" && File.Exists(projectListPath))
+            if (!string.IsNullOrEmpty(projectListPath) && File.Exists(projectListPath))
             {
                 string[] lines =  File.ReadAllLines(projectListPath);
                 foreach (string line in lines)
@@ -755,14 +755,15 @@ public class LanguageServer
                         trackedProjects.Add(trimmedLine);
                     }
                 }
-                await _package.LogAsync($"Loaded {trackedProjects.Count} projects from {projectListPath}");
+                await _package.LogAsync($"Number of Projects loaded from {projectListPath}: {trackedProjects.Count}");
             }
         }
         catch (Exception ex)
         {
             await _package.LogAsync($"Error reading project list: {ex.Message}");
         }
-
+        // Note: If you have projects in the indexing list, but none ofthe projects in the sln  are actually in that list, then this function will get called on every completion generation.
+        // This is because _initializedWorkspace will never be set to True. That should never happen though so not handling it.
         async Task ProcessProjectAsync(EnvDTE.Project project)
         {
             try
@@ -803,7 +804,7 @@ public class LanguageServer
         foreach (EnvDTE.Project project in dte.Solution.Projects)
         {
             await ProcessProjectAsync(project);
-        }
+        } 
     }
 
     private async Task<T?> RequestCommandAsync<T>(string command, object data,

@@ -782,7 +782,6 @@ public class LanguageServer
                     if (response != null)
                     {
                         _initializedWorkspace = true;
-                        await _package.LogAsync("Initialized tracked workspace");
                     }
                 }
 

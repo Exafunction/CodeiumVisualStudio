@@ -36,7 +36,9 @@ public class LanguageServer
     private readonly HttpClient _httpClient;
     private readonly CodeiumVSPackage _package;
 
+
     public readonly LanguageServerController Controller;
+
 
     public LanguageServer()
     {
@@ -158,7 +160,7 @@ public class LanguageServer
 
             // TODO: should we use timeout = Timeout.InfiniteTimeSpan? default value is 100s (1m40s)
             GetAuthTokenResponse? result =
-                await RequestCommandAsync<GetAuthTokenResponse>("GetAuthToken", new {});
+                await RequestCommandAsync<GetAuthTokenResponse>("GetAuthToken", new { });
 
             if (result == null)
             {
@@ -302,7 +304,7 @@ public class LanguageServer
                 KnownMonikers.StatusError,
                 true,
                 null,
-                [..actions, ..NotificationInfoBar.SupportActions]);
+                [.. actions, .. NotificationInfoBar.SupportActions]);
         }
         else
         {
@@ -373,7 +375,8 @@ public class LanguageServer
         webClient.DownloadFileCompleted += (s, e) =>
         {
             ThreadHelper.JoinableTaskFactory
-                .RunAsync(async delegate {
+                .RunAsync(async delegate
+                {
                     await ThreadDownload_OnCompletedAsync(e, progressDialog, downloadDest);
                 })
                 .FireAndForget();
@@ -591,7 +594,7 @@ public class LanguageServer
                 KnownMonikers.StatusError,
                 true,
                 null,
-                [..actions, ..NotificationInfoBar.SupportActions]);
+                [.. actions, .. NotificationInfoBar.SupportActions]);
 
             return;
         }
@@ -739,46 +742,137 @@ public class LanguageServer
         DTE dte = (DTE)ServiceProvider.GlobalProvider.GetService(typeof(DTE));
         await _package.LogAsync($"Number of top-level projects: {dte.Solution.Projects.Count}");
 
-        List<string> processedProjects = new List<string>();
+        var documents = dte.Documents;
+        var openFilePaths = new HashSet<string>();
+        if (_package.SettingsPage.IndexOpenFiles)
+        {
+            foreach (EnvDTE.Document doc in documents)
+            {
+                await _package.LogAsync($"Open File: {doc.Path}");
+                openFilePaths.Add(doc.Path);
+            }
+        }
 
-        async Task ProcessProjectAsync(EnvDTE.Project project)
+        var inputProjectsToIndex = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        string projectListPath = _package.SettingsPage.IndexingFilesListPath.Trim();
+        try
+        {
+            if (!string.IsNullOrEmpty(projectListPath) && File.Exists(projectListPath))
+            {
+                string[] lines = File.ReadAllLines(projectListPath);
+                foreach (string line in lines)
+                {
+                    string trimmedLine = line.Trim();
+                    if (!string.IsNullOrEmpty(trimmedLine))
+                    {
+                        inputProjectsToIndex.Add(trimmedLine);
+                    }
+                }
+                await _package.LogAsync($"Number of Projects loaded from {projectListPath}: {inputProjectsToIndex.Count}");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _package.LogAsync($"Error reading project list: {ex.Message}");
+        }
+
+        List<string> projectsToIndex = await GetFilesToIndex(inputProjectsToIndex, openFilePaths, dte);
+        await _package.LogAsync($"Number of projects to index: {projectsToIndex.Count}");
+
+        for (int i = 0; i < projectsToIndex.Count; i++)
         {
             try
             {
-                string projectFullName = project.FullName;
-                await _package.LogAsync($"Project Full Name: {projectFullName}");
-                if (!string.IsNullOrEmpty(projectFullName) && !processedProjects.Contains(projectFullName))
+                await _package.LogAsync($"Processing Project {i + 1} of {projectsToIndex.Count}: {projectsToIndex[i]}");
+                AddTrackedWorkspaceResponse response = await AddTrackedWorkspaceAsync(projectsToIndex[i]);
+                if (response != null)
                 {
-                    processedProjects.Add(projectFullName);
-                    string projectDir = Path.GetDirectoryName(projectFullName);
-                    await _package.LogAsync($"Project Dir: {projectDir}");
-                    AddTrackedWorkspaceResponse response = await AddTrackedWorkspaceAsync(projectDir);
-                    if (response != null)
-                    {
-                        _initializedWorkspace = true;
-                    }
-                }
-
-                // Process sub-projects (e.g., project references)
-                foreach (EnvDTE.ProjectItem item in project.ProjectItems)
-                {
-                    if (item.SubProject != null)
-                    {
-                        await ProcessProjectAsync(item.SubProject);
-                    }
+                    _initializedWorkspace = true;
                 }
             }
             catch (Exception ex)
             {
-                await _package.LogAsync("Error: Failed to initialize tracked workspace: " + ex.Message);
+                await _package.LogAsync($"Error processing project {i + 1} of {projectsToIndex.Count}: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task<List<string>> GetFilesToIndex(HashSet<string> inputProjectsToIndex, HashSet<string> openFilePaths, DTE dte)
+    {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        int maxToIndex = 15;
+        HashSet<string> specifiedProjectsToIndexPath = new HashSet<string>();
+        HashSet<string> openFilesProjectsToIndexPath = new HashSet<string>();
+        HashSet<string> remainingProjectsToIndexPath = new HashSet<string>();
+        HashSet<string> processedProjects = new HashSet<string>();
+        async Task AddFilesToIndexLists(EnvDTE.Project project)
+        {
+            if (specifiedProjectsToIndexPath.Count == inputProjectsToIndex.Count && openFilePaths.Count == 0 && (specifiedProjectsToIndexPath.Count + remainingProjectsToIndexPath.Count + openFilesProjectsToIndexPath.Count) >= maxToIndex)
+            {
+                return;
+            }
+            string projectFullName = project.FullName;
+            string projectName = Path.GetFileNameWithoutExtension(projectFullName);
+            if (!string.IsNullOrEmpty(projectFullName) && !processedProjects.Contains(projectFullName))
+            {
+                string projectDir = Path.GetDirectoryName(projectFullName);
+
+                // There are three cases.
+                // 1. The project is in the list of projects to index passed in by the user. These take priority. The entire solution is searched until all are found.
+                // 2. Find the project the open file is a member of. Not sure if nested projects could match the same file multiple times so delete from the set when found.
+                // 3. Any other project. Tops it up to the max amount to index if the previous two cases didnt.
+                if (inputProjectsToIndex.Contains(projectName))
+                {
+                    await _package.LogAsync($"Found in input list {projectName}");
+                    specifiedProjectsToIndexPath.Add(projectDir);
+                }
+                else if (openFilePaths.Count != 0)
+                {
+                    string matchingFile = null;
+                    foreach (var filePath in openFilePaths)
+                    {
+                        if (filePath.StartsWith(projectDir, StringComparison.OrdinalIgnoreCase))
+                        {
+                            await _package.LogAsync($"Found in open files {filePath}");
+                            matchingFile = filePath;
+                            break;
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(matchingFile))
+                    {
+                        openFilesProjectsToIndexPath.Add(projectDir);
+                        openFilePaths.Remove(matchingFile);
+                    }
+                }
+                else
+                {
+                    await _package.LogAsync($"Found in remaining {projectName}");
+                    remainingProjectsToIndexPath.Add(projectDir);
+                }
+                processedProjects.Add(projectFullName);
+            }
+
+            foreach (EnvDTE.ProjectItem item in project.ProjectItems)
+            {
+                if (item.SubProject != null)
+                {
+                    await AddFilesToIndexLists(item.SubProject);
+
+                }
             }
         }
 
         foreach (EnvDTE.Project project in dte.Solution.Projects)
         {
-            await ProcessProjectAsync(project);
+            await AddFilesToIndexLists(project);
         }
+        List<string> result = new List<string>();
+        result.AddRange(specifiedProjectsToIndexPath);
+        result.AddRange(openFilesProjectsToIndexPath);
+        result.AddRange(remainingProjectsToIndexPath);
+        return result;
     }
+
 
     private async Task<T?> RequestCommandAsync<T>(string command, object data,
                                                   CancellationToken cancellationToken = default)
@@ -800,21 +894,28 @@ public class LanguageServer
         var uri = new System.Uri(absolutePath);
         var absoluteUri = uri.AbsoluteUri;
         GetCompletionsRequest data =
-            new() { metadata = GetMetadata(),
-                    document = new() { text = text,
-                                       editor_language = language.Name,
-                                       language = language.Type,
-                                       cursor_offset = (ulong)cursorPosition,
-                                       line_ending = lineEnding,
-                                       absolute_path = absolutePath,
-                                       absolute_uri = absoluteUri,
-                                       relative_path = Path.GetFileName(absolutePath) },
-                    editor_options = new() {
-                        tab_size = (ulong)tabSize,
-                        insert_spaces = insertSpaces,
-                        disable_autocomplete_in_comments =
+            new()
+            {
+                metadata = GetMetadata(),
+                document = new()
+                {
+                    text = text,
+                    editor_language = language.Name,
+                    language = language.Type,
+                    cursor_offset = (ulong)cursorPosition,
+                    line_ending = lineEnding,
+                    absolute_path = absolutePath,
+                    absolute_uri = absoluteUri,
+                    relative_path = Path.GetFileName(absolutePath)
+                },
+                editor_options = new()
+                {
+                    tab_size = (ulong)tabSize,
+                    insert_spaces = insertSpaces,
+                    disable_autocomplete_in_comments =
                             !_package.SettingsPage.EnableCommentCompletion,
-                    } };
+                }
+            };
 
         GetCompletionsResponse? result =
             await RequestCommandAsync<GetCompletionsResponse>("GetCompletions", data, token);
@@ -831,7 +932,7 @@ public class LanguageServer
 
     public async Task<GetProcessesResponse?> GetProcessesAsync()
     {
-        return await RequestCommandAsync<GetProcessesResponse>("GetProcesses", new {});
+        return await RequestCommandAsync<GetProcessesResponse>("GetProcesses", new { });
     }
 
     public async Task<AddTrackedWorkspaceResponse?> AddTrackedWorkspaceAsync(string workspacePath)
@@ -842,16 +943,19 @@ public class LanguageServer
 
     public Metadata GetMetadata()
     {
-        return new() { request_id = _metadata.request_id++,
-                       api_key = _metadata.api_key,
-                       ide_name = _metadata.ide_name,
-                       ide_version = _metadata.ide_version,
-                     
-                       extension_name = _metadata.extension_name,
-                       extension_version = _metadata.extension_version,
-                       session_id = _metadata.session_id,
-                       locale = _metadata.locale,
-                       disable_telemetry = _metadata.disable_telemetry };
+        return new()
+        {
+            request_id = _metadata.request_id++,
+            api_key = _metadata.api_key,
+            ide_name = _metadata.ide_name,
+            ide_version = _metadata.ide_version,
+
+            extension_name = _metadata.extension_name,
+            extension_version = _metadata.extension_version,
+            session_id = _metadata.session_id,
+            locale = _metadata.locale,
+            disable_telemetry = _metadata.disable_telemetry
+        };
     }
 
     public async Task<IList<FunctionInfo>?>

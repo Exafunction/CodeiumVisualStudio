@@ -36,6 +36,7 @@ public class LanguageServer
     private readonly HttpClient _httpClient;
     private readonly CodeiumVSPackage _package;
 
+
     public readonly LanguageServerController Controller;
 
 
@@ -806,7 +807,7 @@ public class LanguageServer
         HashSet<string> processedProjects = new HashSet<string>();
         async Task AddFilesToIndexLists(EnvDTE.Project project)
         {
-            if (specifiedProjectsToIndexPath.Count == inputProjectsToIndex.Count && openFilePaths.Count == 0 && (specifiedProjectsToIndexPath.Count + remainingProjectsToIndexPath.Count + openFilesProjectsToIndexPath.Count) > maxToIndex)
+            if (specifiedProjectsToIndexPath.Count == inputProjectsToIndex.Count && openFilePaths.Count == 0 && (specifiedProjectsToIndexPath.Count + remainingProjectsToIndexPath.Count + openFilesProjectsToIndexPath.Count) >= maxToIndex)
             {
                 return;
             }

@@ -16,6 +16,7 @@ public class SettingsPage : DialogPage
     private bool enableCodeLens = true;
     private int indexingMaxFileCount = 5000;
     private string indexingFilesListPath = "";
+    private bool indexOpenFiles = true;
 
     [Category("Codeium")]
     [DisplayName("Enterprise Mode")]
@@ -152,6 +153,21 @@ public class SettingsPage : DialogPage
         }
         set {
             indexingFilesListPath = value;
+        }
+    }
+    [Category("Codeium")]
+    [DisplayName("Index Open Files")]
+    [Description(
+       "Complete path to a .txt file that contains a line separated list of file paths to index. Leave blank to index full solution.")]
+    public bool IndexOpenFiles
+    {
+        get
+        {
+            return indexOpenFiles;
+        }
+        set
+        {
+            indexOpenFiles = value;
         }
     }
 }

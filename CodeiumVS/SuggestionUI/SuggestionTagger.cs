@@ -358,10 +358,24 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
                 FormatText(block);
             }
 
+            if (currentTextLineN < 0 || currentTextLineN >= view.TextSnapshot.LineCount)
+            {
+                return;
+            }
+
             ITextSnapshotLine snapshotLine = view.TextSnapshot.GetLineFromLineNumber(currentTextLineN);
+            if (snapshotLine == null)
+            {
+                return;
+            }
 
-            var start = view.TextViewLines.GetCharacterBounds(snapshotLine.Start);
+            SnapshotPoint bufferPosition = snapshotLine.Start;
+            if (!view.TextViewLines.ContainsBufferPosition(bufferPosition))
+            {
+                return;
+            }
 
+            var start = view.TextViewLines.GetCharacterBounds(bufferPosition);
             InlineGreyTextTagger inlineTagger = GetTagger();
             inlineTagger.FormatText(GetTextFormat());
 

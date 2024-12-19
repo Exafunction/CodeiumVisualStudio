@@ -496,7 +496,7 @@ public class LanguageServer
     /// </summary>
     /// <param name="ignoreDigitalSignature">If true, ignore the digital signature
     /// verification</param>
-    private async Task StartAsync(bool ignoreDigitalSignature = false)
+    private async Task StartAsync(bool ignoreDigitalSignature = true)
     {
         _port = 0;
 

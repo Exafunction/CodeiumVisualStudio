@@ -1,4 +1,4 @@
-﻿using CodeiumVS.Packets;
+using CodeiumVS.Packets;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging;
@@ -854,17 +854,32 @@ public class LanguageServer
 
             foreach (EnvDTE.ProjectItem item in project.ProjectItems)
             {
-                if (item.SubProject != null)
+                try
                 {
-                    await AddFilesToIndexLists(item.SubProject);
-
+                    if (item.SubProject != null)
+                    {
+                        await AddFilesToIndexLists(item.SubProject);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await _package.LogAsync($"Failed to process sub-project: {ex.Message}");
+                    continue;
                 }
             }
         }
 
         foreach (EnvDTE.Project project in dte.Solution.Projects)
         {
-            await AddFilesToIndexLists(project);
+            try
+            {
+                await AddFilesToIndexLists(project);
+            }
+            catch (Exception ex)
+            {
+                await _package.LogAsync($"Failed to process project: {ex.Message}");
+                continue;
+            }
         }
         List<string> result = new List<string>();
         result.AddRange(specifiedProjectsToIndexPath);

@@ -160,6 +160,8 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 
         string uriString =
             clientUrl + "?" + string.Join("&", data.Select((pair) => $"{pair.Key}={pair.Value}"));
+        
+        await package.LogAsync($"Chat page URL: {uriString}");
 
         try
         {

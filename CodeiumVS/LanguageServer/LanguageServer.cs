@@ -1,4 +1,4 @@
-using CodeiumVS.Packets;
+﻿using CodeiumVS.Packets;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging;
@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -20,6 +21,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace CodeiumVS;
 
@@ -816,6 +818,65 @@ public class LanguageServer
             if (!string.IsNullOrEmpty(projectFullName) && !processedProjects.Contains(projectFullName))
             {
                 string projectDir = Path.GetDirectoryName(projectFullName);
+                HashSet<string> sourceDirectories = new HashSet<string> { projectDir };
+
+                // Parse the csproj file to find all source directories
+                if (File.Exists(projectFullName) && (projectFullName.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) || projectFullName.EndsWith(".vcxproj", StringComparison.OrdinalIgnoreCase)))
+                {
+                    try
+                    {
+                        XDocument projDoc = XDocument.Load(projectFullName);
+                        IEnumerable<string> compileItems;
+                        if (projectFullName.EndsWith(".vcxproj", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Handle C++ project files
+                            compileItems = projDoc.Descendants()
+                                .Where(x => x.Name.LocalName == "ClCompile" || x.Name.LocalName == "ClInclude")
+                                .Select(x => x.Attribute("Include")?.Value)
+                                .Where(x => !string.IsNullOrEmpty(x));
+                        }
+                        else
+                        {
+                            // Handle C# project files
+                            compileItems = projDoc.Descendants()
+                                .Where(x => x.Name.LocalName == "Compile" || x.Name.LocalName == "Content")
+                                .Select(x => x.Attribute("Include")?.Value)
+                                .Where(x => !string.IsNullOrEmpty(x));
+                        }
+
+                        var fullPaths = new List<string>();
+                        foreach (var item in compileItems)
+                        {
+                            string fullPath = Path.GetFullPath(Path.Combine(projectDir, item));
+                            await _package.LogAsync($"FULL PATH: {fullPath}");
+                            fullPaths.Add(fullPath);
+                        }
+
+                        if (fullPaths.Count > 0)
+                        {
+                            // Find the common root directory
+                            string commonRoot = Path.GetDirectoryName(fullPaths[0]);
+                            foreach (var path in fullPaths.Skip(1))
+                            {
+                                string directory = Path.GetDirectoryName(path);
+                                while (!directory.StartsWith(commonRoot, StringComparison.OrdinalIgnoreCase) && commonRoot.Length > 3)
+                                {
+                                    commonRoot = Path.GetDirectoryName(commonRoot);
+                                }
+                            }
+
+                            await _package.LogAsync($"Common root directory: {commonRoot}");
+                            if (Directory.Exists(commonRoot))
+                            {
+                                sourceDirectories.Add(commonRoot);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await _package.LogAsync($"Failed to parse project file {projectFullName}: {ex.Message}");
+                    }
+                }
 
                 // There are three cases.
                 // 1. The project is in the list of projects to index passed in by the user. These take priority. The entire solution is searched until all are found.
@@ -824,14 +885,17 @@ public class LanguageServer
                 if (inputProjectsToIndex.Contains(projectName))
                 {
                     await _package.LogAsync($"Found in input list {projectName}");
-                    specifiedProjectsToIndexPath.Add(projectDir);
+                    foreach (var dir in sourceDirectories)
+                    {
+                        specifiedProjectsToIndexPath.Add(dir);
+                    }
                 }
                 else if (openFilePaths.Count != 0)
                 {
                     string matchingFile = null;
                     foreach (var filePath in openFilePaths)
                     {
-                        if (filePath.StartsWith(projectDir, StringComparison.OrdinalIgnoreCase))
+                        if (sourceDirectories.Any(dir => filePath.StartsWith(dir, StringComparison.OrdinalIgnoreCase)))
                         {
                             await _package.LogAsync($"Found in open files {filePath}");
                             matchingFile = filePath;
@@ -840,14 +904,20 @@ public class LanguageServer
                     }
                     if (!string.IsNullOrEmpty(matchingFile))
                     {
-                        openFilesProjectsToIndexPath.Add(projectDir);
+                        foreach (var dir in sourceDirectories)
+                        {
+                            openFilesProjectsToIndexPath.Add(dir);
+                        }
                         openFilePaths.Remove(matchingFile);
                     }
                 }
                 else
                 {
                     await _package.LogAsync($"Found in remaining {projectName}");
-                    remainingProjectsToIndexPath.Add(projectDir);
+                    foreach (var dir in sourceDirectories)
+                    {
+                        remainingProjectsToIndexPath.Add(dir);
+                    }
                 }
                 processedProjects.Add(projectFullName);
             }

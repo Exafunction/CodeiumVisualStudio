@@ -755,7 +755,7 @@ public class LanguageServer
             }
         }
 
-        var inputProjectsToIndex = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var inputFilesToIndex = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         string projectListPath = _package.SettingsPage.IndexingFilesListPath.Trim();
         try
         {
@@ -767,10 +767,13 @@ public class LanguageServer
                     string trimmedLine = line.Trim();
                     if (!string.IsNullOrEmpty(trimmedLine))
                     {
-                        inputProjectsToIndex.Add(trimmedLine);
+                        if (Path.IsPathRooted(trimmedLine))
+                        {
+                            inputFilesToIndex.Add(trimmedLine);
+                        }
                     }
                 }
-                await _package.LogAsync($"Number of Projects loaded from {projectListPath}: {inputProjectsToIndex.Count}");
+                await _package.LogAsync($"Loaded from {inputFilesToIndex.Count} files");
             }
         }
         catch (Exception ex)
@@ -778,7 +781,8 @@ public class LanguageServer
             await _package.LogAsync($"Error reading project list: {ex.Message}");
         }
 
-        List<string> projectsToIndex = await GetFilesToIndex(inputProjectsToIndex, openFilePaths, dte);
+        List<string> projectsToIndex = new List<string>(inputFilesToIndex);
+        projectsToIndex.AddRange(await GetFilesToIndex(openFilePaths, dte));
         await _package.LogAsync($"Number of projects to index: {projectsToIndex.Count}");
 
         for (int i = 0; i < projectsToIndex.Count; i++)
@@ -799,17 +803,16 @@ public class LanguageServer
         }
     }
 
-    private async Task<List<string>> GetFilesToIndex(HashSet<string> inputProjectsToIndex, HashSet<string> openFilePaths, DTE dte)
+    private async Task<List<string>> GetFilesToIndex(HashSet<string> openFilePaths, DTE dte)
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         int maxToIndex = 15;
-        HashSet<string> specifiedProjectsToIndexPath = new HashSet<string>();
         HashSet<string> openFilesProjectsToIndexPath = new HashSet<string>();
         HashSet<string> remainingProjectsToIndexPath = new HashSet<string>();
         HashSet<string> processedProjects = new HashSet<string>();
         async Task AddFilesToIndexLists(EnvDTE.Project project)
         {
-            if (specifiedProjectsToIndexPath.Count == inputProjectsToIndex.Count && openFilePaths.Count == 0 && (specifiedProjectsToIndexPath.Count + remainingProjectsToIndexPath.Count + openFilesProjectsToIndexPath.Count) >= maxToIndex)
+            if (openFilePaths.Count == 0 && (openFilesProjectsToIndexPath.Count + remainingProjectsToIndexPath.Count) >= maxToIndex)
             {
                 return;
             }
@@ -848,7 +851,6 @@ public class LanguageServer
                         foreach (var item in compileItems)
                         {
                             string fullPath = Path.GetFullPath(Path.Combine(projectDir, item));
-                            await _package.LogAsync($"FULL PATH: {fullPath}");
                             fullPaths.Add(fullPath);
                         }
 
@@ -878,37 +880,27 @@ public class LanguageServer
                     }
                 }
 
-                // There are three cases.
-                // 1. The project is in the list of projects to index passed in by the user. These take priority. The entire solution is searched until all are found.
-                // 2. Find the project the open file is a member of. Not sure if nested projects could match the same file multiple times so delete from the set when found.
-                // 3. Any other project. Tops it up to the max amount to index if the previous two cases didnt.
-                if (inputProjectsToIndex.Contains(projectName))
+                if (openFilePaths.Count != 0)
                 {
-                    await _package.LogAsync($"Found in input list {projectName}");
-                    foreach (var dir in sourceDirectories)
-                    {
-                        specifiedProjectsToIndexPath.Add(dir);
-                    }
-                }
-                else if (openFilePaths.Count != 0)
-                {
-                    string matchingFile = null;
+                    List<string> matchingFiles = new List<string>();
                     foreach (var filePath in openFilePaths)
                     {
                         if (sourceDirectories.Any(dir => filePath.StartsWith(dir, StringComparison.OrdinalIgnoreCase)))
                         {
                             await _package.LogAsync($"Found in open files {filePath}");
-                            matchingFile = filePath;
-                            break;
+                            matchingFiles.Add(filePath);
                         }
                     }
-                    if (!string.IsNullOrEmpty(matchingFile))
+                    if (matchingFiles.Count > 0)
                     {
                         foreach (var dir in sourceDirectories)
                         {
                             openFilesProjectsToIndexPath.Add(dir);
                         }
-                        openFilePaths.Remove(matchingFile);
+                        foreach (var file in matchingFiles)
+                        {
+                            openFilePaths.Remove(file);
+                        }
                     }
                 }
                 else
@@ -945,14 +937,13 @@ public class LanguageServer
             {
                 await AddFilesToIndexLists(project);
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 await _package.LogAsync($"Failed to process project: {ex.Message}");
                 continue;
             }
         }
         List<string> result = new List<string>();
-        result.AddRange(specifiedProjectsToIndexPath);
         result.AddRange(openFilesProjectsToIndexPath);
         result.AddRange(remainingProjectsToIndexPath);
         return result;

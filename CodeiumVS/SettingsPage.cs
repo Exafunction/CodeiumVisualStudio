@@ -143,9 +143,9 @@ public class SettingsPage : DialogPage
     }
 
     [Category("Codeium")]
-    [DisplayName("Files to Index List Path")]
+    [DisplayName("Directories to Index List Path")]
     [Description(
-        "Complete path to a .txt file that contains a line separated list of file paths to index. Leave blank to index full solution.")]
+        "Absolute path to a .txt file that contains a line separated list of absolute paths of directories to index. Requires restart.")]
     public string IndexingFilesListPath
     {
         get {
@@ -158,7 +158,7 @@ public class SettingsPage : DialogPage
     [Category("Codeium")]
     [DisplayName("Index Open Files")]
     [Description(
-       "Complete path to a .txt file that contains a line separated list of file paths to index. Leave blank to index full solution.")]
+       "Codeium will attempt to parse the project files that the files open upon IDE startup belong to. Requires restart.")]
     public bool IndexOpenFiles
     {
         get

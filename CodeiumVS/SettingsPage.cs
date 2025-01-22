@@ -19,7 +19,7 @@ public class SettingsPage : DialogPage
     private bool indexOpenFiles = true;
 
     [Category("Codeium")]
-    [DisplayName("Enterprise Mode")]
+    [DisplayName("Self-Hosted Enterprise Mode")]
     [Description(
         "Set this to True if using Visual Studio with Codeium Enterprise. Requires restart.")]
     public bool EnterpriseMode

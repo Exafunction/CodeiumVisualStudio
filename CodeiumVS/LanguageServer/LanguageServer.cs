@@ -811,7 +811,7 @@ public class LanguageServer
         HashSet<string> openFilesProjectsToIndexPath = new HashSet<string>();
         HashSet<string> remainingProjectsToIndexPath = new HashSet<string>();
         // Safeguard against any edge case I didn't think of
-        int maxRecursiveCalls = 50;
+        int maxRecursiveCalls = 25;
         async Task AddFilesToIndexLists(EnvDTE.Project project)
         {
             maxRecursiveCalls--;

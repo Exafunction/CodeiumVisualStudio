@@ -811,9 +811,9 @@ public class LanguageServer
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         HashSet<string> openFilesProjectsToIndexPath = new HashSet<string>();
         HashSet<string> remainingProjectsToIndexPath = new HashSet<string>();
-        async Task AddFilesToIndexLists(EnvDTE.Project project);
         // Safeguard against any edge case I didn't think of
         int maxRecursiveCalls = 50;
+        async Task AddFilesToIndexLists(EnvDTE.Project project)
         {
             maxRecursiveCalls--;
             if (openFilesProjectsToIndexPath.Count >= remainingToFind || (openFilePaths.Count == 0 && remainingProjectsToIndexPath.Count >= remainingToFind) || maxRecursiveCalls == 0)

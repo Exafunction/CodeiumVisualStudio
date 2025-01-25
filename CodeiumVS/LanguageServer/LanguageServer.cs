@@ -759,6 +759,7 @@ public class LanguageServer
         string projectListPath = _package.SettingsPage.IndexingFilesListPath.Trim();
         try
         {
+            projectListPath = projectListPath.Trim();
             if (!string.IsNullOrEmpty(projectListPath) && File.Exists(projectListPath))
             {
                 string[] lines = File.ReadAllLines(projectListPath);
@@ -806,12 +807,16 @@ public class LanguageServer
 
     private async Task<List<string>> GetFilesToIndex(HashSet<string> processedProjects, HashSet<string> openFilePaths, int remainingToFind, DTE dte)
     {
+        
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         HashSet<string> openFilesProjectsToIndexPath = new HashSet<string>();
         HashSet<string> remainingProjectsToIndexPath = new HashSet<string>();
-        async Task AddFilesToIndexLists(EnvDTE.Project project)
+        async Task AddFilesToIndexLists(EnvDTE.Project project);
+        // Safeguard against any edge case I didn't think of
+        int maxRecursiveCalls = 50;
         {
-            if (openFilesProjectsToIndexPath.Count >= remainingToFind || (openFilePaths.Count == 0 && remainingProjectsToIndexPath.Count >= remainingToFind))
+            maxRecursiveCalls--;
+            if (openFilesProjectsToIndexPath.Count >= remainingToFind || (openFilePaths.Count == 0 && remainingProjectsToIndexPath.Count >= remainingToFind) || maxRecursiveCalls == 0)
             {
                 return;
             }
@@ -860,7 +865,7 @@ public class LanguageServer
                             foreach (var path in fullPaths.Skip(1))
                             {
                                 string directory = Path.GetDirectoryName(path);
-                                while (!directory.StartsWith(commonRoot, StringComparison.OrdinalIgnoreCase) && commonRoot.Split("\\").Length > 3)
+                                while (!directory.StartsWith(commonRoot, StringComparison.OrdinalIgnoreCase) && commonRoot.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Where(s => !string.IsNullOrWhiteSpace(s)).Count() > 4)
                                 {
                                     commonRoot = Path.GetDirectoryName(commonRoot);
                                 }

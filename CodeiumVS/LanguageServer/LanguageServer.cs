@@ -759,6 +759,7 @@ public class LanguageServer
         string projectListPath = _package.SettingsPage.IndexingFilesListPath.Trim();
         try
         {
+            projectListPath = projectListPath.Trim();
             if (!string.IsNullOrEmpty(projectListPath) && File.Exists(projectListPath))
             {
                 string[] lines = File.ReadAllLines(projectListPath);
@@ -782,10 +783,11 @@ public class LanguageServer
         }
 
         List<string> projectsToIndex = new List<string>(inputFilesToIndex);
-        projectsToIndex.AddRange(await GetFilesToIndex(openFilePaths, dte));
+        int maxToIndex = 10;
+        projectsToIndex.AddRange(await GetFilesToIndex(inputFilesToIndex, openFilePaths, maxToIndex - projectsToIndex.Count, dte));
         await _package.LogAsync($"Number of projects to index: {projectsToIndex.Count}");
 
-        for (int i = 0; i < projectsToIndex.Count; i++)
+        for (int i = 0; i < Math.Min(maxToIndex, projectsToIndex.Count); i++)
         {
             try
             {
@@ -803,25 +805,26 @@ public class LanguageServer
         }
     }
 
-    private async Task<List<string>> GetFilesToIndex(HashSet<string> openFilePaths, DTE dte)
+    private async Task<List<string>> GetFilesToIndex(HashSet<string> processedProjects, HashSet<string> openFilePaths, int remainingToFind, DTE dte)
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-        int maxToIndex = 15;
         HashSet<string> openFilesProjectsToIndexPath = new HashSet<string>();
         HashSet<string> remainingProjectsToIndexPath = new HashSet<string>();
-        HashSet<string> processedProjects = new HashSet<string>();
+        // Safeguard against any edge case
+        int maxRecursiveCalls = 25;
         async Task AddFilesToIndexLists(EnvDTE.Project project)
         {
-            if (openFilePaths.Count == 0 && (openFilesProjectsToIndexPath.Count + remainingProjectsToIndexPath.Count) >= maxToIndex)
+            maxRecursiveCalls--;
+            if (remainingToFind <= 0 || (openFilePaths.Count == 0 && remainingProjectsToIndexPath.Count >= remainingToFind) || maxRecursiveCalls == 0)
             {
                 return;
             }
             string projectFullName = project.FullName;
             string projectName = Path.GetFileNameWithoutExtension(projectFullName);
-            if (!string.IsNullOrEmpty(projectFullName) && !processedProjects.Contains(projectFullName))
+            if (!string.IsNullOrEmpty(projectFullName) && !processedProjects.Any(p => projectFullName.StartsWith(p)))
             {
                 string projectDir = Path.GetDirectoryName(projectFullName);
-                HashSet<string> sourceDirectories = new HashSet<string> { projectDir };
+                string projectCommonRoot = projectDir;
 
                 // Parse the csproj file to find all source directories
                 if (File.Exists(projectFullName) && (projectFullName.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) || projectFullName.EndsWith(".vcxproj", StringComparison.OrdinalIgnoreCase)))
@@ -861,16 +864,16 @@ public class LanguageServer
                             foreach (var path in fullPaths.Skip(1))
                             {
                                 string directory = Path.GetDirectoryName(path);
-                                while (!directory.StartsWith(commonRoot, StringComparison.OrdinalIgnoreCase) && commonRoot.Length > 3)
+                                while (!directory.StartsWith(commonRoot, StringComparison.OrdinalIgnoreCase) && commonRoot.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Where(s => !string.IsNullOrWhiteSpace(s)).Count() > 4)
                                 {
                                     commonRoot = Path.GetDirectoryName(commonRoot);
                                 }
                             }
 
-                            await _package.LogAsync($"Common root directory: {commonRoot}");
                             if (Directory.Exists(commonRoot))
                             {
-                                sourceDirectories.Add(commonRoot);
+                                await _package.LogAsync($"Common root directory: {commonRoot}");
+                                projectCommonRoot = commonRoot;
                             }
                         }
                     }
@@ -885,7 +888,7 @@ public class LanguageServer
                     List<string> matchingFiles = new List<string>();
                     foreach (var filePath in openFilePaths)
                     {
-                        if (sourceDirectories.Any(dir => filePath.StartsWith(dir, StringComparison.OrdinalIgnoreCase)))
+                        if (filePath.StartsWith(projectCommonRoot, StringComparison.OrdinalIgnoreCase))
                         {
                             await _package.LogAsync($"Found in open files {filePath}");
                             matchingFiles.Add(filePath);
@@ -893,10 +896,8 @@ public class LanguageServer
                     }
                     if (matchingFiles.Count > 0)
                     {
-                        foreach (var dir in sourceDirectories)
-                        {
-                            openFilesProjectsToIndexPath.Add(dir);
-                        }
+                        openFilesProjectsToIndexPath.Add(projectCommonRoot);
+                        remainingToFind--;
                         foreach (var file in matchingFiles)
                         {
                             openFilePaths.Remove(file);
@@ -905,11 +906,8 @@ public class LanguageServer
                 }
                 else
                 {
-                    await _package.LogAsync($"Found in remaining {projectName}");
-                    foreach (var dir in sourceDirectories)
-                    {
-                        remainingProjectsToIndexPath.Add(dir);
-                    }
+                    await _package.LogAsync($"Found in remaining {projectCommonRoot}");
+                    remainingProjectsToIndexPath.Add(projectCommonRoot);
                 }
                 processedProjects.Add(projectFullName);
             }

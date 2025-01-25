@@ -807,7 +807,6 @@ public class LanguageServer
 
     private async Task<List<string>> GetFilesToIndex(HashSet<string> processedProjects, HashSet<string> openFilePaths, int remainingToFind, DTE dte)
     {
-        
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         HashSet<string> openFilesProjectsToIndexPath = new HashSet<string>();
         HashSet<string> remainingProjectsToIndexPath = new HashSet<string>();
@@ -816,7 +815,7 @@ public class LanguageServer
         async Task AddFilesToIndexLists(EnvDTE.Project project)
         {
             maxRecursiveCalls--;
-            if (openFilesProjectsToIndexPath.Count >= remainingToFind || (openFilePaths.Count == 0 && remainingProjectsToIndexPath.Count >= remainingToFind) || maxRecursiveCalls == 0)
+            if (remainingToFind <= 0 || (openFilePaths.Count == 0 && remainingProjectsToIndexPath.Count >= remainingToFind) || maxRecursiveCalls == 0)
             {
                 return;
             }
@@ -825,7 +824,7 @@ public class LanguageServer
             if (!string.IsNullOrEmpty(projectFullName) && !processedProjects.Any(p => projectFullName.StartsWith(p)))
             {
                 string projectDir = Path.GetDirectoryName(projectFullName);
-                HashSet<string> sourceDirectories = new HashSet<string> { projectDir };
+                string projectCommonRoot = projectDir;
 
                 // Parse the csproj file to find all source directories
                 if (File.Exists(projectFullName) && (projectFullName.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) || projectFullName.EndsWith(".vcxproj", StringComparison.OrdinalIgnoreCase)))
@@ -871,10 +870,10 @@ public class LanguageServer
                                 }
                             }
 
-                            await _package.LogAsync($"Common root directory: {commonRoot}");
                             if (Directory.Exists(commonRoot))
                             {
-                                sourceDirectories.Add(commonRoot);
+                                await _package.LogAsync($"Common root directory: {commonRoot}");
+                                projectCommonRoot = commonRoot;
                             }
                         }
                     }
@@ -889,7 +888,7 @@ public class LanguageServer
                     List<string> matchingFiles = new List<string>();
                     foreach (var filePath in openFilePaths)
                     {
-                        if (sourceDirectories.Any(dir => filePath.StartsWith(dir, StringComparison.OrdinalIgnoreCase)))
+                        if (filePath.StartsWith(projectCommonRoot, StringComparison.OrdinalIgnoreCase))
                         {
                             await _package.LogAsync($"Found in open files {filePath}");
                             matchingFiles.Add(filePath);
@@ -897,10 +896,8 @@ public class LanguageServer
                     }
                     if (matchingFiles.Count > 0)
                     {
-                        foreach (var dir in sourceDirectories)
-                        {
-                            openFilesProjectsToIndexPath.Add(dir);
-                        }
+                        openFilesProjectsToIndexPath.Add(projectCommonRoot);
+                        remainingToFind--;
                         foreach (var file in matchingFiles)
                         {
                             openFilePaths.Remove(file);
@@ -909,11 +906,8 @@ public class LanguageServer
                 }
                 else
                 {
-                    await _package.LogAsync($"Found in remaining {projectName}");
-                    foreach (var dir in sourceDirectories)
-                    {
-                        remainingProjectsToIndexPath.Add(dir);
-                    }
+                    await _package.LogAsync($"Found in remaining {projectCommonRoot}");
+                    remainingProjectsToIndexPath.Add(projectCommonRoot);
                 }
                 processedProjects.Add(projectFullName);
             }

@@ -782,10 +782,11 @@ public class LanguageServer
         }
 
         List<string> projectsToIndex = new List<string>(inputFilesToIndex);
-        projectsToIndex.AddRange(await GetFilesToIndex(openFilePaths, dte));
+        int maxToIndex = 10;
+        projectsToIndex.AddRange(await GetFilesToIndex(inputFilesToIndex, openFilePaths, maxToIndex - projectsToIndex.Count, dte));
         await _package.LogAsync($"Number of projects to index: {projectsToIndex.Count}");
 
-        for (int i = 0; i < projectsToIndex.Count; i++)
+        for (int i = 0; i < Math.Min(maxToIndex, projectsToIndex.Count); i++)
         {
             try
             {
@@ -803,22 +804,20 @@ public class LanguageServer
         }
     }
 
-    private async Task<List<string>> GetFilesToIndex(HashSet<string> openFilePaths, DTE dte)
+    private async Task<List<string>> GetFilesToIndex(HashSet<string> processedProjects, HashSet<string> openFilePaths, int remainingToFind, DTE dte)
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-        int maxToIndex = 15;
         HashSet<string> openFilesProjectsToIndexPath = new HashSet<string>();
         HashSet<string> remainingProjectsToIndexPath = new HashSet<string>();
-        HashSet<string> processedProjects = new HashSet<string>();
         async Task AddFilesToIndexLists(EnvDTE.Project project)
         {
-            if (openFilePaths.Count == 0 && (openFilesProjectsToIndexPath.Count + remainingProjectsToIndexPath.Count) >= maxToIndex)
+            if (openFilesProjectsToIndexPath.Count >= remainingToFind || (openFilePaths.Count == 0 && remainingProjectsToIndexPath.Count >= remainingToFind))
             {
                 return;
             }
             string projectFullName = project.FullName;
             string projectName = Path.GetFileNameWithoutExtension(projectFullName);
-            if (!string.IsNullOrEmpty(projectFullName) && !processedProjects.Contains(projectFullName))
+            if (!string.IsNullOrEmpty(projectFullName) && !processedProjects.Any(p => projectFullName.StartsWith(p)))
             {
                 string projectDir = Path.GetDirectoryName(projectFullName);
                 HashSet<string> sourceDirectories = new HashSet<string> { projectDir };
@@ -861,7 +860,7 @@ public class LanguageServer
                             foreach (var path in fullPaths.Skip(1))
                             {
                                 string directory = Path.GetDirectoryName(path);
-                                while (!directory.StartsWith(commonRoot, StringComparison.OrdinalIgnoreCase) && commonRoot.Length > 3)
+                                while (!directory.StartsWith(commonRoot, StringComparison.OrdinalIgnoreCase) && commonRoot.Split("\\").Length > 3)
                                 {
                                     commonRoot = Path.GetDirectoryName(commonRoot);
                                 }

@@ -747,7 +747,6 @@ public class LanguageServer
         await _package.LogAsync($"Number of top-level projects: {dte.Solution.Projects.Count}");
 
         var documents = dte.Documents;
-        // var openFilePaths = new HashSet<string>();
         var openFileProjects = new HashSet<EnvDTE.Project>();
         if (_package.SettingsPage.IndexOpenFiles)
         {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="Codeium.VisualStudio" Version="1.8.98" Language="en-US" Publisher="Codeium" />
+        <Identity Id="Codeium.VisualStudio" Version="1.8.99" Language="en-US" Publisher="Codeium" />
         <DisplayName>Codeium</DisplayName>
         <Description xml:space="preserve">The modern coding superpower: free AI code acceleration plugin for your favorite languages. Type less. Code more. Ship faster.</Description>
         <MoreInfo>https://www.codeium.com</MoreInfo>

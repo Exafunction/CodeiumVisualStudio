@@ -1,4 +1,5 @@
 ﻿using CodeiumVS.Packets;
+using Community.VisualStudio.Toolkit;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging;
@@ -21,6 +22,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Xml.Linq;
 
 namespace CodeiumVS;
@@ -745,17 +747,24 @@ public class LanguageServer
         await _package.LogAsync($"Number of top-level projects: {dte.Solution.Projects.Count}");
 
         var documents = dte.Documents;
-        var openFilePaths = new HashSet<string>();
+        var openFileProjects = new HashSet<EnvDTE.Project>();
         if (_package.SettingsPage.IndexOpenFiles)
         {
             foreach (EnvDTE.Document doc in documents)
             {
-                await _package.LogAsync($"Open File: {doc.Path}");
-                openFilePaths.Add(doc.Path);
+                ProjectItem projectItem = doc.ProjectItem;
+                if (projectItem != null)
+                {
+                    EnvDTE.Project project = projectItem.ContainingProject;
+                    if (project != null && !openFileProjects.Contains(project))
+                    {
+                        openFileProjects.Add(project);
+                    }
+                }
             }
         }
 
-        var inputFilesToIndex = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var inputDirectoriesToIndex = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         string projectListPath = _package.SettingsPage.IndexingFilesListPath.Trim();
         try
         {
@@ -770,11 +779,11 @@ public class LanguageServer
                     {
                         if (Path.IsPathRooted(trimmedLine))
                         {
-                            inputFilesToIndex.Add(trimmedLine);
+                            inputDirectoriesToIndex.Add(trimmedLine);
                         }
                     }
                 }
-                await _package.LogAsync($"Loaded from {inputFilesToIndex.Count} files");
+                await _package.LogAsync($"Loaded from {inputDirectoriesToIndex.Count} directories");
             }
         }
         catch (Exception ex)
@@ -782,9 +791,9 @@ public class LanguageServer
             await _package.LogAsync($"Error reading project list: {ex.Message}");
         }
 
-        List<string> projectsToIndex = new List<string>(inputFilesToIndex);
+        List<string> projectsToIndex = new List<string>(inputDirectoriesToIndex);
         int maxToIndex = 10;
-        projectsToIndex.AddRange(await GetFilesToIndex(inputFilesToIndex, openFilePaths, maxToIndex - projectsToIndex.Count, dte));
+        projectsToIndex.AddRange(await GetDirectoriesToIndex(inputDirectoriesToIndex, openFileProjects, maxToIndex - projectsToIndex.Count, dte));
         await _package.LogAsync($"Number of projects to index: {projectsToIndex.Count}");
 
         for (int i = 0; i < Math.Min(maxToIndex, projectsToIndex.Count); i++)
@@ -805,28 +814,24 @@ public class LanguageServer
         }
     }
 
-    private async Task<List<string>> GetFilesToIndex(HashSet<string> processedProjects, HashSet<string> openFilePaths, int remainingToFind, DTE dte)
+    private async Task<List<string>> GetDirectoriesToIndex(HashSet<string> processedProjects, HashSet<EnvDTE.Project> openFileProjects, int remainingToFind, DTE dte)
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-        HashSet<string> openFilesProjectsToIndexPath = new HashSet<string>();
         HashSet<string> remainingProjectsToIndexPath = new HashSet<string>();
-        // Safeguard against any edge case
-        int maxRecursiveCalls = 25;
         async Task AddFilesToIndexLists(EnvDTE.Project project)
         {
-            maxRecursiveCalls--;
-            if (remainingToFind <= 0 || (openFilePaths.Count == 0 && remainingProjectsToIndexPath.Count >= remainingToFind) || maxRecursiveCalls == 0)
+            if (remainingToFind <= 0)
             {
                 return;
             }
             string projectFullName = project.FullName;
-            string projectName = Path.GetFileNameWithoutExtension(projectFullName);
+            await _package.LogAsync($"Adding files to index of project: {projectFullName}");
             if (!string.IsNullOrEmpty(projectFullName) && !processedProjects.Any(p => projectFullName.StartsWith(p)))
             {
+                string projectName = Path.GetFileNameWithoutExtension(projectFullName);
+                IEnumerable<string> commonDirs = Enumerable.Empty<string>();
                 string projectDir = Path.GetDirectoryName(projectFullName);
-                string projectCommonRoot = projectDir;
-
-                // Parse the csproj file to find all source directories
+                // Parse the proj file to find all source directories
                 if (File.Exists(projectFullName) && (projectFullName.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) || projectFullName.EndsWith(".vcxproj", StringComparison.OrdinalIgnoreCase)))
                 {
                     try
@@ -857,25 +862,7 @@ public class LanguageServer
                             fullPaths.Add(fullPath);
                         }
 
-                        if (fullPaths.Count > 0)
-                        {
-                            // Find the common root directory
-                            string commonRoot = Path.GetDirectoryName(fullPaths[0]);
-                            foreach (var path in fullPaths.Skip(1))
-                            {
-                                string directory = Path.GetDirectoryName(path);
-                                while (!directory.StartsWith(commonRoot, StringComparison.OrdinalIgnoreCase) && commonRoot.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Where(s => !string.IsNullOrWhiteSpace(s)).Count() > 4)
-                                {
-                                    commonRoot = Path.GetDirectoryName(commonRoot);
-                                }
-                            }
-
-                            if (Directory.Exists(commonRoot))
-                            {
-                                await _package.LogAsync($"Common root directory: {commonRoot}");
-                                projectCommonRoot = commonRoot;
-                            }
-                        }
+                        commonDirs = Utilities.FileUtilities.FindMinimumEncompassingDirectories(fullPaths);
                     }
                     catch (Exception ex)
                     {
@@ -883,33 +870,14 @@ public class LanguageServer
                     }
                 }
 
-                if (openFilePaths.Count != 0)
+                await _package.LogAsync($"Found set-covering directories for {projectName}: {commonDirs.Count()}");
+                foreach (var dir in commonDirs)
                 {
-                    List<string> matchingFiles = new List<string>();
-                    foreach (var filePath in openFilePaths)
-                    {
-                        if (filePath.StartsWith(projectCommonRoot, StringComparison.OrdinalIgnoreCase))
-                        {
-                            await _package.LogAsync($"Found in open files {filePath}");
-                            matchingFiles.Add(filePath);
-                        }
-                    }
-                    if (matchingFiles.Count > 0)
-                    {
-                        openFilesProjectsToIndexPath.Add(projectCommonRoot);
-                        remainingToFind--;
-                        foreach (var file in matchingFiles)
-                        {
-                            openFilePaths.Remove(file);
-                        }
-                    }
+                    remainingToFind -= 1;
+                    remainingProjectsToIndexPath.Add(dir);
                 }
-                else
-                {
-                    await _package.LogAsync($"Found in remaining {projectCommonRoot}");
-                    remainingProjectsToIndexPath.Add(projectCommonRoot);
-                }
-                processedProjects.Add(projectFullName);
+                
+                processedProjects.Add(project.Name);
             }
 
             foreach (EnvDTE.ProjectItem item in project.ProjectItems)
@@ -929,7 +897,7 @@ public class LanguageServer
             }
         }
 
-        foreach (EnvDTE.Project project in dte.Solution.Projects)
+        foreach (EnvDTE.Project project in openFileProjects)
         {
             try
             {
@@ -937,14 +905,31 @@ public class LanguageServer
             }
             catch (Exception ex) 
             {
-                await _package.LogAsync($"Failed to process project: {ex.Message}");
+                await _package.LogAsync($"Failed to process open project: {ex.Message}");
                 continue;
             }
         }
-        List<string> result = new List<string>();
-        result.AddRange(openFilesProjectsToIndexPath);
-        result.AddRange(remainingProjectsToIndexPath);
-        return result;
+        foreach (EnvDTE.Project project in dte.Solution.Projects)
+        {
+            if (openFileProjects.Contains(project))
+            {
+                continue;
+            }
+            try
+            {
+                await AddFilesToIndexLists(project);
+            }
+            catch (Exception ex) 
+            {
+                await _package.LogAsync($"Failed to process remaining project: {ex.Message}");
+                continue;
+            }
+            if (remainingToFind <=0)
+            {
+                break;
+            }
+        }
+        return remainingProjectsToIndexPath.ToList();
     }
 
 

@@ -754,14 +754,12 @@ public class LanguageServer
             foreach (EnvDTE.Document doc in documents)
             {
                 ProjectItem projectItem = doc.ProjectItem;
-                await _package.LogAsync($"projectITEM: {projectItem}");
                 if (projectItem != null)
                 {
                     EnvDTE.Project project = projectItem.ContainingProject;
                     if (project != null && !openFileProjects.Contains(project))
                     {
                         openFileProjects.Add(project);
-                        await _package.LogAsync($"Open File FOUNDD: {project}, {project.FullName}, {project.Name}");
                     }
                 }
             }
@@ -828,12 +826,13 @@ public class LanguageServer
                 return;
             }
             string projectFullName = project.FullName;
-            string projectName = Path.GetFileNameWithoutExtension(projectFullName);
-            IEnumerable<string> commonDirs = Enumerable.Empty<string>();
-
+            await _package.LogAsync($"Adding files to index of project: {projectFullName}");
             if (!string.IsNullOrEmpty(projectFullName) && !processedProjects.Any(p => projectFullName.StartsWith(p)))
             {
-                // Parse the csproj file to find all source directories
+                string projectName = Path.GetFileNameWithoutExtension(projectFullName);
+                IEnumerable<string> commonDirs = Enumerable.Empty<string>();
+                string projectDir = Path.GetDirectoryName(projectFullName);
+                // Parse the proj file to find all source directories
                 if (File.Exists(projectFullName) && (projectFullName.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) || projectFullName.EndsWith(".vcxproj", StringComparison.OrdinalIgnoreCase)))
                 {
                     try
@@ -907,7 +906,7 @@ public class LanguageServer
             }
             catch (Exception ex) 
             {
-                await _package.LogAsync($"Failed to process project: {ex.Message}");
+                await _package.LogAsync($"Failed to process open project: {ex.Message}");
                 continue;
             }
         }
@@ -923,7 +922,7 @@ public class LanguageServer
             }
             catch (Exception ex) 
             {
-                await _package.LogAsync($"Failed to process project: {ex.Message}");
+                await _package.LogAsync($"Failed to process remaining project: {ex.Message}");
                 continue;
             }
             if (remainingToFind <=0)

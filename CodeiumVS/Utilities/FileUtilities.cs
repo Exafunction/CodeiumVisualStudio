@@ -58,53 +58,91 @@ internal static class FileUtilities
     {
         if (filePaths == null || !filePaths.Any())
             return new List<string>();
+        // Get the directory paths of the file paths
+        var directoryPaths = filePaths.Select(Path.GetDirectoryName).Distinct().ToList();
+        CodeiumVSPackage.Instance?.Log($"Directories before minimization: {string.Join(", ", directoryPaths)}");
+        var result = GetMinimumDirectoryCover(directoryPaths);
+        CodeiumVSPackage.Instance?.Log($"Directories after minimization: {string.Join(", ", result)}");
+        return result.Where(dir => CountPathSegments(dir) > 1).ToList();
+    }
 
-        // Get all parent directories for each file
-        var allPaths = filePaths.Select(path => 
+
+    public static List<string> GetMinimumDirectoryCover(IEnumerable<string> directories)
+    {
+        // 1. Normalize all paths to full/absolute paths and remove duplicates
+        var normalizedDirs = directories
+            .Select(d => NormalizePath(d))
+            .Distinct()
+            .ToList();
+
+        // 2. Sort by ascending number of path segments (shallow first)
+        normalizedDirs.Sort((a, b) =>
+            CountPathSegments(a).CompareTo(CountPathSegments(b)));
+
+        var coverSet = new List<string>();
+
+        // 3. Greedy selection
+        foreach (var dir in normalizedDirs)
         {
-            var parents = new List<string>();
-            var dir = Path.GetDirectoryName(path);
-            while (!string.IsNullOrEmpty(dir))
+            bool isCovered = false;
+
+            // Check if 'dir' is already covered by any directory in coverSet
+            foreach (var coverDir in coverSet)
             {
-                parents.Add(dir);
-                dir = Path.GetDirectoryName(dir);
+                if (IsSubdirectoryOrSame(coverDir, dir))
+                {
+                    isCovered = true;
+                    break;
+                }
             }
-            return parents;
-        }).ToList();
 
-        // Find directories that contain files
-        var directoryCounts = new Dictionary<string, HashSet<int>>();
-        for (int i = 0; i < allPaths.Count; i++)
-        {
-            foreach (var dir in allPaths[i])
+            // If not covered, add it to the cover set
+            if (!isCovered)
             {
-                if (!directoryCounts.ContainsKey(dir))
-                    directoryCounts[dir] = new HashSet<int>();
-                directoryCounts[dir].Add(i);
+                coverSet.Add(dir);
             }
         }
 
-        var result = new List<string>();
-        var coveredFiles = new HashSet<int>();
-        
-        // While we haven't covered all files
-        while (coveredFiles.Count < allPaths.Count)
-        {
-            // Find directory that covers most uncovered files
-            var bestDir = directoryCounts
-                .Where(kvp => kvp.Value.Except(coveredFiles).Any())
-                .OrderByDescending(kvp => kvp.Value.Except(coveredFiles).Count())
-                .ThenBy(kvp => kvp.Key.Count(c => c == Path.DirectorySeparatorChar)) // Prefer deeper directories
-                .FirstOrDefault();
+        return coverSet;
+    }
 
-            if (bestDir.Key == null)
-                break;
+    /// <summary>   
+    /// Checks if 'child' is the same or a subdirectory of 'parent'.
+    /// </summary>
+    private static bool IsSubdirectoryOrSame(string parent, string child)
+    {
+        // 1. Normalize both directories to their full path (remove extra slashes, etc.).
+        string parentFull = Path.GetFullPath(parent)
+            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        string childFull = Path.GetFullPath(child)
+            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
-            result.Add(bestDir.Key);
-            coveredFiles.UnionWith(bestDir.Value);
-        }
+    // 2. Append a directory separator at the end of each path to ensure
+    //    that "C:\Folder" won’t incorrectly match "C:\Folder2".
+    //    e.g. "C:\Folder" -> "C:\Folder\"
+    parentFull += Path.DirectorySeparatorChar;
+    childFull  += Path.DirectorySeparatorChar;
 
-        // Filter out paths that are too shallow (less than 3 levels deep)
-        return result.Where(dir => dir.Count(c => c == Path.DirectorySeparatorChar) >= 2).ToList();
+    // 3. On Windows, paths are case-insensitive. Use OrdinalIgnoreCase
+    //    to compare. On non-Windows systems, consider using Ordinal.
+    return childFull.StartsWith(parentFull, StringComparison.OrdinalIgnoreCase);
+}
+
+    /// <summary>
+    /// Normalize a directory path by getting its full path (removing trailing slash, etc).
+    /// </summary>
+    private static string NormalizePath(string path)
+    {
+        return Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+    }
+
+    /// <summary>
+    /// Count path segments based on splitting by directory separators.
+    /// E.g. "C:\Folder\Sub" -> 3 segments (on Windows).
+    /// </summary>
+    private static int CountPathSegments(string path)
+    {
+        return path.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                   .Count(segment => !string.IsNullOrEmpty(segment));
     }
 }

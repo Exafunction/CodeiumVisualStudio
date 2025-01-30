@@ -1,4 +1,7 @@
-﻿using System.IO;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace CodeiumVS.Utilities;
 
@@ -43,5 +46,65 @@ internal static class FileUtilities
                                         "Please see the output windows for more details");
             }
         }
+    }
+
+    /// <summary>
+    /// Finds the minimum set of directories that encompass all the given files.
+    /// For example, given ["E:/a/b/c.txt", "E:/a/b/d/e.cpp"], returns ["E:/a/b"]
+    /// </summary>
+    /// <param name="filePaths">List of absolute file paths</param>
+    /// <returns>List of directory paths that collectively contain all input files with minimum redundancy</returns>
+    internal static List<string> FindMinimumEncompassingDirectories(IEnumerable<string> filePaths)
+    {
+        if (filePaths == null || !filePaths.Any())
+            return new List<string>();
+
+        // Get all parent directories for each file
+        var allPaths = filePaths.Select(path => 
+        {
+            var parents = new List<string>();
+            var dir = Path.GetDirectoryName(path);
+            while (!string.IsNullOrEmpty(dir))
+            {
+                parents.Add(dir);
+                dir = Path.GetDirectoryName(dir);
+            }
+            return parents;
+        }).ToList();
+
+        // Find directories that contain files
+        var directoryCounts = new Dictionary<string, HashSet<int>>();
+        for (int i = 0; i < allPaths.Count; i++)
+        {
+            foreach (var dir in allPaths[i])
+            {
+                if (!directoryCounts.ContainsKey(dir))
+                    directoryCounts[dir] = new HashSet<int>();
+                directoryCounts[dir].Add(i);
+            }
+        }
+
+        var result = new List<string>();
+        var coveredFiles = new HashSet<int>();
+        
+        // While we haven't covered all files
+        while (coveredFiles.Count < allPaths.Count)
+        {
+            // Find directory that covers most uncovered files
+            var bestDir = directoryCounts
+                .Where(kvp => kvp.Value.Except(coveredFiles).Any())
+                .OrderByDescending(kvp => kvp.Value.Except(coveredFiles).Count())
+                .ThenBy(kvp => kvp.Key.Count(c => c == Path.DirectorySeparatorChar)) // Prefer deeper directories
+                .FirstOrDefault();
+
+            if (bestDir.Key == null)
+                break;
+
+            result.Add(bestDir.Key);
+            coveredFiles.UnionWith(bestDir.Value);
+        }
+
+        // Filter out paths that are too shallow (less than 3 levels deep)
+        return result.Where(dir => dir.Count(c => c == Path.DirectorySeparatorChar) >= 2).ToList();
     }
 }

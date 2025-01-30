@@ -821,6 +821,7 @@ public class LanguageServer
             }
             string projectFullName = project.FullName;
             string projectName = Path.GetFileNameWithoutExtension(projectFullName);
+            IEnumerable<string> commonDirs;
             if (!string.IsNullOrEmpty(projectFullName) && !processedProjects.Any(p => projectFullName.StartsWith(p)))
             {
                 string projectDir = Path.GetDirectoryName(projectFullName);
@@ -857,25 +858,7 @@ public class LanguageServer
                             fullPaths.Add(fullPath);
                         }
 
-                        if (fullPaths.Count > 0)
-                        {
-                            // Find the common root directory
-                            string commonRoot = Path.GetDirectoryName(fullPaths[0]);
-                            foreach (var path in fullPaths.Skip(1))
-                            {
-                                string directory = Path.GetDirectoryName(path);
-                                while (!directory.StartsWith(commonRoot, StringComparison.OrdinalIgnoreCase) && commonRoot.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Where(s => !string.IsNullOrWhiteSpace(s)).Count() > 4)
-                                {
-                                    commonRoot = Path.GetDirectoryName(commonRoot);
-                                }
-                            }
-
-                            if (Directory.Exists(commonRoot))
-                            {
-                                await _package.LogAsync($"Common root directory: {commonRoot}");
-                                projectCommonRoot = commonRoot;
-                            }
-                        }
+                        commonDirs = FileUtilities.FindMinimumEncompassingDirectories(fullPaths);
                     }
                     catch (Exception ex)
                     {
@@ -888,26 +871,27 @@ public class LanguageServer
                     List<string> matchingFiles = new List<string>();
                     foreach (var filePath in openFilePaths)
                     {
-                        if (filePath.StartsWith(projectCommonRoot, StringComparison.OrdinalIgnoreCase))
+                        var matchingDir = commonDirs.FirstOrDefault(dir => filePath.StartsWith(dir, StringComparison.OrdinalIgnoreCase));
+                        if (matchingDir != null)
                         {
-                            await _package.LogAsync($"Found in open files {filePath}");
+                            await _package.LogAsync($"Found in open files {filePath}, {matchingDir}");
+                            openFilesProjectsToIndexPath.Add(matchingDir);
                             matchingFiles.Add(filePath);
                         }
                     }
-                    if (matchingFiles.Count > 0)
+                    if (matchingFiles.Any())
                     {
-                        openFilesProjectsToIndexPath.Add(projectCommonRoot);
                         remainingToFind--;
-                        foreach (var file in matchingFiles)
-                        {
-                            openFilePaths.Remove(file);
-                        }
+                        openFilePaths.ExceptWith(matchingFiles);
                     }
                 }
                 else
                 {
-                    await _package.LogAsync($"Found in remaining {projectCommonRoot}");
-                    remainingProjectsToIndexPath.Add(projectCommonRoot);
+                    await _package.LogAsync($"Found in remaining {commondDirs.Count}");
+                    foreach (var dir in commonDirs)
+                    {
+                        remainingProjectsToIndexPath.Add(dir);
+                    }
                 }
                 processedProjects.Add(projectFullName);
             }

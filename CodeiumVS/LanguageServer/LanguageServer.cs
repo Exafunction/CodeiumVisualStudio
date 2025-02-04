@@ -870,6 +870,11 @@ public class LanguageServer
                     }
                 }
 
+                if (commonDirs.Count() == 0)
+                {
+                    commonDirs = new[] { projectDir };
+                }
+
                 await _package.LogAsync($"Found set-covering directories for {projectName}: {commonDirs.Count()}");
                 foreach (var dir in commonDirs)
                 {

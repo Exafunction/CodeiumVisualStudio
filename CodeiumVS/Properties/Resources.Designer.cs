@@ -8,6 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+
 namespace CodeiumVS.Properties
 {
 using System;

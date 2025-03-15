@@ -56,6 +56,7 @@ public class LanguageServer
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
+
         string ideVersion = "17.0", locale = "en-US";
 
         try

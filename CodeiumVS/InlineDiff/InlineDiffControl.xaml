@@ -9,6 +9,7 @@
              xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
              xmlns:imagecatalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
 
+
              toolkit:Themes.UseVsTheme="True"
              mc:Ignorable="d"
              d:DesignWidth="800"

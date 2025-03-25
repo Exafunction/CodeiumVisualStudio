@@ -30,7 +30,7 @@ namespace CodeiumVS;
 public class LanguageServer
 {
     private string _languageServerURL;
-    private string _languageServerVersion = "1.30.15";
+    private string _languageServerVersion = "1.42.3";
 
     private int _port = 0;
     private System.Diagnostics.Process _process;

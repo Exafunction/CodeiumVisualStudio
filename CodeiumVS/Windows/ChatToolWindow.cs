@@ -207,7 +207,7 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
 
                 // focus the text input
                 await webView.ExecuteScriptAsync(
-                    "document.getElementsByClassName('ql-editor')[0].focus()");
+                    "const editor = document.getElementsByClassName('ql-editor')[0]; if(editor) editor.focus()");
             })
             .FireAndForget();
     }

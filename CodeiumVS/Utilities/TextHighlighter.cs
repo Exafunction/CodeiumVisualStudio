@@ -97,6 +97,8 @@ internal class HighlightWordFormatDefinition : MarkerFormatDefinition
 
 [Export(typeof(IViewTaggerProvider))]
 [ContentType("code")]
+[ContentType("html")]
+
 [TagType(typeof(HighlightWordTag))]
 internal class HighlightWordTaggerProvider : IViewTaggerProvider
 {

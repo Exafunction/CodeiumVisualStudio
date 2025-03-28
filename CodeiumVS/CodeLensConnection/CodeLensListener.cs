@@ -24,7 +24,7 @@ namespace CodeiumVS
     [ContentType("vbscript")]
     [ContentType("TypeScript")]
     [ContentType("JavaScript")]
-    [ContentType("HTML")]
+    [ContentType("html")]
     public class CodeLensListener : ICodeLensCallbackListener, ICodeLensListener
     {
 

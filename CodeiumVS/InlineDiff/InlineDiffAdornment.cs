@@ -760,6 +760,7 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
 [Export(typeof(ILineTransformSourceProvider))]
 [Name("CodeiumInlineDiffViewProvider")]
 [ContentType("code")]
+[ContentType("html")]
 [TextViewRole(PredefinedTextViewRoles.Document)]
 internal class CodeiumInlineDiffViewProvider : ILineTransformSourceProvider
 {

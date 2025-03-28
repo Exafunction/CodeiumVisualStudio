@@ -98,7 +98,6 @@ internal class HighlightWordFormatDefinition : MarkerFormatDefinition
 [Export(typeof(IViewTaggerProvider))]
 [ContentType("code")]
 [ContentType("html")]
-[ContentType("html")]
 [ContentType("HTMLX")]
 [ContentType("Razor")]
 [TagType(typeof(HighlightWordTag))]

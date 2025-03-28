@@ -39,7 +39,7 @@ internal class KnownLanguages
         new LangInfo("Groovy", "groovy", Packets.Language.LANGUAGE_GROOVY),
         new LangInfo("Handlebars", "handlebars", Packets.Language.LANGUAGE_HANDLEBARS),
         new LangInfo("Haml", "haml", Packets.Language.LANGUAGE_UNSPECIFIED),
-        new LangInfo("HTML", "html", Packets.Language.LANGUAGE_HTML, IsTypeCharTriggerSupported: true),
+        new LangInfo("HTML", "html", Packets.Language.LANGUAGE_HTML),
         new LangInfo("Ini", "ini", Packets.Language.LANGUAGE_INI),
         new LangInfo("Java", "java", Packets.Language.LANGUAGE_JAVA),
         new LangInfo("JavaScript", "javascript", Packets.Language.LANGUAGE_JAVASCRIPT),

@@ -432,9 +432,9 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
     public bool CompleteSuggestion(bool checkLine = true)
     {
         var tagger = GetTagger();
-        bool onSameLine = tagger.OnSameLine();
         if (tagger != null)
         {
+        bool onSameLine = tagger.OnSameLine();
             if (tagger.IsSuggestionActive() && (onSameLine || !checkLine) && tagger.CompleteText())
             {
                 ClearCompletionSessions();

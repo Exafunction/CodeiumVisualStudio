@@ -399,6 +399,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
                 currentCompletionID = suggestions[suggestionIndex].Item2;
 
                 SuggestionTagger tagger = GetTagger();
+                if (tagger == null) { return; }
 
                 int lineN, characterN;
                 int res = _textViewAdapter.GetCaretPos(out lineN, out characterN);
@@ -535,6 +536,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
                 if (bindings == null || bindings.Length <= 0)
                 {
                     var tagger = GetTagger();
+                    if (tagger == null) { return; }
 
                     ICompletionSession session = m_provider.CompletionBroker.GetSessions(_view).FirstOrDefault();
                     if (session != null && session.SelectedCompletionSet != null)

@@ -267,7 +267,9 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
         {
             string remainder = line.Substring(start, end - start);
             var textBlock = CreateTextBox(remainder, greyBrush);
-            GetTagger().UpdateAdornment(textBlock);
+            var inlineTagger = GetTagger();
+            if (inlineTagger == null) { return; }
+            inlineTagger.UpdateAdornment(textBlock);
         }
         catch (ArgumentOutOfRangeException)
         {
@@ -281,7 +283,9 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
         try
         { 
             stackPanel.Children.Clear();
-            GetTagger().ClearAdornment();
+            var inlineTagger = GetTagger();
+            if (inlineTagger == null) { return; }
+            inlineTagger.ClearAdornment();
             for (int i = suggestionStart; i < suggestion.Item2.Length; i++)
             {
                 string line = suggestion.Item2[i];
@@ -363,6 +367,7 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
             var start = view.TextViewLines.GetCharacterBounds(snapshotLine.Start);
 
             InlineGreyTextTagger inlineTagger = GetTagger();
+            if (inlineTagger == null) { return; }
             inlineTagger.FormatText(GetTextFormat());
 
             if (stackPanel.Children.Count > 0)
@@ -516,6 +521,7 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
         {
             if (!showSuggestion) return;
             InlineGreyTextTagger inlineTagger = GetTagger();
+            if (inlineTagger == null) { return; }
             inlineTagger.ClearAdornment();
             inlineTagger.MarkDirty();
             suggestion = null;
@@ -536,7 +542,9 @@ internal sealed class SuggestionTagger : ITagger<SuggestionTag>
     {
         try
         {
-            GetTagger().MarkDirty();
+            InlineGreyTextTagger inlineTagger = GetTagger();
+            if (inlineTagger == null) { return; }
+            inlineTagger.MarkDirty();
             ITextSnapshot newSnapshot = buffer.CurrentSnapshot;
             this.snapshot = newSnapshot;
 

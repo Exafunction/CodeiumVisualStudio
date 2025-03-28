@@ -536,7 +536,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
                 if (bindings == null || bindings.Length <= 0)
                 {
                     var tagger = GetTagger();
-                    if (tagger == null) { return; }
+                    if (tagger == null) { return m_nextCommandHandler.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut); }
 
                     ICompletionSession session = m_provider.CompletionBroker.GetSessions(_view).FirstOrDefault();
                     if (session != null && session.SelectedCompletionSet != null)

@@ -636,7 +636,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
 [Export(typeof(IVsTextViewCreationListener))]
 [Name("TextViewListener")]
 [ContentType("code")]
-[ContentType("html")]
+// [ContentType("html")]
 [ContentType("HTMLX")]
 [ContentType("Razor")]
 [TextViewRole(PredefinedTextViewRoles.Document)]

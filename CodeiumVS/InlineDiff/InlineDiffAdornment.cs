@@ -761,6 +761,8 @@ internal class InlineDiffAdornment : TextViewExtension<IWpfTextView, InlineDiffA
 [Name("CodeiumInlineDiffViewProvider")]
 [ContentType("code")]
 [ContentType("html")]
+[ContentType("HTMLX")]
+[ContentType("Razor")]
 [TextViewRole(PredefinedTextViewRoles.Document)]
 internal class CodeiumInlineDiffViewProvider : ILineTransformSourceProvider
 {

@@ -399,6 +399,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
                 currentCompletionID = suggestions[suggestionIndex].Item2;
 
                 SuggestionTagger tagger = GetTagger();
+                if (tagger == null) { return; }
 
                 int lineN, characterN;
                 int res = _textViewAdapter.GetCaretPos(out lineN, out characterN);
@@ -432,10 +433,9 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
     public bool CompleteSuggestion(bool checkLine = true)
     {
         var tagger = GetTagger();
-        bool onSameLine = tagger.OnSameLine();
         if (tagger != null)
         {
-            if (tagger.IsSuggestionActive() && (onSameLine || !checkLine) && tagger.CompleteText())
+            if (tagger.IsSuggestionActive() && (tagger.OnSameLine() || !checkLine) && tagger.CompleteText())
             {
                 ClearCompletionSessions();
                 OnSuggestionAccepted(currentCompletionID);
@@ -535,6 +535,7 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
                 if (bindings == null || bindings.Length <= 0)
                 {
                     var tagger = GetTagger();
+                    if (tagger == null) { return m_nextCommandHandler.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut); }
 
                     ICompletionSession session = m_provider.CompletionBroker.GetSessions(_view).FirstOrDefault();
                     if (session != null && session.SelectedCompletionSet != null)
@@ -636,6 +637,9 @@ internal class CodeiumCompletionHandler : IOleCommandTarget, IDisposable
 [Export(typeof(IVsTextViewCreationListener))]
 [Name("TextViewListener")]
 [ContentType("code")]
+[ContentType("html")]
+[ContentType("HTMLX")]
+[ContentType("Razor")]
 [TextViewRole(PredefinedTextViewRoles.Document)]
 
 internal class TextViewListener : IVsTextViewCreationListener

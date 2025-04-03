@@ -59,14 +59,14 @@ internal sealed class CodeiumAsyncQuickInfoSource
         await GetTagAggregatorAsync(session.TextView);
 
         Assumes.True(_tagAggregator != null,
-                     "Codeium Quick Info Source couldn't create a tag aggregator for error tags");
+                     "Windsurf Quick Info Source couldn't create a tag aggregator for error tags");
 
         // Put together the span over which tags are to be discovered.
         // This will be the zero-length span at the trigger point of the session.
         SnapshotPoint? subjectTriggerPoint = session.GetTriggerPoint(_owner.CurrentSnapshot);
         if (!subjectTriggerPoint.HasValue)
         {
-            Debug.Fail("The Codeium Quick Info Source is being called when it shouldn't be.");
+            Debug.Fail("The Windsurf Quick Info Source is being called when it shouldn't be.");
             return null;
         }
 
@@ -102,8 +102,8 @@ internal sealed class CodeiumAsyncQuickInfoSource
         if (appToSpan != null && problemMessage.Length > 0)
         {
             var hyperLink = ClassifiedTextElement.CreateHyperlink(
-                "Codeium: Explain Problem",
-                "Ask codeium to explain the problem",
+                "Windsurf: Explain Problem",
+                "Ask Windsurf to explain the problem",
                 () =>
                 {
                     ThreadHelper.JoinableTaskFactory
@@ -135,13 +135,13 @@ internal sealed class CodeiumAsyncQuickInfoSource
         else if (_tagAggregatorTextView != textView)
         {
             throw new ArgumentException(
-                "The Codeium Quick Info Source cannot be shared between TextViews.");
+                "The Windsurf Quick Info Source cannot be shared between TextViews.");
         }
     }
 }
 
 [Export(typeof(IAsyncQuickInfoSourceProvider))]
-[Name("Codeium Quick Info Provider")]
+[Name("Windsurf Quick Info Provider")]
 [ContentType("any")]
 [Order(After = "Default Quick Info Presenter")]
 internal sealed class AsyncQuickInfoSourceProvider : IAsyncQuickInfoSourceProvider

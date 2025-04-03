@@ -26,7 +26,7 @@ internal sealed class CommandOpenChatWindow : BaseCommand<CommandOpenChatWindow>
             typeof(ChatToolWindow), 0, create: true, CodeiumVSPackage.Instance.DisposalToken);
         if (toolWindowPane == null || toolWindowPane.Frame == null)
         {
-            throw new NotSupportedException("Cannot create Codeium chat tool window");
+            throw new NotSupportedException("Cannot create Windsurf chat tool window");
         }
     }
 }
@@ -271,7 +271,7 @@ internal class CommandExplainCodeBlock : BaseCommandContextMenu<CommandExplainCo
         base.BeforeQueryStatus(e);
         if (Command.Visible)
             Command.Text =
-                is_function ? "Codeium: Explain Function" : "Codeium: Explain Code block";
+                is_function ? "Windsurf: Explain Function" : "Windsurf: Explain Code block";
     }
 
     protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
@@ -303,7 +303,7 @@ internal class CommandRefactorCodeBlock : BaseCommandContextMenu<CommandRefactor
         base.BeforeQueryStatus(e);
         if (Command.Visible)
             Command.Text =
-                is_function ? "Codeium: Refactor Function" : "Codeium: Refactor Code block";
+                is_function ? "Windsurf: Refactor Function" : "Windsurf: Refactor Code block";
     }
 
     protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)

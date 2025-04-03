@@ -13,7 +13,7 @@ public class OutputWindow
         if (ServiceProvider.GlobalProvider.GetService(typeof(SVsOutputWindow))
                 is IVsOutputWindow obj)
         {
-            obj.CreatePane(ref OutputWindowGuid, "Codeium", 1, 0);
+            obj.CreatePane(ref OutputWindowGuid, "Windsurf", 1, 0);
             obj.GetPane(ref OutputWindowGuid, out outputPane);
         }
     }

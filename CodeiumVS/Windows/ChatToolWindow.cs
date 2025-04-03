@@ -21,7 +21,7 @@ public class ChatToolWindow : ToolWindowPane
     public ChatToolWindow() : base(null)
     {
         Instance = this;
-        Caption = "Codeium Chat";
+        Caption = "Windsur Chat";
         Content = new ChatToolWindowControl();
     }
 
@@ -90,7 +90,7 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         var model = new InfoBarModel(
             new[] {
                 new InfoBarTextSpan(
-                    "It looks like Codeium Chat is taking too long to load, do you want to reload? "),
+                    "It looks like Windsurf Chat is taking too long to load, do you want to reload? "),
                 new InfoBarHyperlink("Reload")
             },
             KnownMonikers.IntellisenseWarning,

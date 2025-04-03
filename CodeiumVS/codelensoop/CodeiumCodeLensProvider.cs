@@ -157,8 +157,8 @@ namespace CodeiumVS
 
                 CodeLensDataPointDescriptor response = new CodeLensDataPointDescriptor()
                 {
-                    Description = "Invoke Codeium",
-                    TooltipText = "Codeium",
+                    Description = "Invoke Windsurf",
+                    TooltipText = "Windsurf",
                     IntValue = null, // no int value
                 };
 

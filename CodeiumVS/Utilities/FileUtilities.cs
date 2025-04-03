@@ -35,14 +35,14 @@ internal static class FileUtilities
                     CodeiumVSPackage.Instance?.Log(
                         $"Failed to move the file why trying to delete it, exception: {ex2}");
                     VS.MessageBox.ShowError(
-                        $"Codeium: Failed to move the file why trying to delete it: {path}",
+                        $"Windsurf: Failed to move the file why trying to delete it: {path}",
                         "Please see the output windows for more details");
                 }
             }
             else
             {
                 CodeiumVSPackage.Instance?.Log($"Failed to delete file, exception: {ex}");
-                VS.MessageBox.ShowError($"Codeium: Failed to delete file: {path}",
+                VS.MessageBox.ShowError($"Windsurf: Failed to delete file: {path}",
                                         "Please see the output windows for more details");
             }
         }

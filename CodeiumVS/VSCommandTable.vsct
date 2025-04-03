@@ -91,7 +91,7 @@
 				<CommandFlag>DefaultInvisible</CommandFlag>
 				<CommandFlag>DynamicVisibility</CommandFlag>
 				<Strings>
-					<ButtonText>Codeium: Explain Code Block</ButtonText>
+					<ButtonText>Windsurf: Explain Code Block</ButtonText>
 					<LocCanonicalName>Codeium.ExplainCodeBlock</LocCanonicalName>
 				</Strings>
 			</Button>
@@ -105,7 +105,7 @@
 				<CommandFlag>DefaultInvisible</CommandFlag>
 				<CommandFlag>DynamicVisibility</CommandFlag>
 				<Strings>
-					<ButtonText>Codeium: Refactor Code Block</ButtonText>
+					<ButtonText>Windsurf: Refactor Code Block</ButtonText>
 					<LocCanonicalName>Codeium.RefactorCodeBlock</LocCanonicalName>
 				</Strings>
 			</Button>
@@ -118,7 +118,7 @@
 				<CommandFlag>DefaultInvisible</CommandFlag>
 				<CommandFlag>DynamicVisibility</CommandFlag>
 				<Strings>
-					<ButtonText>Codeium: Generate Docstring for Function</ButtonText>
+					<ButtonText>Windsurf: Generate Docstring for Function</ButtonText>
 					<LocCanonicalName>Codeium.GenerateFunctionDocstring</LocCanonicalName>
 				</Strings>
 			</Button>
@@ -131,7 +131,7 @@
 				<CommandFlag>DefaultInvisible</CommandFlag>
 				<CommandFlag>DynamicVisibility</CommandFlag>
 				<Strings>
-					<ButtonText>Codeium: Generate Unit Test for Function</ButtonText>
+					<ButtonText>Windsurf: Generate Unit Test for Function</ButtonText>
 					<LocCanonicalName>Codeium.GenerateFunctionUnitTest</LocCanonicalName>
 				</Strings>
 			</Button>
@@ -142,7 +142,7 @@
         <CommandFlag>IconIsMoniker</CommandFlag>
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>        <Strings>
-          <ButtonText>Codeium: Show Next Suggestion</ButtonText>
+          <ButtonText>Windsurf: Show Next Suggestion</ButtonText>
           <LocCanonicalName>Codeium.ShowNextSuggestion</LocCanonicalName>
         </Strings>
       </Button>
@@ -153,7 +153,7 @@
         <CommandFlag>IconIsMoniker</CommandFlag>
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>        <Strings>
-          <ButtonText>Codeium: Accept Completion</ButtonText>
+          <ButtonText>Windsurf: Accept Completion</ButtonText>
           <LocCanonicalName>Codeium.CompleteSuggestion</LocCanonicalName>
         </Strings>
       </Button>
@@ -162,7 +162,7 @@
         <Parent guid="CodeiumVS" id="ContextGroupCodeium" />
         <CommandFlag>DefaultInvisible</CommandFlag>
         <Strings>
-          <ButtonText>Codeium: Explain Code Block</ButtonText>
+          <ButtonText>Windsurf: Explain Code Block</ButtonText>
           <LocCanonicalName>Codeium.ExplainSelectionCodeBlock</LocCanonicalName>
         </Strings>
       </Button>
@@ -173,7 +173,7 @@
         <Icon guid="ImageCatalogGuid" id="Refactoring" />
         <CommandFlag>DefaultInvisible</CommandFlag>
         <Strings>
-          <ButtonText>Codeium: Refactor Code Block</ButtonText>
+          <ButtonText>Windsurf: Refactor Code Block</ButtonText>
           <LocCanonicalName>Codeium.RefactorSelectionCodeBlock</LocCanonicalName>
         </Strings>
       </Button>
@@ -184,7 +184,7 @@
         <Icon guid="ImageCatalogGuid" id="AddComment" />
         <CommandFlag>DefaultInvisible</CommandFlag>
         <Strings>
-          <ButtonText>Codeium: Generate Docstring for Function</ButtonText>
+          <ButtonText>Windsurf: Generate Docstring for Function</ButtonText>
           <LocCanonicalName>Codeium.GenerateSelectionFunctionDocstring</LocCanonicalName>
         </Strings>
       </Button>

@@ -136,7 +136,7 @@ public class LanguageServer
 
             // show an error message box
             var msgboxResult = await VS.MessageBox.ShowAsync(
-                "Codeium: Failed to sign in. Please check the output window for more details.",
+                "Windsurf: Failed to sign in. Please check the output window for more details.",
                 "Do you want to retry?",
                 OLEMSGICON.OLEMSGICON_WARNING,
                 OLEMSGBUTTON.OLEMSGBUTTON_RETRYCANCEL,
@@ -170,7 +170,7 @@ public class LanguageServer
             {
                 // show an error message box
                 var msgboxResult = await VS.MessageBox.ShowAsync(
-                    "Codeium: Failed to get the Authentication Token. Please check the output window for more details.",
+                    "Windsurf: Failed to get the Authentication Token. Please check the output window for more details.",
                     "Do you want to retry?",
                     OLEMSGICON.OLEMSGICON_WARNING,
                     OLEMSGBUTTON.OLEMSGBUTTON_RETRYCANCEL,
@@ -258,7 +258,7 @@ public class LanguageServer
         progressDialog.UpdateProgress(
             $"Downloading language server v{_languageServerVersion} ({e.ProgressPercentage}%)",
             $"{recievedBytesMb:f2}Mb / {totalBytesMb:f2}Mb",
-            $"Codeium: Downloading language server v{_languageServerVersion} ({e.ProgressPercentage}%)",
+            $"Windsurf: Downloading language server v{_languageServerVersion} ({e.ProgressPercentage}%)",
             (int)e.BytesReceived,
             (int)e.TotalBytesToReceive,
             true,
@@ -275,11 +275,11 @@ public class LanguageServer
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-        progressDialog.StartWaitDialog("Codeium",
+        progressDialog.StartWaitDialog("Windsurf",
                                        $"Extracting files...",
                                        "Almost done",
                                        null,
-                                       $"Codeium: Extracting files...",
+                                       $"Windsurf: Extracting files...",
                                        0,
                                        false,
                                        true);
@@ -423,11 +423,11 @@ public class LanguageServer
         IVsThreadedWaitDialog4 progressDialog = waitDialogFactory.CreateInstance();
 
         progressDialog.StartWaitDialog(
-            "Codeium",
+            "Windsurf",
             $"Downloading language server v{_languageServerVersion}",
             "",
             null,
-            $"Codeium: Downloading language server v{_languageServerVersion}",
+            $"Windsurf: Downloading language server v{_languageServerVersion}",
             0,
             false,
             true);

@@ -21,7 +21,7 @@ public class ChatToolWindow : ToolWindowPane
     public ChatToolWindow() : base(null)
     {
         Instance = this;
-        Caption = "Windsur Chat";
+        Caption = "Windsurf Chat";
         Content = new ChatToolWindowControl();
     }
 
@@ -71,7 +71,7 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
             await package.LogAsync(
                 $"Failed to initialize webview core enviroment. Exception: {ex}");
             await VS.MessageBox.ShowErrorAsync(
-                "Codeium: Failed to initialize webview core enviroment",
+                "Windsurf: Failed to initialize webview core enviroment",
                 "Chat might be unavailable. Please see more details in the output window.");
         }
 

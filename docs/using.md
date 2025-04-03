@@ -10,14 +10,14 @@
 7. [Explain Problem](#explain-problem)
 
 ## Auto Completion
-Once started typing, you should see grey texts that show Codeium's suggestions. You can press <kbd>Tab</kbd> to accept, and <kbd>Alt+.</kbd> to cycle through the suggestions.
+Once started typing, you should see grey texts that show Windsurf's suggestions. You can press <kbd>Tab</kbd> to accept, and <kbd>Alt+.</kbd> to cycle through the suggestions.
 
 <p align="center">
   <image src="images/using_auto_completion.png"/>
 </p>
 
 ## Chat Window
-In the Menu bar, click on **Extenions > Codeium > Open Chat Window**.
+In the Menu bar, click on **Extenions > Windsurf > Open Chat Window**.
 <p align="center">
   <image src="images/using_chat_window.png"/>
 </p>
@@ -28,20 +28,20 @@ This will bring up the Chat Window, which will be docked to the Solution Explore
 </p>
 
 ## Explain Code block
-Right-click anywhere the code block you would like Codeium to explain, there will be a **Codeium: Explain Code block** in the context menu.
+Right-click anywhere the code block you would like Windsurf to explain, there will be a **Windsurf: Explain Code block** in the context menu.
 
 <p align="center">
   <image src="images/using_explain_code_block.png"/>
 </p>
 
-If you right-click on a function, you will see **Codeium: Explain Function** instead.
+If you right-click on a function, you will see **Windsurf: Explain Function** instead.
 
 <p align="center">
   <image src="images/using_explain_function.png"/>
 </p>
 
 ## Refactor Code block
-Much like the [Explain Code block](#explain-code-block) feature, right-click anywhere the code block you would like Codeium to refactor, there will be a **Codeium: Refactor Code block** in the context menu.
+Much like the [Explain Code block](#explain-code-block) feature, right-click anywhere the code block you would like Windsurf to refactor, there will be a **Windsurf: Refactor Code block** in the context menu.
 
 <p align="center">
   <image src="images/using_refactor_code_block.png"/>
@@ -53,21 +53,21 @@ Clicking on it will highlight the code block and open a dialog window asking how
 </p>
 
 ## Generate Docstring for Function
-Right-click on any function, there will be a **Codeium: Generate Docstring for Function** in the context menu.
+Right-click on any function, there will be a **Windsurf: Generate Docstring for Function** in the context menu.
 
 <p align="center">
   <image src="images/using_generate_docstring.png"/>
 </p>
 
 ## Generate Unit Test for Function
-Right-click on any function, there will be a **Codeium: Generate Unit Test for Function** in the context menu.
+Right-click on any function, there will be a **Windsurf: Generate Unit Test for Function** in the context menu.
 
 <p align="center">
   <image src="images/using_generate_unit_test.png"/>
 </p>
 
 ## Explain Problem
-When you have a warning, error, or diagnostic message in your code, hovering on it will show a **Codeium: Explain Problem** button.
+When you have a warning, error, or diagnostic message in your code, hovering on it will show a **Windsurf: Explain Problem** button.
 
 <p align="center">
   <image src="images/using_explain_problem.png"/>

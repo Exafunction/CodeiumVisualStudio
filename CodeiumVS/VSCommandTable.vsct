@@ -24,7 +24,7 @@
 			<Menu guid="CodeiumVS" id="ToolsSubMenuCodeium" priority="100" type="Menu">
 				<Parent guid="guidSHLMainMenu" id="Extensions.DefaultGroup"/>
 				<Strings>
-					<ButtonText>Codeium</ButtonText>
+					<ButtonText>Windsurf</ButtonText>
 				</Strings>
 			</Menu>
 		</Menus>

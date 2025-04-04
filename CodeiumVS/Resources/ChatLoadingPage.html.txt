@@ -14,7 +14,7 @@
         .loader {
             width: 80px;
             height: 80px;
-            align-self: flex-start;
+            align-self: center;
         }
 
         @keyframes pulse {

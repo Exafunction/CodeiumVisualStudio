@@ -42,9 +42,9 @@
 
 <body>
     <div class="container">
-        <h2 id="loading-text">Loading Codeium</h2>
+        <h2 id="loading-text">Loading Windsurf</h2>
         <div class="loader">
-            <svg viewBox="0 0 124 124" aria-label="Codeium Logo" fill="none" xmlns="http://www.w3.org/2000/svg"
+            <svg viewBox="0 0 124 124" aria-label="Windsurf Logo" fill="none" xmlns="http://www.w3.org/2000/svg"
                 class="h-16 w-16">
                 <mask id="mask0_306_96" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="124"
                     height="124">

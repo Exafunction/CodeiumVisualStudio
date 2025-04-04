@@ -15,7 +15,7 @@
                         ResizeMode="CanResize"
                         mc:Ignorable="d"
 
-                        Title="Codeium Refactor Code Block"
+                        Title="Windsurf Refactor Code Block"
                         WindowStartupLocation="CenterOwner"
 
                         Width="450"
@@ -73,7 +73,7 @@
                         />
                 <Setter Property="HorizontalAlignment" Value="Right"/>
                 <Setter Property="Width" Value="30"/>
-                <Setter Property="ToolTip" Value="Ask Codeium"/>
+                <Setter Property="ToolTip" Value="Ask Windsurf"/>
                 <Setter Property="Background" Value="{StaticResource {x:Static platform:CommonControlsColors.TextBoxBackgroundFocusedBrushKey}}"/>
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"/>
                 <Setter Property="BorderBrush" Value="Transparent"/>

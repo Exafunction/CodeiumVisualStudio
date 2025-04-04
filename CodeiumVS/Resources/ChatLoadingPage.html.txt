@@ -12,9 +12,12 @@
         }
 
         .loader {
-            width: 80px;
-            height: 80px;
-            align-self: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: auto;
+            height: auto;
+            margin-top: 20px; /* optional spacing */
         }
 
         @keyframes pulse {

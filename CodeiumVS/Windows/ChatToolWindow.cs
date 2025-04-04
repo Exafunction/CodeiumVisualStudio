@@ -21,7 +21,7 @@ public class ChatToolWindow : ToolWindowPane
     public ChatToolWindow() : base(null)
     {
         Instance = this;
-        Caption = "Codeium Chat";
+        Caption = "Windsurf Chat";
         Content = new ChatToolWindowControl();
     }
 
@@ -71,7 +71,7 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
             await package.LogAsync(
                 $"Failed to initialize webview core enviroment. Exception: {ex}");
             await VS.MessageBox.ShowErrorAsync(
-                "Codeium: Failed to initialize webview core enviroment",
+                "Windsurf: Failed to initialize webview core enviroment",
                 "Chat might be unavailable. Please see more details in the output window.");
         }
 
@@ -90,7 +90,7 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         var model = new InfoBarModel(
             new[] {
                 new InfoBarTextSpan(
-                    "It looks like Codeium Chat is taking too long to load, do you want to reload? "),
+                    "It looks like Windsurf Chat is taking too long to load, do you want to reload? "),
                 new InfoBarHyperlink("Reload")
             },
             KnownMonikers.IntellisenseWarning,
@@ -174,7 +174,7 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         {
             await package.LogAsync($"Failed to open the chat page. Exception: {ex}");
             await VS.MessageBox.ShowErrorAsync(
-                "Codeium: Failed to open the chat page",
+                "Windsurf: Failed to open the chat page",
                 "We're sorry for the inconvenience. Please see more details in the output window.");
         }
     }

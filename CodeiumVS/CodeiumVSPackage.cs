@@ -24,7 +24,7 @@ namespace CodeiumVS;
 [InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Version)]
 [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 [ProvideMenuResource("Menus.ctmenu", 1)]
-[ProvideOptionPage(typeof(SettingsPage), "Codeium", "Codeium", 0, 0, true)]
+[ProvideOptionPage(typeof(SettingsPage), "Windsurf", "Windsurf", 0, 0, true)]
 [ProvideToolWindow(
     typeof(ChatToolWindow), MultiInstances = false, Style = VsDockStyle.Tabbed,
     Orientation = ToolWindowOrientation.Right,
@@ -77,8 +77,8 @@ public sealed class CodeiumVSPackage : ToolkitPackage
             await LogAsync(
                 $"CodeiumVSPackage.InitializeAsync: Failed to register commands; Exception {ex}");
             await VS.MessageBox.ShowErrorAsync(
-                "Codeium: Failed to register commands.",
-                "Codeium might not work correctly. Please check the output window for more details.");
+                "Windsurf: Failed to register commands.",
+                "Windsurf might not work correctly. Please check the output window for more details.");
         }
 
         try
@@ -89,12 +89,12 @@ public sealed class CodeiumVSPackage : ToolkitPackage
         }
         catch (Exception ex)
         {
-            await LogAsync("Codeium Error" + ex);
+            await LogAsync("Windsurf Error" + ex);
             throw;
         }
 
         await LanguageServer.InitializeAsync();
-        await LogAsync("Codeium Extension for Visual Studio");
+        await LogAsync("Windsurf Extension for Visual Studio");
     }
 
     protected override void Dispose(bool disposing)
@@ -158,7 +158,7 @@ public sealed class CodeiumVSPackage : ToolkitPackage
                     delegate { new EnterTokenDialogWindow().ShowDialog(); }),
             ];
 
-            NotificationAuth.Show("[Codeium] To enable Codeium, please sign in to your account",
+            NotificationAuth.Show("[Windsurf] To enable Windsurf, please sign in to your account",
                                   KnownMonikers.AddUser,
                                   true,
                                   null,
@@ -249,9 +249,9 @@ public sealed class CodeiumVSPackage : ToolkitPackage
             }
         }
 
-        Instance?.Log($"Codeium failed to open the browser, please use this URL instead: {url}");
+        Instance?.Log($"Windsurf failed to open the browser, please use this URL instead: {url}");
         VS.MessageBox.Show(
-            "Codeium: Failed to open browser",
+            "Windsurf: Failed to open browser",
             $"Please use this URL instead (you can copy from the output window):\n{url}");
     }
 

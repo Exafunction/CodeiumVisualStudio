@@ -30,7 +30,7 @@ namespace CodeiumVS;
 public class LanguageServer
 {
     private string _languageServerURL;
-    private string _languageServerVersion = "1.42.3";
+    private string _languageServerVersion = "1.42.7";
 
     private int _port = 0;
     private System.Diagnostics.Process _process;
@@ -136,7 +136,7 @@ public class LanguageServer
 
             // show an error message box
             var msgboxResult = await VS.MessageBox.ShowAsync(
-                "Codeium: Failed to sign in. Please check the output window for more details.",
+                "Windsurf: Failed to sign in. Please check the output window for more details.",
                 "Do you want to retry?",
                 OLEMSGICON.OLEMSGICON_WARNING,
                 OLEMSGBUTTON.OLEMSGBUTTON_RETRYCANCEL,
@@ -170,7 +170,7 @@ public class LanguageServer
             {
                 // show an error message box
                 var msgboxResult = await VS.MessageBox.ShowAsync(
-                    "Codeium: Failed to get the Authentication Token. Please check the output window for more details.",
+                    "Windsurf: Failed to get the Authentication Token. Please check the output window for more details.",
                     "Do you want to retry?",
                     OLEMSGICON.OLEMSGICON_WARNING,
                     OLEMSGBUTTON.OLEMSGBUTTON_RETRYCANCEL,
@@ -186,7 +186,7 @@ public class LanguageServer
 
         string state = Guid.NewGuid().ToString();
         string portalUrl = _package.SettingsPage.EnterpriseMode ? _package.SettingsPage.PortalUrl
-                                                                : "https://www.codeium.com";
+                                                                : "https://www.windsurf.com";
         string redirectUrl = Uri.EscapeDataString($"http://127.0.0.1:{_port}/auth");
         string url =
             $"{portalUrl}/profile?response_type=token&redirect_uri={redirectUrl}&state={state}&scope=openid%20profile%20email&redirect_parameters_type=query";
@@ -258,7 +258,7 @@ public class LanguageServer
         progressDialog.UpdateProgress(
             $"Downloading language server v{_languageServerVersion} ({e.ProgressPercentage}%)",
             $"{recievedBytesMb:f2}Mb / {totalBytesMb:f2}Mb",
-            $"Codeium: Downloading language server v{_languageServerVersion} ({e.ProgressPercentage}%)",
+            $"Windsurf: Downloading language server v{_languageServerVersion} ({e.ProgressPercentage}%)",
             (int)e.BytesReceived,
             (int)e.TotalBytesToReceive,
             true,
@@ -275,11 +275,11 @@ public class LanguageServer
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-        progressDialog.StartWaitDialog("Codeium",
+        progressDialog.StartWaitDialog("Windsurf",
                                        $"Extracting files...",
                                        "Almost done",
                                        null,
-                                       $"Codeium: Extracting files...",
+                                       $"Windsurf: Extracting files...",
                                        0,
                                        false,
                                        true);
@@ -304,7 +304,7 @@ public class LanguageServer
             ];
 
             errorBar.Show(
-                "[Codeium] Critical Error: Failed to download the language server. Do you want to retry?",
+                "[Windsurf] Critical Error: Failed to download the language server. Do you want to retry?",
                 KnownMonikers.StatusError,
                 true,
                 null,
@@ -423,11 +423,11 @@ public class LanguageServer
         IVsThreadedWaitDialog4 progressDialog = waitDialogFactory.CreateInstance();
 
         progressDialog.StartWaitDialog(
-            "Codeium",
+            "Windsurf",
             $"Downloading language server v{_languageServerVersion}",
             "",
             null,
-            $"Codeium: Downloading language server v{_languageServerVersion}",
+            $"Windsurf: Downloading language server v{_languageServerVersion}",
             0,
             false,
             true);
@@ -489,7 +489,7 @@ public class LanguageServer
 
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         errorBar.Show(
-            "[Codeium] Failed to verify the language server digital signature. The executable might be corrupted.",
+            "[Windsurf] Failed to verify the language server digital signature. The executable might be corrupted.",
             KnownMonikers.IntellisenseWarning,
             true,
             null,
@@ -526,7 +526,7 @@ public class LanguageServer
                 $"LanguageServer.StartAsync: Failed to create directories; Exception: {ex}");
 
             new NotificationInfoBar().Show(
-                "[Codeium] Critical error: Failed to create language server directories. Please check the output window for more details.",
+                "[Windsurf] Critical error: Failed to create language server directories. Please check the output window for more details.",
                 KnownMonikers.StatusError,
                 true,
                 null,
@@ -594,7 +594,7 @@ public class LanguageServer
 
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             errorBar.Show(
-                "[Codeium] Critical Error: Failed to start the language server. Do you want to retry?",
+                "[Windsurf] Critical Error: Failed to start the language server. Do you want to retry?",
                 KnownMonikers.StatusError,
                 true,
                 null,
@@ -616,7 +616,7 @@ public class LanguageServer
             // warn the user about the issue
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             new NotificationInfoBar().Show(
-                "[Codeium] Failed to read output from the language server, Codeium might not work properly.",
+                "[Windsurf] Failed to read output from the language server, Windsurf might not work properly.",
                 KnownMonikers.IntellisenseWarning,
                 true,
                 null,
@@ -650,7 +650,7 @@ public class LanguageServer
             else
             {
                 new NotificationInfoBar().Show(
-                    "[Codeium] Critical Error: Failed to get the language server port. Please check the output window for more details.",
+                    "[Windsurf] Critical Error: Failed to get the language server port. Please check the output window for more details.",
                     KnownMonikers.StatusError,
                     true,
                     null,

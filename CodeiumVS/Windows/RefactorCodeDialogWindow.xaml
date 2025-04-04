@@ -107,7 +107,7 @@
                     <Label x:Name="InputPromptHint" Margin="5,0,0,0"
                        Foreground="{DynamicResource {x:Static platform:CommonControlsColors.TextBoxTextDisabledBrushKey}}"
                        Padding="{Binding ElementName=InputPrompt, Path=Padding}">
-                        Ask Codeium anything! Or you can just select from the presets below...
+                        Ask Windsurf anything! Or you can just select from the presets below...
                     </Label>
 
                     <Button Style="{StaticResource SendButton}">

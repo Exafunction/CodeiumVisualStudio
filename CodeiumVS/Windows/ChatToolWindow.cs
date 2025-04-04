@@ -174,7 +174,7 @@ public partial class ChatToolWindowControl : UserControl, IComponentConnector
         {
             await package.LogAsync($"Failed to open the chat page. Exception: {ex}");
             await VS.MessageBox.ShowErrorAsync(
-                "Codeium: Failed to open the chat page",
+                "Windsurf: Failed to open the chat page",
                 "We're sorry for the inconvenience. Please see more details in the output window.");
         }
     }

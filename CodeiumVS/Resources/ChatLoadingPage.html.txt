@@ -14,6 +14,7 @@
         .loader {
             width: 80px;
             height: 80px;
+            align-self: flex-start;
         }
 
         @keyframes pulse {
@@ -44,7 +45,7 @@
     <div class="container">
         <h2 id="loading-text">Loading Windsurf</h2>
         <div class="loader">
-           <svg width="2620" height="737" viewBox="1000 1000 2620 737" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:300px; height:auto;">
+           <svg width="2620" height="737" viewBox="0 0 2620 737" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:300px; height:auto;">
 <g clip-path="url(#clip0_21947_7215)">
 <g clip-path="url(#clip1_21947_7215)">
 <g filter="url(#filter0_i_21947_7215)">
